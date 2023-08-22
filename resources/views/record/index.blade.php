@@ -30,6 +30,29 @@
                         </button>
                     </div>
                 </ul>
+                <div class="flex flex-col items-center mt-4">
+                    <div>
+                        <h2 style="font-weight: bold">FILTER</h2>
+                        <h4 style="font-weight: bold">CATEGORIES</h4>
+                        @foreach ($categories as $category)
+                            <label class="flex items-center">
+                                <input type="checkbox" class="mr-4" name="category[]" value="{{ $category->category_id }}">
+                                {{ $category->category_name }}
+                            </label>
+                        @endforeach
+
+                        <p class="mt-4" style="font-weight: bold">RECORD TYPES</p>
+                        <label class="flex items-center">
+                            <input type="checkbox" class="mr-4" name="expense" id="expense">
+                            Expense
+                        </label>
+                        <label class="flex items-center">
+                            <input type="checkbox" class="mr-4" name="income" id="income">
+                            Income
+                        </label>
+                    </div>
+                </div>
+
             </div>
         </aside>
         <div class="float-right p-4 sm:ml-64 " style="width: 80%;">

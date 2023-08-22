@@ -26,8 +26,9 @@ class RecordController extends Controller
                 // If account_id is not provided, return all records for the authenticated user
                 $records = $user->records;
             }
+            $categories = Category::all();
 
-            return view('record.index', compact('records'));
+            return view('record.index', compact('records', 'categories'));
         } else {
             // Redirect to the login page if the user is not authenticated
             return redirect('/login');

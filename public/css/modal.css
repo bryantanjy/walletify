@@ -15,12 +15,21 @@ body.modal-open {
   overflow: hidden;
 }
 
-.modal-content {
+.modal-content-s {
   background-color: #fefefe;
   margin: 10% auto;
   padding: 20px;
   border: 1px solid #888;
   width: 500px;
+}
+
+.modal-content-m {
+  background-color: #fefefe;
+  margin: 10% auto;
+  padding: 20px;
+  border: 1px solid #888;
+  width: 800px;
+  height: 500px;
 }
 
 .modal-body, .modal-header {

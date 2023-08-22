@@ -2,7 +2,7 @@
 <div id="editAccountModal" class="modal fade" tabindex="-1" role="dialog">
     <div class="modal-dialog" role="document">
         <!--Modal Content-->
-        <div class="modal-content relative p-4 text-center bg-white rounded-lg shadow sm:p-5">
+        <div class="modal-content-s relative p-4 text-center bg-white rounded-lg shadow sm:p-5">
             <div class="modal-header flex items-center justify-between">
                 <h2 class="modal-title" style="font-weight: bold; font-size:20px">Edit Account</h2>
                 <button type="button" class="close" data-dismiss="modal" aria-label="Close">&times;</button>
