@@ -21,7 +21,7 @@ class Record extends Model
         'record_description',
     ];
 
-    public function account()
+    public function accounts()
     {
         return $this->belongsTo(Account::class, 'account_id', 'account_id');
     }
