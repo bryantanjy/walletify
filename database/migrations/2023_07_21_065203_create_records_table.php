@@ -13,6 +13,7 @@ return new class extends Migration
     {
         Schema::create('records', function (Blueprint $table) {
             $table->bigIncrements('record_id'); // Big integer auto-incrementing primary key 'record_id'
+            $table->foreignId('user_id')->constrained('users')->onDelete('cascade');
             $table->unsignedBigInteger('account_id');
             $table->foreign('account_id')->references('account_id')->on('accounts')->onDelete('cascade');
             $table->unsignedBigInteger('category_id');
