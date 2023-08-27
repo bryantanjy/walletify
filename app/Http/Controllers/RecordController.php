@@ -13,19 +13,11 @@ class RecordController extends Controller
     /**
      * Display a listing of the resource.
      */
-    public function index(Request $request)
+    public function index()
     {
         if (auth()->check()) {
-            $user = Auth::user();
-            $account_id = $request->input('account_id');
-
-            // Check if account_id is provided, retrieve records for the single user
-            if ($account_id) {
-                $records = Record::where('account_id', $account_id)->get();
-            } else {
-                // If account_id is not provided, return all records for the authenticated user
-                $records = $user->records;
-            }
+            $userId = Auth::id();
+            $records = Record::all();
             $categories = Category::all();
 
             return view('record.index', compact('records', 'categories'));
@@ -35,13 +27,16 @@ class RecordController extends Controller
         }
     }
 
+
     /**
      * Show the form for creating a new resource.
      */
     public function create()
     {
-        $accounts = Account::where('user_id', auth()->id())->get();
+        $user = Auth::user();
+        $accounts = Account::where('user_id', $user->id)->get();
         $categories = Category::all();
+        //dd($accounts);
         return view('record.create', compact('accounts', 'categories'));
     }
 
@@ -53,20 +48,16 @@ class RecordController extends Controller
         $validatedData = $request->validate([
             'account_id' => 'required',
             'record_type' => 'required',
-            'category_name' => 'required',
+            'category_id' => 'required',
             'amount' => 'required|numeric',
             'date' => 'required|date',
             'time' => 'required',
             'record_description' => 'nullable|max:50',
+            'group_id' => 'nullable',
         ]);
+        $validatedData['user_id'] = auth()->id();
+        Record::create($validatedData);
 
-        // Create a new Record instance and fill it with the validated data
-        $record = new Record($validatedData);
-
-        // Save the record to the database
-        $record->save();
-
-        // Redirect back to the index page with a success message
         return redirect()->route('record.index')->with('success', 'Record added successfully');
     }
 
@@ -97,7 +88,7 @@ class RecordController extends Controller
     /**
      * Remove the specified resource from storage.
      */
-    public function destroy(Record $record)
+    public function delete(Record $record)
     {
         //
     }
