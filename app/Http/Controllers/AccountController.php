@@ -44,7 +44,7 @@ class AccountController extends Controller
             'account_name' => 'required|string|max:50',
         ]);
 
-        $incomingDatas['accoount_type'] = strip_tags($incomingDatas['account_type']);
+        $incomingDatas['account_type'] = strip_tags($incomingDatas['account_type']);
         $incomingDatas['account_name'] = strip_tags($incomingDatas['account_name']);
         $incomingDatas['user_id'] = auth()->id();
         Account::create($incomingDatas);
