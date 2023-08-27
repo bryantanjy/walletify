@@ -2,15 +2,16 @@
 
 namespace App\Models;
 
-use Illuminate\Contracts\Auth\MustVerifyEmail;
-use Illuminate\Database\Eloquent\Factories\HasFactory;
-use Illuminate\Foundation\Auth\User as Authenticatable;
+use App\Models\Record;
+use App\Models\Account;
+use Laravel\Sanctum\HasApiTokens;
+use Laravel\Jetstream\HasProfilePhoto;
 use Illuminate\Notifications\Notifiable;
 use Laravel\Fortify\TwoFactorAuthenticatable;
-use Laravel\Jetstream\HasProfilePhoto;
-use Laravel\Sanctum\HasApiTokens;
+use Illuminate\Contracts\Auth\MustVerifyEmail;
 
-use App\Models\Account;
+use Illuminate\Database\Eloquent\Factories\HasFactory;
+use Illuminate\Foundation\Auth\User as Authenticatable;
 
 class User extends Authenticatable
 {
@@ -61,12 +62,16 @@ class User extends Authenticatable
     //     'profile_photo_url',
     // ];
 
-    public function financeAccounts()
+    public function accounts()
     {
         return $this->hasMany(Account::class, 'user_id', 'id');
     }
 
-
+    public function records()
+    {
+        return $this->hasMany(Record::class, 'account_id', 'account_id');
+    }
+    
 
     // public function belongsToGroup(Group $group)
     // {

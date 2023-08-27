@@ -2,10 +2,11 @@
 
 namespace App\Models;
 
-use Illuminate\Database\Eloquent\Factories\HasFactory;
-use Illuminate\Database\Eloquent\Model;
-
 use App\Models\User;
+use App\Models\Record;
+
+use Illuminate\Database\Eloquent\Model;
+use Illuminate\Database\Eloquent\Factories\HasFactory;
 
 class Account extends Model
 {
@@ -23,7 +24,7 @@ class Account extends Model
     }
 
     public function records()
-{
-    return $this->hasMany(Record::class, 'account_id', 'account_id');
-}
+    {
+        return $this->hasMany(Record::class, 'account_id', 'account_id');
+    }
 }

@@ -2,8 +2,10 @@
 
 namespace App\Models;
 
-use Illuminate\Database\Eloquent\Factories\HasFactory;
+use App\Models\Account;
+use App\Models\Category;
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Database\Eloquent\Factories\HasFactory;
 
 class Record extends Model
 {
@@ -11,6 +13,7 @@ class Record extends Model
 
     protected $primaryKey = 'record_id';
     protected $fillable = [
+        'user_id',
         'account_id',
         'category_id',
         'group_id',
@@ -21,10 +24,18 @@ class Record extends Model
         'record_description',
     ];
 
-    public function accounts()
+    public function user()
+    {
+        return $this->belongsTo(User::class, 'user_id', 'id');
+    }
+
+    public function account()
     {
         return $this->belongsTo(Account::class, 'account_id', 'account_id');
     }
 
-    
+    public function category()
+    {
+        return $this->belongsTo(Category::class, 'category_id', 'category_id');
+    }
 }
