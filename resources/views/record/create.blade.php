@@ -1,3 +1,7 @@
+@php
+    $accounts = $accounts ?? [];
+@endphp
+
 <div id="createRecordModal" class="modal fade" tabindex="-1" role="dialog" aria-labelledby="createRecordModalLabel"
     aria-hidden="true">
     <div class="modal-dialog relative p-4 w-full  h-full md:h-auto" role="document">
@@ -18,11 +22,11 @@
                                 style="height: 30px; padding:0px 10px 0px 10px; margin:15px 0px 0px 20px;width:175px;"
                                 required>
                                 <option value="" selected disabled>Select an account</option>
-                                @isset($accounts)
+                                @if ($accounts)
                                     @foreach ($accounts as $account)
                                         <option value="{{ $account->account_id }}">{{ $account->account_name }}</option>
                                     @endforeach
-                                @endisset
+                                @endif
                             </select>
                         </div>
                         <div class="flex items-center">
@@ -40,9 +44,9 @@
                                 style="height: 30px; padding:0px 10px 0px 10px; margin:15px 0px 0px 20px;width:175px;"
                                 required>
                                 <option value="" selected disabled>Select a category</option>
-                                {{-- @foreach ($categories as $category)
-                                    <option value="{{ $category['category_id'] }}">{{ $category['category_name'] }}</option>
-                                @endforeach --}}
+                                @foreach ($categories as $category)
+                                    <option value="{{ $category->category_id }}">{{ $category->category_name }}</option>
+                                @endforeach
                             </select>
                         </div>
                         <div class="flex items-center">
@@ -53,18 +57,20 @@
                         </div>
                         <div class="flex items-center">
                             <label for="date" class="w-32 text-left pr-2 mt-4">Date</label>
-                            <input type="text" class="border rounded px-2 py-1" name="date" placeholder="1/1/2023"
+                            <input type="date" class="border rounded px-2 py-1" name="date" id="date"
+                                placeholder="1/1/2023"
                                 style="height: 30px; padding:0px 10px 0px 10px; margin:15px 0px 0px 20px;width:175px;"
                                 required>
                             <label for="time" class="w-32 text-left pr-2 mt-4 ml-10">Time</label>
-                            <input type="text" class="border rounded px-2 py-1" name="time" placeholder="00:00 AM"
+                            <input type="time" class="border rounded px-2 py-1" name="time" id="time"
+                                placeholder="00:00 AM"
                                 style="height: 30px; padding:0px 10px 0px 10px; margin:15px 0px 0px 20px;width:175px;"
                                 required>
                         </div>
                         <div class="flex items-center">
                             <label for="description" class="w-32 text-left pr-2 mt-4">Description</label>
-                            <textarea type="text" name="record_description" class="border rounded px-2 py-1 flex-grow" placeholder="Remarks" maxlength="50"
-                                style="height: 60px; padding:0px 10px 0px 10px; margin:15px 0px 0px 20px;"></textarea>
+                            <textarea type="text" name="record_description" class="border rounded px-2 py-1 flex-grow" placeholder="Remarks"
+                                maxlength="50" style="height: 60px; padding:0px 10px 0px 10px; margin:15px 0px 0px 20px;"></textarea>
                         </div>
                         <div class="flex mt-6 justify-center">
                             <button type="submit"
@@ -77,3 +83,11 @@
         </div>
     </div>
 </div>
+
+<script>
+    document.getElementById("date").valueAsDate = new Date();
+    const now = new Date();
+    const currentTime = `${now.getHours()}:${(now.getMinutes()<10?'0':'') + now.getMinutes()}`;
+    const timeInput = document.getElementById('time');
+    timeInput.value = currentTime;
+</script>
