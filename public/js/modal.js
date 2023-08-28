@@ -48,3 +48,22 @@ function showDeleteModal(accountId) {
     deleteForm.action = '/account/delete/' + accountId; 
     modal.show();
 }
+
+// account list for create record 
+$(document).ready(function () {
+    // Fetch accounts data via AJAX request
+    $.get('/account', function (data) {
+        var accountSelect = $('#accountSelect');
+        accountSelect.empty(); 
+        accountSelect.append(new Option('Select an account', ''));
+        if ($.isArray(data)) {
+            // Add the new options from the fetched data
+            $.each(data, function (index, account) {
+                accountSelect.append(new Option(account.account_name, account.account_id));
+            });
+        } else {
+            // Render the HTML response as is
+            $('#accountIndexContainer').html(data);
+        }
+    });
+});

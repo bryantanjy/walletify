@@ -1,0 +1,70 @@
+aside {
+    border-right: 2px solid white;
+    width: 20%; 
+    height:100%;
+}
+
+span.title{
+    font-size:24px; 
+    font-weight:bold;
+}
+
+.createRecordBtn {
+    background: #4D96EB; width: 125px; height: 26px
+}
+
+.createRecordBtn i {
+    color: #fff;
+}
+
+.filter h3 {
+    font-weight: bold;
+}
+
+.search-icon i {
+    position: absolute;
+}
+ 
+.search-icon {
+    margin-bottom: 10px;
+}
+ 
+.icon {
+    padding: 10px;
+    min-width: 40px;
+}
+ 
+.input-field {
+    padding: 10px;
+    text-align: center;
+}
+
+.feature-bar {
+    display: flex;
+    justify-content: space-between;
+    margin-left: 60px;
+    margin-right: 100px;
+}
+
+#reportrange {
+    width: 240px; 
+    background: #fff; 
+    cursor: pointer; 
+    padding: 5px 10px;
+}
+
+.datepicker {
+    width: 300px;
+}
+
+.records {
+    width: 90%;
+}
+
+.record-list {
+    height: 45px;
+}
+
+p {
+    font-size: 20px;
+}

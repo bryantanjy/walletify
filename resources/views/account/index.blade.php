@@ -34,7 +34,7 @@
         </aside>
         <div class="float-right p-4 sm:ml-64 " style="width: 80%;">
             @if ($accounts)
-                <div class="mt-1 p-4 ml-14" style="width:1000px">
+                <div class="mt-1 p-4 ml-14" id="accountIndexContainer" style="width:1000px">
                     @foreach ($accounts as $account)
                         <div class="card rounded-md bg-white">
                             <div class="flex mb-4 data-row">
@@ -73,7 +73,7 @@
 <div class="modal fade" id="deleteModal" tabindex="-1" role="dialog" aria-labelledby="deleteModalLabel"
     aria-hidden="true">
     <div class="modal-dialog" role="document">
-        <div class="modal-content relative p-4 text-center bg-white rounded-lg shadow sm:p-5">
+        <div class="modal-content-s relative p-4 text-center bg-white rounded-lg shadow sm:p-5">
             <div class="modal-header flex justify-end">
                 <button type="button" class="close " data-dismiss="modal" aria-label="Close">
                     <span aria-hidden="true">&times;</span>

@@ -13,12 +13,16 @@ class AccountController extends Controller
     /**
      * Display a listing of the resource.
      */
-    public function index()
+    public function index(Request $request)
     {
         if (Auth::check()) {
             // The user is authenticated, fetch the finance accounts
-            $userId = Auth::id();
-            $accounts = Account::where('user_id', $userId)->oldest()->get();
+            $user = Auth::user();
+            $accounts = Account::where('user_id', $user->id)->oldest()->get();
+            if ($request->ajax()) {
+                return response()->json($accounts); // Return accounts data as JSON for AJAX request
+            }
+        
             return view('account.index', compact('accounts'));
         } else {
             // Redirect to the login page or take appropriate action

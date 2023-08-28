@@ -10,9 +10,6 @@ use Illuminate\Support\Facades\Auth;
 
 class RecordController extends Controller
 {
-    /**
-     * Display a listing of the resource.
-     */
     public function index()
     {
         if (auth()->check()) {
@@ -27,22 +24,14 @@ class RecordController extends Controller
         }
     }
 
-
-    /**
-     * Show the form for creating a new resource.
-     */
     public function create()
     {
         $user = Auth::user();
-        $accounts = Account::where('user_id', $user->id)->get();
         $categories = Category::all();
-        //dd($accounts);
-        return view('record.create', compact('accounts', 'categories'));
+
+        return view('record.create', compact('categories'));
     }
 
-    /**
-     * Store a newly created resource in storage.
-     */
     public function store(Request $request)
     {
         $validatedData = $request->validate([
@@ -61,33 +50,21 @@ class RecordController extends Controller
         return redirect()->route('record.index')->with('success', 'Record added successfully');
     }
 
-    /**
-     * Display the specified resource.
-     */
     public function show(Record $record)
     {
         //
     }
 
-    /**
-     * Show the form for editing the specified resource.
-     */
     public function edit(Record $record)
     {
         //
     }
 
-    /**
-     * Update the specified resource in storage.
-     */
     public function update(Request $request, Record $record)
     {
         //
     }
 
-    /**
-     * Remove the specified resource from storage.
-     */
     public function delete(Record $record)
     {
         //
