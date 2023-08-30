@@ -13,8 +13,9 @@ return new class extends Migration
     {
         Schema::create('records', function (Blueprint $table) {
             $table->bigIncrements('record_id'); // Big integer auto-incrementing primary key 'record_id'
+            $table->unsignedBigInteger('user_id');
             $table->foreignId('user_id')->constrained('users')->onDelete('cascade');
-            $table->unsignedBigInteger('account_id');
+            $table->unsignedBigInteger('account_id')->nullable();
             $table->foreign('account_id')->references('account_id')->on('accounts')->onDelete('cascade');
             $table->unsignedBigInteger('category_id');
             $table->foreign('category_id')->references('category_id')->on('categories')->onDelete('cascade');
@@ -23,8 +24,8 @@ return new class extends Migration
             $table->string('record_type', 50);
             $table->decimal('amount', 10, 2);
             $table->date('date');
-            $table->time('time');
-            $table->string('record_description', 50);
+            $table->string('time');
+            $table->string('record_description', 50)->nullable();
             $table->timestamps();
         });
     }
