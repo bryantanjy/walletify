@@ -86,20 +86,6 @@ class AccountController extends Controller
      */
     public function update(Request $request, $accountId)
     {
-        // $incomingDatas = $request->validate([
-        //     'account_type' => 'required|string',
-        //     'account_name' => 'required|string|max:50',
-        // ]);
-
-        // $incomingDatas['account_type'] = strip_tags($incomingDatas['account_type']);
-        // $incomingDatas['account_name'] = strip_tags($incomingDatas['account_name']);
-        // $incomingDatas['user_id'] = auth()->id();
-        // //update data
-        // $account->update($incomingDatas);
-
-        // return redirect()->route('account.index')
-        //     ->with('success', 'Account updated successfully');
-
         $account = Account::find($accountId);
 
         if (!$account) {
