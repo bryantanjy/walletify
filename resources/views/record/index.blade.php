@@ -2,7 +2,6 @@
     <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.5.1/jquery.min.js"  integrity="sha256-9/aliU8dGd2tb6OSsuzixeV4y/faTqgFtohetphbbj0=" crossorigin="anonymous"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/twitter-bootstrap/4.5.0/js/bootstrap.min.js" integrity="sha256-OFRAJNoaD8L3Br5lglV7VyLRf0itmoBzWUoM+Sji4/8=" crossorigin="anonymous"></script>
     <link rel="stylesheet" type="text/css" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
-    <script src="https://cdn.jsdelivr.net/jquery/latest/jquery.min.js"></script>
     <script src="https://cdn.jsdelivr.net/momentjs/latest/moment.min.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/daterangepicker/daterangepicker.min.js"></script>
     <link rel="stylesheet" type="text/css" href="https://cdn.jsdelivr.net/npm/daterangepicker/daterangepicker.css" />
@@ -20,7 +19,7 @@
                 <ul class="space-y-2 font-medium">
                     <li>
                         <div class="flex items-center p-2 text-gray-900 rounded-lg dark:text-black mx-auto">
-                            <span href="{{ route('record.index') }}" class="mx-auto title">Record</span>
+                            <span class="mx-auto title">Record</span>
                         </div>
                     </li>
                     <div class="flex justify-center">
@@ -97,8 +96,12 @@
                             <div>{{ $record->date }} {{ $record->time }}</div>
                             <div>{{ $record->record_description }}</div>
                             <div>{{ $record->user->name }}</div>
-                            <div class="text-right">RM {{ $record->amount }}
-                                <i class="fa-solid fa-ellipsis-vertical ml-3"></i>
+                            <div class="text-right dropdown-container" tabindex="-1">RM {{ $record->amount }}
+                                <i class="fa-solid fa-ellipsis-vertical ml-3 menu"></i>
+                                <div class="dropdown shadow">
+                                    <button class="editRecordBtn" value="{{ $record->record_id }}"><div>Edit</div></button>
+                                    <button href=""><div>Delete</div></button>
+                                </div>
                             </div>
                         </div>
                     @endforeach
@@ -108,5 +111,6 @@
             @endif
         </div>
         @include('record.create')
+        @include('record.edit')
     </main>
 </x-app-layout>

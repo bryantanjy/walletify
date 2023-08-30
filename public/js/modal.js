@@ -3,6 +3,9 @@ $(document).on('click', '.editAccountBtn', function () {
     var editModal = $('#editAccountModal');
 
     $.ajax({
+        headers: {
+            'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')
+        },
         type: 'GET',
         url: '/account/edit/' + accountId,
         success: function (data) {
@@ -28,6 +31,9 @@ $(document).on('submit', '#edit-form', function (event) {
     var accountId = editModal.find('#account_id').val();
 
     $.ajax({
+        headers: {
+            'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')
+        },
         type: 'PUT',
         url: '/account/update/' + accountId,
         data: formData,
@@ -45,25 +51,37 @@ $(document).on('submit', '#edit-form', function (event) {
 function showDeleteModal(accountId) {
     var deleteForm = document.getElementById('deleteForm');
     var modal = new bootstrap.Modal(document.getElementById('deleteModal'));
-    deleteForm.action = '/account/delete/' + accountId; 
+    deleteForm.action = '/account/delete/' + accountId;
     modal.show();
 }
 
-// account list for create record 
-$(document).ready(function () {
-    // Fetch accounts data via AJAX request
-    $.get('/account', function (data) {
-        var accountSelect = $('#accountSelect');
-        accountSelect.empty(); 
-        accountSelect.append(new Option('Select an account', ''));
-        if ($.isArray(data)) {
-            // Add the new options from the fetched data
-            $.each(data, function (index, account) {
-                accountSelect.append(new Option(account.account_name, account.account_id));
-            });
-        } else {
-            // Render the HTML response as is
-            $('#accountIndexContainer').html(data);
-        }
-    });
-});
+
+//edit record
+// $(document).on('click', '.editRecordBtn', function () {
+//     var recordId = $(this).val();
+//     var editRecord = $('#editRecordModal');
+
+//     $.ajax({
+//         headers: {
+//             'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')
+//         },
+//         type: 'GET',
+//         url: '/record/edit/' + recordId,
+//         success: function (data) {
+//             editRecord.find('#account_name').val(data.account_id);
+//             editRecord.find('#record_type').val(data.record_type);
+//             editRecord.find('#category_name').val(data.category_id);
+//             editRecord.find('#amount').val(data.amount);
+//             editRecord.find('#date').val(data.date);
+//             editRecord.find('#time').val(data.time);
+//             editRecord.find('#record_description').val(data.record_description);
+//             editRecord.find('#record_id').val(data.record_id);
+
+//             // Show the edit modal
+//             editRecord.modal('show');
+//         },
+//         error: function (error) {
+//             console.log(error);
+//         }
+//     });
+// });
