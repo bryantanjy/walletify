@@ -15,7 +15,7 @@ class RecordController extends Controller
     {
         if (auth()->check()) {
             $user = Auth::user();
-            $records = Record::where('user_id', $user->id)->get();
+            $records = Record::where('user_id', $user->id)->latest()->get();
             $categories = Category::all();
             $accounts = Account::where('user_id', $user->id)->get();
             return view('record.index', compact('records', 'categories', 'accounts'));
@@ -60,25 +60,25 @@ class RecordController extends Controller
 
     public function edit($recordId)
     {
-        $record = Record::findOrFail($recordId);
+        $records = Record::find($recordId);
         $categories = Category::all();
-        $user = Auth::user();
-        $accounts = Account::where('user_id', $user->id)->get();
-        return view('record.edit', compact('record', 'accounts', 'categories'));
+        $accounts = Account::where('user_id', Auth::user()->id)->get();
+        return view('record.edit', compact('records', 'accounts', 'categories'));
     }
 
     public function update(Request $request, $recordId)
     {
         $validatedData = $request->validate([
-            'account_id' => 'required|nullable',
-            'record_type' => 'required|string',
+            'account_id' => 'required',
             'category_id' => 'required',
+            'record_type' => 'required|string',
             'amount' => 'required|numeric',
             'date' => 'required',
             'time' => 'required',
-            'record_description' => 'string|nullable',
+            'record_description' => 'nullable|string',
             'group_id' => 'nullable',
         ]);
+        $validatedData['user_id'] = auth()->id();
 
         $record = Record::findOrFail($recordId);
         $record->update($validatedData);
@@ -88,6 +88,10 @@ class RecordController extends Controller
 
     public function delete(Record $record)
     {
-        //
+        $userId = Auth::id();
+        if ($record->user_id === $userId) {
+            $record->delete();
+        }
+        return redirect()->route('record.index')->with('success', 'Record deleted successfully');
     }
 }
