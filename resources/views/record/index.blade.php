@@ -93,13 +93,13 @@
                         <div class="text-right mr-5">Total: <b>RM9999.00</b></div>
                     </div>
                     @foreach ($records as $record)
-                        <div class="grid grid-cols-6 px-5 bg-gray-200 items-center record-list mt-1 rounded-md">
-                            <div class="flex items-center" ><input type="checkbox" name="row" id="row"></div>
-                            <div>{{ $record->category->category_name }}</div>
-                            <div>{{ Carbon\Carbon::parse($record->date)->format('d/m/Y') }} {{ Carbon\Carbon::parse($record->time)->format('g:i A') }}</div>
-                            <div>{{ $record->record_description }}</div>
-                            <div>{{ $record->user->name }}</div>
-                            <div class="text-right dropdown-container" tabindex="-1">
+                        <div class="grid grid-cols-9 px-5 bg-gray-200 items-center record-list mt-1 rounded-md">
+                            <div class="flex items-center col-start-1 col-end-1" ><input type="checkbox" name="row" id="row"></div>
+                            <div class="col-start-2 col-end-2">{{ $record->category->category_name }}</div>
+                            <div class="col-start-3 col-end-5">{{ Carbon\Carbon::parse($record->date)->format('d/m/Y') }} {{ Carbon\Carbon::parse($record->time)->format('g:i A') }}</div>
+                            <div class="col-start-5 col-end-7">{{ $record->record_description }}</div>
+                            <div class="col-start-8 col-end-8">{{ $record->user->name }}</div>
+                            <div class="text-right dropdown-container col-start-9 col-end-9" tabindex="-1">
                                 RM {{ $record->amount }}
                                 <i class="fa-solid fa-ellipsis-vertical ml-3 menu"></i>
                                 <div class="dropdown shadow">
