@@ -15,12 +15,11 @@ class RecordController extends Controller
     {
         if (auth()->check()) {
             $user = Auth::user();
-            $records = Record::where('user_id', $user->id)->latest()->get();
+            $records = Record::where('user_id', $user->id)->oldest()->get();
             $categories = Category::all();
             $accounts = Account::where('user_id', $user->id)->get();
             return view('record.index', compact('records', 'categories', 'accounts'));
         } else {
-            // Redirect to the login page if the user is not authenticated
             return redirect('/login');
         }
     }
@@ -60,20 +59,28 @@ class RecordController extends Controller
 
     public function edit($recordId)
     {
-        $records = Record::find($recordId);
+        $record = Record::findOrFail($recordId);
         $categories = Category::all();
         $accounts = Account::where('user_id', Auth::user()->id)->get();
-        return view('record.edit', compact('records', 'accounts', 'categories'));
+        // return response()->json([
+        //     'record' => $record,
+        //     'accounts' => $accounts,
+        //     'categories' => $categories,
+        // ]);
+        return view('record.edit', compact('record', 'accounts', 'categories'));
     }
 
-    public function update(Request $request, $recordId)
+
+    public function update(Request $request, Record $record)
     {
+        $recordId = $request->input('record_id');
+
         $validatedData = $request->validate([
             'account_id' => 'required',
             'category_id' => 'required',
             'record_type' => 'required|string',
             'amount' => 'required|numeric',
-            'date' => 'required',
+            'date' => 'required|date',
             'time' => 'required',
             'record_description' => 'nullable|string',
             'group_id' => 'nullable',
@@ -83,7 +90,7 @@ class RecordController extends Controller
         $record = Record::findOrFail($recordId);
         $record->update($validatedData);
 
-        return redirect()->route('record.index')->with('success', 'Record updated successfully');
+        return redirect()->route('record.index');
     }
 
     public function delete(Record $record)

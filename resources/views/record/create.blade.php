@@ -1,5 +1,5 @@
 
-<div id="createRecordModal" class="recordModal fade" tabindex="-1" role="dialog" aria-labelledby="createRecordModalLabel"
+<div id="createRecordModal" class="modal fade" tabindex="-1" role="dialog" aria-labelledby="createRecordModalLabel"
     aria-hidden="true">
     <div class="modal-dialog relative p-4 w-full  h-full md:h-auto" role="document">
         <!--Modal Content-->
@@ -46,7 +46,7 @@
                         </div>
                         <div class="flex items-center">
                             <label for="amount" class="w-32 text-left pr-2 mt-4">Amount</label>
-                            <input type="number" class="border rounded-md px-2 py-1" name="amount" id="amount" placeholder="0.00"
+                            <input type="number" step="0.01" class="border rounded-md px-2 py-1" name="amount" id="amount" placeholder="0.00"
                                 style="height: 30px; padding:0px 10px 0px 10px; margin:15px 0px 0px 20px;text-align:right;width:175px;"
                                 required>
                         </div>

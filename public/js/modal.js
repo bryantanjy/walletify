@@ -1,3 +1,4 @@
+// fetch account details to edit modal
 $(document).on('click', '.editAccountBtn', function () {
     var accountId = $(this).val();
     var editModal = $('#editAccountModal');
@@ -9,12 +10,10 @@ $(document).on('click', '.editAccountBtn', function () {
         type: 'GET',
         url: '/account/edit/' + accountId,
         success: function (data) {
-            // Fill the data in the input fields
             editModal.find('#account_id').val(data.account_id);
             editModal.find('#account_type').val(data.account_type);
             editModal.find('#account_name').val(data.account_name);
 
-            // Show the edit modal
             editModal.modal('show');
         },
         error: function (error) {
@@ -47,7 +46,7 @@ $(document).on('submit', '#edit-form', function (event) {
     });
 });
 
-// modal delete
+// modal delete for account
 function showDeleteModal(accountId) {
     var deleteForm = document.getElementById('deleteForm');
     var modal = new bootstrap.Modal(document.getElementById('deleteModal'));
@@ -55,33 +54,35 @@ function showDeleteModal(accountId) {
     modal.show();
 }
 
+// modal edit for record
+$(document).on('click', '.editRecordBtn', function () {
+    var editRecord = $('#editRecordModal');
+    var recordId = $(this).data('record-id'); 
+    var accountId = $(this).data('account-id');
+    var recordType = $(this).data('record-type');
+    var categoryId = $(this).data('category-id');
+    var amount = $(this).data('amount');
+    var date = $(this).data('date');
+    var time = $(this).data('time');
+    var recordDescription = $(this).data('record-description');
 
-//edit record
-// $(document).on('click', '.editRecordBtn', function () {
-//     var recordId = $(this).val();
-//     var editRecord = $('#editRecordModal');
+    // Populate the modal fields with the record data
+    editRecord.find('#record_id').val(recordId);
+    editRecord.find('#account_id').val(accountId);
+    editRecord.find('#record_type').val(recordType);
+    editRecord.find('#category_id').val(categoryId);
+    editRecord.find('#amount').val(amount);
+    editRecord.find('#date').val(date);
+    editRecord.find('#time').val(time);
+    editRecord.find('#record_description').val(recordDescription);
+    
+    editRecord.modal('show');
+});
 
-//     $.ajax({
-//         headers: {
-//             'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')
-//         },
-//         type: 'GET',
-//         url: '/record/edit/' + recordId,
-//         success: function (data) {
-//             editRecord.find('#account_name').val(data.account_id);
-//             editRecord.find('#record_type').val(data.record_type);
-//             editRecord.find('#category_name').val(data.category_id);
-//             editRecord.find('#amount').val(data.amount);
-//             editRecord.find('#date').val(data.date);
-//             editRecord.find('#time').val(data.time);
-//             editRecord.find('#record_description').val(data.record_description);
-//             editRecord.find('#record_id').val(data.record_id);
-
-//             // Show the edit modal
-//             editRecord.modal('show');
-//         },
-//         error: function (error) {
-//             console.log(error);
-//         }
-//     });
-// });
+// modal delete for record
+function recordDeleteModal(recordId) {
+    var deleteForm = document.getElementById('deleteForm');
+    var modal = new bootstrap.Modal(document.getElementById('deleteModal'));
+    deleteForm.action = '/record/delete/' + recordId;
+    modal.show();
+}
