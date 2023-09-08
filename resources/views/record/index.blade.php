@@ -94,10 +94,10 @@
                     </div>
                     @foreach ($records as $record)
                         <div class="grid grid-cols-6 px-5 bg-gray-200 items-center record-list mt-1 rounded-md">
-                            <div class="flex items-center"><input type="checkbox" name="row" id="row" class="flex-grow-0"></div>
+                            <div class="flex items-center" ><input type="checkbox" name="row" id="row"></div>
                             <div>{{ $record->category->category_name }}</div>
-                            <div class="d-flex justify-content-between">{{ $record->date }} {{ Carbon\Carbon::parse($record->time)->format('g:i A') }}</div>
-                            <div class="col-span-1">{{ $record->record_description }}</div>
+                            <div>{{ Carbon\Carbon::parse($record->date)->format('d/m/Y') }} {{ Carbon\Carbon::parse($record->time)->format('g:i A') }}</div>
+                            <div>{{ $record->record_description }}</div>
                             <div>{{ $record->user->name }}</div>
                             <div class="text-right dropdown-container" tabindex="-1">
                                 RM {{ $record->amount }}
