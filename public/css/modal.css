@@ -1,8 +1,8 @@
 /* Modal CSS */
-.modal, .recordModal {
+.modal {
   display: none;
   position: fixed;
-  z-index: 50;
+  z-index: 1060;
   left: 0;
   top: 0;
   width: 100%;

@@ -84,7 +84,6 @@ p {
     right: 10px;
     background-color: #fff;
     width: 80px;
-    
     outline: none;
     opacity: 0;
     z-index: -1;
@@ -94,7 +93,7 @@ p {
     transition: opacity 0.1s, max-height 0.1s, z-index 0.1s, top 0.1s;
 }
 
-.dropdown div:hover {
+.dropdown button:hover {
     background-color: rgb(196, 227, 254);
 }
 
