@@ -20,12 +20,12 @@
     <body class="font-sans antialiased">
         <x-banner />
 
-        <div class="min-h-screen bg-gray-100" style="background-color: #92C3E3">
+        <div class="min-h-screen" style="background-color: #92C3E3; display: flex; flex-direction: column;">
             @livewire('navigation-menu')
 
             <!-- Page Heading -->
             @if (isset($header))
-                <header class="shadow" style="background: #C4DBFD;">
+                <header class="shadow" style="background: #C4DBFD; margin-top: 65px;">
                     <div class="max-w-7xl mx-auto py-4 px-4 sm:px-6 lg:px-8">
                         {{ $header }}
                     </div>
@@ -33,7 +33,7 @@
             @endif
 
             <!-- Page Content -->
-            <main>
+            <main class="flex-grow">
                 {{ $slot }}
             </main>
         </div>

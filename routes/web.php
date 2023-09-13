@@ -2,6 +2,7 @@
 
 use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\AccountController;
+use App\Http\Controllers\BudgetController;
 use App\Http\Controllers\RecordController;
 
 /*
@@ -45,4 +46,13 @@ Route::group(['prefix' => 'record'], function () {
     Route::get('/edit/{record}', [RecordController::class, 'edit'])->name('record.edit');
     Route::put('/update/{record}', [RecordController::class, 'update'])->name('record.update');
     Route::delete('/delete/{record}', [RecordController::class, 'delete'])->name('record.delete');
+});
+
+Route::group(['prefix' => 'budget'], function () {
+    Route::get('/create', [BudgetController::class, 'create'])->name('budget.create');
+    Route::get('/', [BudgetController::class, 'index'])->name('budget.index');
+    Route::post('/store', [BudgetController::class, 'store'])->name('budget.store');
+    Route::get('/edit/{budget}', [BudgetController::class, 'edit'])->name('budget.edit');
+    Route::put('/update/{budget}', [BudgetController::class, 'update'])->name('budget.update');
+    Route::delete('/delete/{budget}', [BudgetController::class, 'delete'])->name('budget.delete');
 });

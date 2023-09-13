@@ -9,9 +9,9 @@
 </head>
 
 <x-app-layout>
-    <main>
-        <aside class="fixed top-16 left-0 z-40 transition-transform -translate-x-full sm:translate-x-0"
-            aria-label="Sidebar" style="border-right: 2px solid white; width: 20%; height:100%;">
+    <main class="flex">
+        <aside class="fixed left-0 z-40 transition-transform -translate-x-full sm:translate-x-0"
+            aria-label="Sidebar" style="border-right: 2px solid white; width: 20%; height:100vh; margin-top: 65px;">
             <div class="h-full px-3 py-4 overflow-y-auto" style="background-color: #92C3E3">
                 <ul class="space-y-2 font-medium">
                     <li>
@@ -31,7 +31,7 @@
                 </ul>
             </div>
         </aside>
-        <div class="float-right p-4 sm:ml-64 " style="width: 80%;">
+        <div class="flex-1 p-4 sm:ml-64 " style="width: 80%; margin-left:20%; margin-top: 65px;">
             @if ($accounts)
                 <div class="mt-1 p-4 ml-14" id="accountIndexContainer" style="width:1000px">
                     @foreach ($accounts as $account)
