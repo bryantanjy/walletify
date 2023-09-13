@@ -11,14 +11,40 @@ use Symfony\Component\Console\Input\Input;
 
 class RecordController extends Controller
 {
-    public function index()
+    public function index(Request $request)
     {
         if (auth()->check()) {
             $user = Auth::user();
-            $records = Record::where('user_id', $user->id)->oldest()->get();
+            $query = Record::where('user_id', $user->id);
+
+            if ($request->has('sort')) {
+                $sortOption = $request->input('sort');
+                if ($sortOption == 'oldest') {
+                    $query->orderBy('date', 'asc')->orderBy('time', 'asc');
+                } else {
+                    $query->orderBy('date', 'desc')->orderBy('time', 'desc');
+                }
+            } else {
+                $query->orderBy('date', 'desc')->orderBy('time', 'desc');
+            }
+
+            $records = $query->get();
+            $totalExpesne = 0;
+            $totalIncome = 0;
+
+            foreach ($records as $record) {
+                if ($record->record_type === 'Expense') {
+                    $totalExpesne += $record->amount;
+                } else {
+                    $totalIncome += $record->amount;
+                }
+            }
+
+            $totalBalance = $totalIncome - $totalExpesne;
+
             $categories = Category::all();
             $accounts = Account::where('user_id', $user->id)->get();
-            return view('record.index', compact('records', 'categories', 'accounts'));
+            return view('record.index', compact('records', 'categories', 'accounts', 'totalBalance'));
         } else {
             return redirect('/login');
         }

@@ -12,12 +12,11 @@
     <link rel="stylesheet" type="text/css" href="{{ asset('css/modal.css') }}">
     <script src="{{ asset('js/modal.js') }}"></script>
     <link rel="stylesheet" type="text/css" href="{{ asset('css/record.css') }}">
-
 </head>
 <x-app-layout>
-    <main>
-        <aside class="fixed top-16 left-0 z-40 transition-transform -translate-x-full sm:translate-x-0"
-            aria-label="Sidebar">
+    <main class="flex">
+        <aside class="fixed left-0 z-40 transition-transform translate-x-full sm:translate-x-0" aria-label="Sidebar"
+            style="margin-top: 65px;">
             <div class="h-full px-3 py-4 overflow-y-auto">
                 <ul class="space-y-2 font-medium">
                     <li>
@@ -32,7 +31,6 @@
                             <span>Add</span>
                         </button>
                         {{-- <a href="{{ route('record.create') }}">Create Record</a> --}}
-
                     </div>
                 </ul>
                 <div class="flex flex-col items-center mt-10">
@@ -41,7 +39,7 @@
                         <h3>CATEGORIES</h3>
                         @foreach ($categories as $category)
                             <label class="flex items-center">
-                                <input type="checkbox" class="mr-4" name="category[]"
+                                <input type="checkbox" class="mr-4 category-filter" name="category[]"
                                     value="{{ $category->category_id }}">
                                 {{ $category->category_name }}
                             </label>
@@ -49,22 +47,23 @@
 
                         <h3 class="mt-4">RECORD TYPES</h3>
                         <label class="flex items-center">
-                            <input type="checkbox" class="mr-4" name="expense" id="expense">
+                            <input type="checkbox" class="mr-4 record-type-filter" name="expense" value="Expense">
                             Expense
                         </label>
                         <label class="flex items-center">
-                            <input type="checkbox" class="mr-4" name="income" id="income">
+                            <input type="checkbox" class="mr-4 record-type-filter" name="income" value="Income">
                             Income
                         </label>
                     </div>
                 </div>
             </div>
         </aside>
-        <div class="float-right p-4 sm:ml-64" style="width: 80%;">
+        <div class="flex-1 p-4 sm:ml-64" style="width: 80%; margin-left:20%; margin-top: 65px;">
             <div class="feature-bar flex">
                 <div class="relative search-icon">
                     <i class="fa-solid fa-magnifying-glass icon"></i>
-                    <input type="text" class="input-field rounded-md border-none" placeholder="Search">
+                    <input type="text" class="input-field rounded-md border-none search" id="search"
+                        placeholder="Search">
                 </div>
                 <div class="flex items-center datepicker">
                     <i class="fa fa-caret-left ml-2 cursor-pointer" id="prevMonth"></i>
@@ -75,43 +74,56 @@
                     <i class="fa fa-caret-right mr-2 cursor-pointer" id="nextMonth"></i>
                 </div>
                 <div>
-                    <label for="sorting">
-                        Sort:
-                        <select name="sort" id="sort" class="rounded-md border-none shadow">
-                            <option value="">Latest</option>
-                            <option value="">Oldest</option>
-                        </select>
-                    </label>
+                    <form action="{{ route('record.index') }}" method="GET">
+                        @csrf
+                        <label for="sorting">
+                            Sort:
+                            <select name="sort" id="sort" class="rounded-md border-none shadow sort"
+                                onchange="this.form.submit()">
+                                <option value="latest" {{ request('sort', 'latest') == 'latest' ? 'selected' : '' }}>
+                                    Latest</option>
+                                <option value="oldest" {{ request('sort') == 'oldest' ? 'selected' : '' }}>Oldest
+                                </option>
+                            </select>
+                        </label>
+                    </form>
                 </div>
             </div>
-
             @if ($records)
-                <div class="mt-8 px-2 ml-14 records">
+                <div class="mt-8 px-2 ml-14 records mb-9">
                     <div class="grid grid-cols-2 px-5 bg-gray-200 rounded-t-md border border-bottom">
                         <div><label for="selectAll"><input type="checkbox" class="mr-2" name="select_all"
-                                    id="select_all">Select All</label></div>
-                        <div class="text-right mr-5">Total: <b>RM9999.00</b></div>
+                                    id="select_all">&nbsp; Select All</label></div>
+                        <div class="text-right mr-5">Total: <b>{{ $totalBalance < 0 ? '-' : '' }}RM
+                                {{ number_format(abs($totalBalance), 2) }}</b></div>
                     </div>
                     @foreach ($records as $record)
                         <div class="grid grid-cols-9 px-5 bg-gray-200 items-center record-list mt-1 rounded-md">
-                            <div class="flex items-center col-start-1 col-end-1" ><input type="checkbox" name="row" id="row"></div>
+                            <div class="flex items-center col-start-1 col-end-1"><input type="checkbox" name="row"
+                                    id="row"></div>
                             <div class="col-start-2 col-end-2">{{ $record->category->category_name }}</div>
-                            <div class="col-start-3 col-end-5">{{ Carbon\Carbon::parse($record->date)->format('d/m/Y') }} {{ Carbon\Carbon::parse($record->time)->format('g:i A') }}</div>
+                            <div class="col-start-3 col-end-5 flex justify-evenly">
+                                {{ Carbon\Carbon::parse($record->date)->format('d/m/Y') }} &nbsp;
+                                {{ Carbon\Carbon::parse($record->time)->format('h:i A') }}</div>
                             <div class="col-start-5 col-end-7">{{ $record->record_description }}</div>
                             <div class="col-start-8 col-end-8">{{ $record->user->name }}</div>
                             <div class="text-right dropdown-container col-start-9 col-end-9" tabindex="-1">
-                                RM {{ $record->amount }}
+                                @if ($record->record_type === 'Expense')
+                                    <span style="color: rgb(250, 56, 56); font-weight:bold;">-RM
+                                        {{ $record->amount }}</span>
+                                @else
+                                    <span style="color: rgb(90, 216, 90); font-weight:bold;">RM
+                                        {{ $record->amount }}</span>
+                                @endif
                                 <i class="fa-solid fa-ellipsis-vertical ml-3 menu"></i>
                                 <div class="dropdown shadow">
-                                    <button class="editRecordBtn" 
-                                        data-record-id="{{$record->record_id}}"
-                                        data-account-id="{{$record->account_id}}"
-                                        data-record-type="{{$record->record_type}}"
-                                        data-category-id="{{$record->category_id}}"
-                                        data-amount="{{$record->amount}}"
-                                        data-date="{{$record->date}}"
-                                        data-time="{{$record->time}}"
-                                        data-record-description="{{$record->record_description}}">Edit</button>
+                                    <button class="editRecordBtn" data-record-id="{{ $record->record_id }}"
+                                        data-account-id="{{ $record->account_id }}"
+                                        data-record-type="{{ $record->record_type }}"
+                                        data-category-id="{{ $record->category_id }}"
+                                        data-amount="{{ $record->amount }}" data-date="{{ $record->date }}"
+                                        data-time="{{ $record->time }}"
+                                        data-record-description="{{ $record->record_description }}">Edit</button>
                                     {{-- <a href="{{ route('record.edit', ['record' => $record->record_id]) }}">Edit</a> --}}
                                     <button class="deleteRecordBtn"
                                         onclick="recordDeleteModal({{ $record->record_id }})">Delete</button>
@@ -159,3 +171,65 @@
         </div>
     </div>
 </div>
+
+<script>
+    function filterSearchRecords() {
+        var searchInput = $('#search').val().toLowerCase();
+
+        $('.record-list').each(function() {
+            var recordDescription = $(this).find('.col-start-5').text().toLowerCase();
+            var recordElement = $(this);
+
+            if (recordDescription.includes(searchInput)) {
+                recordElement.show();
+            } else {
+                recordElement.hide();
+            }
+        });
+    }
+
+    $('#search').on('input', function() {
+        filterSearchRecords();
+    });
+
+    filterSearchRecords();
+
+    function filterRecords() {
+        var selectedCategories = [];
+        var selectedRecordTypes = [];
+
+        // Get selected categories
+        $('.category-filter:checked').each(function() {
+            selectedCategories.push($(this).val());
+        });
+
+        // Get selected record types
+        $('.record-type-filter:checked').each(function() {
+            selectedRecordTypes.push($(this).val());
+        });
+
+        // Iterate through records and hide/show based on filters
+        $('.record-list').each(function() {
+            var recordElement = $(this);
+            var recordCategory = recordElement.data('category-id');
+            var recordType = recordElement.data('record-type');
+
+            var categoryMatch = selectedCategories.length === 0 || selectedCategories.includes(recordCategory);
+            var typeMatch = selectedRecordTypes.length === 0 || selectedRecordTypes.includes(recordType);
+
+            if (categoryMatch && typeMatch) {
+                recordElement.show();
+            } else {
+                recordElement.hide();
+            }
+        });
+    }
+
+    // Attach event listeners to category and record type checkboxes
+    $('.category-filter, .record-type-filter').on('change', function() {
+        filterRecords();
+    });
+
+    // Initial filtering
+    filterRecords();
+</script>
