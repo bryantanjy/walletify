@@ -5,16 +5,14 @@ namespace App\Models;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 
-class Budget extends Model
+class BudgetTemplatePart extends Model
 {
     use HasFactory;
 
-    protected $primaryKey = 'budget_id';
+    protected $primaryKey = 'part_id';
     protected $fillable = [
         'template_id',
-        'user_id',
-        'group_id',
-        'start_date',
-        'end_date',
+        'part_name',
+        'amount',
     ];
 }

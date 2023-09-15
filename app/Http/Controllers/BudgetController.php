@@ -9,4 +9,20 @@ class BudgetController extends Controller
     public function index() {
         return view('budget.index');
     }
+
+    public function create() {
+
+    }
+
+    public function edit() {
+
+    }
+
+    public function update() {
+        
+    }
+
+    public function delete() {
+
+    }
 }
