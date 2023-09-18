@@ -15,7 +15,7 @@
                     <div class="mb-3">
                         <label for="accountType">Account Type</label>
                         <select name="account_type" id="account_type" class="rounded-md"
-                            style="height: 30px; padding:0px 10px 0px 10px; margin:15px 0px 0px 20px; width:50%">
+                            style="height: 30px; padding:0px 10px; margin:15px 0px 0px 20px; width:50%">
                             <option value="General">General</option>
                             <option value="Saving Account">Saving Account</option>
                             <option value="Credit/Debit Card">Credit/Debit Card</option>
@@ -28,7 +28,7 @@
                     <div class="mb-3">
                         <label for="accountName">Account Name</label>
                         <input type="text" class="rounded-md" name="account_name" id="account_name" placeholder="Account Name"
-                            style="height: 30px; padding:0px 10px 0px 10px; margin:15px 0px 0px 11px; width:50%"
+                            style="height: 30px; padding:0px 10px; margin:15px 0px 0px 11px; width:50%"
                             required>
                     </div>
                     <input type="hidden" id="account_id" name="account_id">
