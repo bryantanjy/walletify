@@ -14,7 +14,13 @@ class Budget extends Model
         'template_id',
         'user_id',
         'group_id',
-        'start_date',
-        'end_date',
     ];
+
+    public function budgetTemplate() {
+        return $this->belongsTo(BudgetTemplate::class);
+    }
+
+    public function categoryAllocations() {
+        return $this->hasMany(CategoryAllocation::class);
+    }
 }

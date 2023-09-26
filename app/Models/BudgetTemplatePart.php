@@ -15,4 +15,8 @@ class BudgetTemplatePart extends Model
         'part_name',
         'amount',
     ];
+
+    public function budgetTemplate() {
+        return $this->belongsTo(BudgetTemplate::class);
+    }
 }

@@ -14,4 +14,12 @@ class BudgetTemplate extends Model
         'template_name',
         'is_default',
     ];
+
+    public function budgets() {
+        return $this->hasMany(Budget::class);
+    }
+
+    public function budgetTemplateParts() {
+        return $this->hasMany(BudgetTemplatePart::class);
+    }
 }

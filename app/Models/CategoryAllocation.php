@@ -15,4 +15,12 @@ class CategoryAllocation extends Model
         'category_id',
         'allocation_amount',
     ];
+
+    public function budget() {
+        return $this->belongsTo(Budget::class);
+    }
+
+    public function category() {
+        return $this->belongsTo(Category::class);
+    }
 }
