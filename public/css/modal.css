@@ -25,12 +25,21 @@ body.modal-open {
 
 .modal-content-m {
   background-color: #E1F1FA;
-  margin: 10% auto;
+  margin: 5% auto;
   padding: 20px;
   border: 1px solid #888;
   width: 800px;
   height: 500px;
   overflow-y: auto;
+}
+
+.modal-content-l {
+  background-color: #E1F1FA;
+  margin: 5% auto;
+  padding: 20px;
+  border: 1px solid #888;
+  width: 800px;
+  height: auto;
 }
 
 .modal-body, .modal-header {

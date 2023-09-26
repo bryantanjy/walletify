@@ -1,3 +1,4 @@
+// Account Section
 // fetch account details to edit modal
 $(document).on('click', '.editAccountBtn', function () {
     var accountId = $(this).val();
@@ -54,10 +55,11 @@ function showDeleteModal(accountId) {
     modal.show();
 }
 
+// Record Section
 // modal edit for record
 $(document).on('click', '.editRecordBtn', function () {
     var editRecord = $('#editRecordModal');
-    var recordId = $(this).data('record-id'); 
+    var recordId = $(this).data('record-id');
     var accountId = $(this).data('account-id');
     var recordType = $(this).data('record-type');
     var categoryId = $(this).data('category-id');
@@ -75,7 +77,7 @@ $(document).on('click', '.editRecordBtn', function () {
     editRecord.find('#date').val(date);
     editRecord.find('#time').val(time);
     editRecord.find('#record_description').val(recordDescription);
-    
+
     editRecord.modal('show');
 });
 
@@ -86,3 +88,21 @@ function recordDeleteModal(recordId) {
     deleteForm.action = '/record/delete/' + recordId;
     modal.show();
 }
+
+// Budget Section
+// 
+$(document).on('click', '.createTemplate', function () {
+    const selectionModal = $('#budgetTemplateSelectionModal');
+    const createTemplate = $('#createBudgetTemplateModal');
+
+    selectionModal.modal('hide');
+    createTemplate.modal('show');
+});
+
+$(document).on('click', '.defaultTemplate', function () {
+    const selectionModal = $('#budgetTemplateSelectionModal');
+    const defaultTemplate = $('#defaultBudgetTemplateModal');
+
+    selectionModal.modal('hide');
+    defaultTemplate.modal('show');
+});
