@@ -14,7 +14,7 @@ return new class extends Migration
         Schema::create('expense_sharing_groups', function (Blueprint $table) {
             $table->bigIncrements('group_id');
             $table->string('group_name', 50);
-            $table->string('group_description', 50);
+            $table->string('group_description', 50)->nullable();
             $table->date('creation_date');
             $table->timestamps();
         });

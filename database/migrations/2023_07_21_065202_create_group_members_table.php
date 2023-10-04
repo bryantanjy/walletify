@@ -13,7 +13,8 @@ return new class extends Migration
     {
         Schema::create('group_members', function (Blueprint $table) {
             $table->bigIncrements('member_id');
-            $table->foreignId('user_id')->constrained('users')->onDelete('cascade');
+            $table->unsignedBigInteger('user_id');
+            $table->foreign('user_id')->references('id')->on('users')->onDelete('cascade');
             // $table->unsignedBigInteger('group_id');
             // $table->foreign('group_id')->references('group_id')->on('expense_sharing_groups')->onDelete('cascade');
             $table->string('role', 20);

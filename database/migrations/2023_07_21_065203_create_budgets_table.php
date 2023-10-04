@@ -13,9 +13,8 @@ return new class extends Migration
     {
         Schema::create('budgets', function (Blueprint $table) {
             $table->bigIncrements('budget_id');
-            // $table->unsignedBigInteger('template_id');
-            // $table->foreign('template_id')->references('template_id')->on('budget_templates')->onDelete('cascade');
-            $table->foreignId('user_id')->constrained('users')->onDelete('cascade');
+            $table->unsignedBigInteger('user_id');
+            $table->foreign('user_id')->references('id')->on('users')->onDelete('cascade');
             // $table->unsignedBigInteger('group_id');
             // $table->foreign('group_id')->references('group_id')->on('expense_sharing_groups')->onDelete('cascade');
             $table->timestamps();

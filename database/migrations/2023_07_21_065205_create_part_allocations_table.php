@@ -11,12 +11,10 @@ return new class extends Migration
      */
     public function up(): void
     {
-        Schema::create('category_allocations', function (Blueprint $table) {
+        Schema::create('part_allocations', function (Blueprint $table) {
             $table->bigIncrements('allocation_id');
-            $table->unsignedBigInteger('budget_id');
-            $table->foreign('budget_id')->references('budget_id')->on('budgets')->onDelete('cascade');
-            $table->unsignedBigInteger('category_id');
-            $table->foreign('category_id')->references('category_id')->on('categories')->onDelete('cascade');
+            $table->unsignedBigInteger('part_id');
+            $table->foreign('part_id')->references('part_id')->on('budget_template_parts')->onDelete('cascade');
             $table->decimal('allocation_amount', 10, 2);
             $table->timestamps();
         });

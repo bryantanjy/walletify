@@ -13,9 +13,7 @@ return new class extends Migration
     {
         Schema::table('budgets', function (Blueprint $table) {
             // Add a new column to the table
-            $table->unsignedBigInteger('template_id');
-            $table->foreign('template_id')->references('template_id')->on('budget_templates')->onDelete('cascade');
-            $table->unsignedBigInteger('group_id');
+            $table->unsignedBigInteger('group_id')->nullable();
             $table->foreign('group_id')->references('group_id')->on('expense_sharing_groups')->onDelete('cascade');
         });
     }

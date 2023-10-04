@@ -16,7 +16,6 @@ return new class extends Migration
             // $table->unsignedBigInteger('template_id');
             // $table->foreign('template_id')->references('template_id')->on('budget_templates')->onDelete('cascade');
             $table->string('part_name', 50);
-            $table->string('amount', 50);
             $table->timestamps();
         });
     }
