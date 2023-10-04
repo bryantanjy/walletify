@@ -32,7 +32,7 @@
             </div>
         </aside>
         <div class="flex-1 p-4 sm:ml-64 " style="width: 80%; margin-left:20%; margin-top: 65px;">
-            @if ($accounts)
+            @if ($accounts && count($accounts) > 0)
                 <div class="mt-1 p-4 ml-14" id="accountIndexContainer" style="width:1000px">
                     @foreach ($accounts as $account)
                         <div class="card rounded-md bg-white">
@@ -82,6 +82,7 @@
                 Are you sure you want to delete this account?
             </div>
             <div class="flex justify-center items-center space-x-4">
+                @if(isset($account))
                 <form id="deleteForm" method="POST"
                     action="{{ route('account.delete', ['account' => $account->account_id]) }}">
                     @csrf
@@ -89,6 +90,7 @@
                     <button type="submit" style="width: 120px"
                         class="py-2 px-3 text-sm font-medium text-center text-white bg-red-600 rounded-lg hover:bg-red-700 mt-4">Yes</button>
                 </form>
+                @endif
                 <button type="button" style="width: 120px"
                     class="py-2 px-3 text-sm font-medium text-gray-500 bg-white rounded-lg border border-gray-200 hover:bg-gray-100 hover:text-gray-900 focus:z-10"
                     data-dismiss="modal">Cancel</button>

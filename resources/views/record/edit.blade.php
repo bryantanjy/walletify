@@ -8,6 +8,7 @@
             </div>
             <x-section-border />
             <div class="modal-body">
+                @if(isset($record))
                 <form id="editRecord" method="POST" action="{{ route('record.update', ['record'=> $record->record_id]) }}">
                     @csrf
                     @method('PUT')
@@ -77,6 +78,7 @@
                             data-dismiss="modal">Cancel</button>
                     </div>
                 </form>
+                @endif
             </div>
         </div>
     </div>

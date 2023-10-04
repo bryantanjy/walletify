@@ -49,7 +49,8 @@ Route::group(['prefix' => 'record'], function () {
 });
 
 Route::group(['prefix' => 'budget'], function () {
-    Route::get('/create', [BudgetController::class, 'create'])->name('budget.create');
+    Route::get('/createUserTemplate', [BudgetController::class, 'createUserTemplate'])->name('budget.createUserTemplate');
+    Route::get('/createDefaultTemplate', [BudgetController::class, 'createDefaultTemplate'])->name('budget.createDefaultTemplate');
     Route::get('/', [BudgetController::class, 'index'])->name('budget.index');
     Route::post('/store', [BudgetController::class, 'store'])->name('budget.store');
     Route::get('/edit/{budget}', [BudgetController::class, 'edit'])->name('budget.edit');

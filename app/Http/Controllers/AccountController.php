@@ -10,9 +10,6 @@ use Illuminate\Support\Facades\Validator;
 
 class AccountController extends Controller
 {
-    /**
-     * Display a listing of the resource.
-     */
     public function index(Request $request)
     {
         if (Auth::check()) {
@@ -30,17 +27,11 @@ class AccountController extends Controller
         }
     }
 
-    /**
-     * Show the form for creating a new resource.
-     */
     public function create()
     {
         return view('account.create');
     }
 
-    /**
-     * Store a newly created resource in storage.
-     */
     public function store(Request $request)
     {
         $incomingDatas = $request->validate([
@@ -56,17 +47,11 @@ class AccountController extends Controller
         return redirect()->route('account.index')->with('success', 'Account created successfully');
     }
 
-    /**
-     * Display the specified resource.
-     */
     public function show(Account $accounts)
     {
         //
     }
 
-    /**
-     * Show the form for editing the specified resource.
-     */
     public function edit($accountId)
     {
         // $user = Auth::user();
@@ -81,9 +66,6 @@ class AccountController extends Controller
         return response()->json($account);
     }
 
-    /**
-     * Update the specified resource in storage.
-     */
     public function update(Request $request, $accountId)
     {
         $account = Account::find($accountId);
@@ -106,9 +88,6 @@ class AccountController extends Controller
         return response()->json(['message' => 'Account updated successfully'], 200);
     }
 
-    /**
-     * Remove the specified resource from storage.
-     */
     public function delete(Account $account)
     {
         $userId = Auth::id();

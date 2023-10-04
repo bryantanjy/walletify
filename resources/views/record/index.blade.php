@@ -89,7 +89,7 @@
                     </form>
                 </div>
             </div>
-            @if ($records)
+            @if ($records && count($records) > 0)
                 <div class="mt-8 px-2 ml-14 records mb-9">
                     <div class="grid grid-cols-2 px-5 bg-gray-200 rounded-t-md border border-bottom">
                         <div><label for="selectAll"><input type="checkbox" class="mr-2" name="select_all"
