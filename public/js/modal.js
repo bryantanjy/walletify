@@ -106,3 +106,77 @@ $(document).on('click', '.defaultTemplate', function () {
     selectionModal.modal('hide');
     defaultTemplate.modal('show');
 });
+
+document.addEventListener("DOMContentLoaded", function() {
+    // user template js
+    const generateButton = document.getElementById("generateFields");
+    const partContainer = document.getElementById("partContainer");
+    const buttonsDiv = document.getElementById('buttons');
+    
+
+    generateButton.addEventListener("click", function() {
+        const numberOfParts = parseInt(document.getElementById('input').value);
+
+        if (numberOfParts >= 1 && numberOfParts <= 5) {
+            partContainer.innerHTML = "";
+
+            for (let i = 1; i <= numberOfParts; i++) {
+                const partDiv = document.createElement("div");
+                const partIndex = i;
+
+                partDiv.innerHTML = `
+                    <h4 style="font-size:20px; margin-top:25px"><b>Part ${partIndex}</b></h4>
+                    <div class="flex items-center">
+                        <label for="partName${partIndex}" class="w-32 pr-2 mt-4">Name</label>
+                        <input class="rounded-md" type="text" name="part_name[${partIndex}]" id="part_name${partIndex}" placeholder="Name"
+                            style="height: 30px; margin:15px 0px 0px 20px;width:175px;" required>
+                    </div>
+                    <div class="flex items-center">
+                        <label for="partAmount${partIndex}" class="w-32 pr-2 mt-4">Amount</label>
+                        <input class="rounded-md" type="number" step="0.01" name="allocation_amount[${partIndex}]" id="allocation_amount${partIndex}" placeholder="0.00"
+                            style="height: 30px; margin:15px 0px 0px 20px;text-align:right;width:175px;" required>
+                    </div>
+                    <div class="flex">
+                        <label for="partCategory${partIndex}" class="w-32 pr-2 mt-4">Category</label>
+                        <select class="rounded-md categorySelect"  name="category_id[${partIndex}][]" id="category_id${partIndex}" multiple
+                            required>
+                            ${categories.map(category => `<option value="${category.category_id}">${category.category_name}</option>`).join('')}
+                        </select>
+                    </div>
+                `;
+
+                partContainer.appendChild(partDiv);
+
+                $('#category_id' + partIndex).filterMultiSelect({
+                    placeholderText: "Please select",
+                });
+            }
+            buttonsDiv.style.display = "block";
+        }
+    });
+
+    // Default template js
+    const percentages = {
+        part1: 0.5,
+        part2: 0.3,
+        part3: 0.2,
+    };
+
+    $('#category_id1').filterMultiSelect();
+    $('#category_id2').filterMultiSelect();
+    $('#category_id3').filterMultiSelect();
+
+    document.getElementById("setAllocation").addEventListener("click", function() {
+        const totalBudget = parseFloat(document.getElementById("totalBudget").value);
+
+        // Calculate allocation amounts based on percentages
+        const part1Amount = totalBudget * percentages.part1;
+        const part2Amount = totalBudget * percentages.part2;
+        const part3Amount = totalBudget * percentages.part3;
+
+        // Update the readonly input fields with calculated amounts
+        document.getElementById("part1Amount").value = part1Amount.toFixed(2);
+        document.getElementById("part2Amount").value = part2Amount.toFixed(2);
+        document.getElementById("part3Amount").value = part3Amount.toFixed(2);
+    });
+});
