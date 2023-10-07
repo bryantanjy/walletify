@@ -2,8 +2,10 @@
 
 namespace App\Models;
 
-use Illuminate\Database\Eloquent\Factories\HasFactory;
+use App\Models\BudgetTemplate;
+use App\Models\PartAllocation;
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Database\Eloquent\Factories\HasFactory;
 
 class BudgetTemplatePart extends Model
 {
@@ -13,10 +15,15 @@ class BudgetTemplatePart extends Model
     protected $fillable = [
         'template_id',
         'part_name',
-        'amount',
     ];
 
-    public function budgetTemplate() {
-        return $this->belongsTo(BudgetTemplate::class);
+    public function template()
+    {
+        return $this->belongsTo(BudgetTemplate::class, 'template_id');
+    }
+
+    public function partAllocations()
+    {
+        return $this->hasMany(PartAllocation::class, 'part_id');
     }
 }

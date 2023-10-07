@@ -2,8 +2,10 @@
 
 namespace App\Models;
 
-use Illuminate\Database\Eloquent\Factories\HasFactory;
+use App\Models\Budget;
+use App\Models\BudgetTemplatePart;
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Database\Eloquent\Factories\HasFactory;
 
 class BudgetTemplate extends Model
 {
@@ -11,15 +13,18 @@ class BudgetTemplate extends Model
 
     protected $primaryKey = 'template_id';
     protected $fillable = [
+        'budget_id',
         'template_name',
         'is_default',
     ];
 
-    public function budgets() {
-        return $this->hasMany(Budget::class);
+    public function budget()
+    {
+        return $this->belongsTo(Budget::class, 'budget_id');
     }
 
-    public function budgetTemplateParts() {
-        return $this->hasMany(BudgetTemplatePart::class);
+    public function parts()
+    {
+        return $this->hasMany(BudgetTemplatePart::class, 'template_id');
     }
 }

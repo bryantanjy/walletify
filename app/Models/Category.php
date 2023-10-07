@@ -13,4 +13,9 @@ class Category extends Model
     protected $fillable = [
         'category_name',
     ];
+
+    public function allocations()
+    {
+        return $this->belongsToMany(PartAllocation::class, 'part_allocation_categories', 'category_id', 'allocation_id');
+    }
 }
