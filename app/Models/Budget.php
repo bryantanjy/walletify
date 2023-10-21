@@ -13,22 +13,13 @@ class Budget extends Model
 
     protected $primaryKey = 'budget_id';
     protected $fillable = [
+        'template_name',
         'user_id',
         'group_id',
     ];
 
-    public function user()
+    public function partAllocations()
     {
-        return $this->belongsTo(User::class, 'user_id');
-    }
-
-    public function templates()
-    {
-        return $this->hasMany(BudgetTemplate::class, 'budget_id');
-    }
-
-    public function budgetTemplateParts()
-    {
-        return $this->hasManyThrough(BudgetTemplatePart::class, BudgetTemplate::class, 'budget_id', 'template_id', 'budget_id', 'template_id');
+        return $this->hasMany(PartAllocation::class, 'budget_id');
     }
 }

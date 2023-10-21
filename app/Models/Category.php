@@ -10,12 +10,14 @@ class Category extends Model
     use HasFactory;
 
     protected $primaryKey = 'category_id';
+    public $incrementing = false;
+    protected $keyType = 'string';
     protected $fillable = [
         'category_name',
     ];
-
-    public function allocations()
+    
+    public function pac()
     {
-        return $this->belongsToMany(PartAllocation::class, 'part_allocation_categories', 'category_id', 'allocation_id');
+        return $this->hasMany(PartAllocationCategory::class, 'category_id');
     }
 }

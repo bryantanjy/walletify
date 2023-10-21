@@ -11,19 +11,20 @@ class PartAllocation extends Model
 {
     use HasFactory;
 
-    protected $primaryKey = 'allocation_id';
+    protected $primaryKey = 'part_allocation_id';
     protected $fillable = [
-        'part_id',
+        'budget_id',
+        'part_name',
         'allocation_amount',
     ];
 
-    public function budgetTemplatePart()
+    public function budget()
     {
-        return $this->belongsTo(BudgetTemplatePart::class, 'part_id');
+        return $this->belongsTo(Budget::class, 'budget_id');
     }
 
     public function partAllocationCategories()
     {
-        return $this->hasMany(PartAllocationCategory::class, 'allocation_id');
+        return $this->hasMany(PartAllocationCategory::class, 'part_allocation_id');
     }
 }
