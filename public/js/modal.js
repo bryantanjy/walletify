@@ -180,3 +180,11 @@ document.addEventListener("DOMContentLoaded", function() {
         document.getElementById("part3Amount").value = part3Amount.toFixed(2);
     });
 });
+
+// modal delete for budget
+function budgetDeleteModal(budgetId) {
+    var deleteForm = document.getElementById('deleteForm');
+    var modal = new bootstrap.Modal(document.getElementById('deleteModal'));
+    deleteForm.action = '/budget/delete/' + budgetId;
+    modal.show();
+}
