@@ -4,6 +4,8 @@
         integrity="sha256-OFRAJNoaD8L3Br5lglV7VyLRf0itmoBzWUoM+Sji4/8=" crossorigin="anonymous"></script>
     <link rel="stylesheet" type="text/css"
         href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/flowbite/1.8.1/flowbite.min.js"></script>
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/flowbite/1.8.1/flowbite.min.css" rel="stylesheet" />
     <link rel="stylesheet" href="{{ asset('css/filter_multi_select.css') }}" />
     <script src="{{ asset('js/filter-multi-select-bundle.min.js') }}"></script>
     <link rel="stylesheet" type="text/css" href="{{ asset('css/modal.css') }}">
@@ -32,31 +34,54 @@
                 </ul>
             </div>
         </aside>
-        <div class="flex p-4 sm:ml-64 items-center justify-center"
+        <div class="flex  p-4 sm:ml-64 items-center justify-center"
             style="width: 80%; margin-left:20%; margin-top: 120px;">
-            @if ($budgets && count($budgets) > 0)
-                @foreach ($budgets as $budget)
-                    <div class="container bg-white"
-                        style="width: 60%; height:auto; border-radius:15px; padding:50px 80px;">
+            @if ($budgetData && count($budgetData) > 0)
+                @foreach ($budgetData as $budgetIndex => $budget)
+                    <div class="bg-white" style="width: 60%; height:auto; border-radius:15px; padding:50px 80px;">
                         <div class="flex justify-between mb-5">
                             <p class="text-gray-400">Current month</p>
-                            <p>Allocation amount: RM {{-- sum of allocation amount belongs to one budget--}}</p>
+                            <p>Allocation amount: RM {{ $budget['total_allocation_amount'] }}</p>
                         </div>
-                        @foreach ($budget->budgetTemplateParts as $part)
+                        @foreach ($budget['parts'] as $partIndex => $part)
                             <div class="text-base font-medium dark:text-black flex justify-between">
-                                <label for="part-name">{{-- part name --}}</label>
+                                <label for="part-name">{{ $part['part_name'] }}
+                                    <button
+                                        data-tooltip-target="tooltip-default-{{ $budgetIndex }}-{{ $partIndex }}"
+                                        type="button" class="focus:ring-4 focus:outline-none focus:ring-gray-300 ">
+                                        <i class="fa-solid fa-circle-info"></i>
+                                    </button>
+                                    <div id="tooltip-default-{{ $budgetIndex }}-{{ $partIndex }}" role="tooltip"
+                                        class="absolute z-10 invisible inline-block px-3 py-2 text-sm font-medium text-white transition-opacity duration-300 bg-gray-900 rounded-lg shadow-sm opacity-0 tooltip dark:bg-gray-700">
+                                        @foreach ($part['category_names'] as $categoryName)
+                                            <div>{{ $categoryName }}</div>
+                                        @endforeach
+                                        <div class="tooltip-arrow" data-popper-arrow></div>
+                                    </div>
+                                </label>
                                 <div>
-                                    RM {{-- sum of amount in the record where the category match the part allocation category table's category id for each part (if the record type have income then minus with record type expense) --}} / RM {{-- allocation amount of this part --}}
+                                    RM {{ $part['current_budget'] }} /
+                                    RM {{ $part['allocation_amount'] }}
+                                    ({{ round($part['percentage'], 2) }}%)
                                 </div>
                             </div>
                             <div class="w-full bg-gray-200 rounded-full h-4 mb-4">
-                                <div class="bg-green-400 h-4 rounded-full" style="width: 80%"></div>
+                                <div class="bg-{{ $part['percentage_for_width'] >= 80 ? 'red' : 'green' }}-400 h-4 rounded-full"
+                                    style="width: {{ $part['percentage_for_width'] }}%">
+                                </div>
                             </div>
                         @endforeach
                         {{-- button --}}
                         <div class="float-right mt-3">
-                            <button type="button" class="bg-blue-500 w-20 rounded">Edit</button>
-                            <button type="button" class="bg-red-500 w-20 rounded ml-2">Delete</button>
+                            @if ($budget['budget']->template_name == 'Default Template')
+                                <button type="button"
+                                    class="bg-blue-500 w-20 rounded editDefaultTemplateBtn">Edit</button>
+                            @else
+                                <button type="button"
+                                    class="bg-blue-500 w-20 rounded editUserTemplateBtn">Edit</button>
+                            @endif
+                            <button type="button" class="bg-red-500 w-20 rounded ml-2 deleteBudgetBtn"
+                                onclick="budgetDeleteModal({{ $budget['budget']->budget_id }})">Delete</button>
                         </div>
                     </div>
                 @endforeach
@@ -67,7 +92,6 @@
     </main>
     @include('budget.createUserTemplate')
     @include('budget.createDefaultTemplate')
-
 </x-app-layout>
 
 {{-- budget template selection modal --}}
@@ -91,3 +115,46 @@
         </div>
     </div>
 </div>
+
+{{-- Delete Modal --}}
+<div class="modal fade" id="deleteModal" tabindex="-1" role="dialog" aria-labelledby="deleteModalLabel"
+    aria-hidden="true">
+    <div class="modal-dialog" role="document">
+        <div class="modal-content-s relative p-4 text-center bg-white rounded-lg shadow sm:p-5">
+            <div class="modal-header flex justify-end">
+                <button type="button" class="close " data-dismiss="modal" aria-label="Close">
+                    <span aria-hidden="true">&times;</span>
+                </button>
+            </div>
+            <div class="modal-body flex flex-col items-center">
+                Are you sure you want to delete this budget?
+            </div>
+            <div class="flex justify-center items-center space-x-4">
+                @if (isset($budget))
+                    <form id="deleteForm" method="POST"
+                        action="{{ route('budget.delete', ['budget' => $budget['budget']->budget_id]) }}">
+                        @csrf
+                        @method('DELETE')
+                        <button type="submit" style="width: 120px"
+                            class="py-2 px-3 text-sm font-medium text-center text-white bg-red-600 rounded-lg hover:bg-red-700 mt-4">Yes</button>
+                    </form>
+                @endif
+                <button type="button" style="width: 120px"
+                    class="py-2 px-3 text-sm font-medium text-gray-500 bg-white rounded-lg border border-gray-200 hover:bg-gray-100 hover:text-gray-900 focus:z-10"
+                    data-dismiss="modal">Cancel</button>
+            </div>
+        </div>
+    </div>
+</div>
+
+<style>
+    .bg-red-400 {
+        background-color: #f03535;
+        /* Red color */
+    }
+
+    .bg-green-400 {
+        background-color: #6fec6f;
+        /* Green color */
+    }
+</style>
