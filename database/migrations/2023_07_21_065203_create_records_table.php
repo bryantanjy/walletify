@@ -17,7 +17,7 @@ return new class extends Migration
             $table->foreign('user_id')->references('id')->on('users')->onDelete('cascade');
             $table->unsignedBigInteger('account_id')->nullable();
             $table->foreign('account_id')->references('account_id')->on('accounts')->onDelete('cascade');
-            $table->unsignedBigInteger('category_id');
+            $table->string('category_id', 3);
             $table->foreign('category_id')->references('category_id')->on('categories')->onDelete('cascade');
             // $table->unsignedBigInteger('group_id');
             // $table->foreign('group_id')->references('group_id')->on('expense_sharing_groups')->onDelete('cascade');
