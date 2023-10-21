@@ -27,7 +27,7 @@ class RecordFactory extends Factory
             'category_id' => $this->faker->randomElement($categories),
             'group_id' => null,
             'record_type' => $this->faker->randomElement(['Expense', 'Income']),
-            'amount' => $this->faker->randomFloat(2, 0, 1000),
+            'amount' => $this->faker->randomFloat(2, 0, 70),
             'date' => $this->faker->date,
             'time' => $this->faker->time,
             'record_description' => $this->faker->sentence(2),
