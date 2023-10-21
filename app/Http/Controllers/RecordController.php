@@ -7,7 +7,6 @@ use App\Models\Account;
 use App\Models\Category;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
-use Symfony\Component\Console\Input\Input;
 
 class RecordController extends Controller
 {
@@ -63,7 +62,7 @@ class RecordController extends Controller
     {
         $validatedData = $request->validate([
             'account_id' => 'required',
-            'category_id' => 'required',
+            'category_id' => 'required|string',
             'record_type' => 'required|string',
             'amount' => 'required|numeric',
             'date' => 'required',
@@ -72,7 +71,7 @@ class RecordController extends Controller
             'group_id' => 'nullable',
         ]);
         $validatedData['user_id'] = auth()->id();
-
+        
         $record = new Record($validatedData);
         $record->save();
         return redirect()->route('record.index')->with('success', 'Record added successfully');
@@ -88,11 +87,7 @@ class RecordController extends Controller
         $record = Record::findOrFail($recordId);
         $categories = Category::all();
         $accounts = Account::where('user_id', Auth::user()->id)->get();
-        // return response()->json([
-        //     'record' => $record,
-        //     'accounts' => $accounts,
-        //     'categories' => $categories,
-        // ]);
+        
         return view('record.edit', compact('record', 'accounts', 'categories'));
     }
 
