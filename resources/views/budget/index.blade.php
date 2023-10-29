@@ -151,12 +151,12 @@
 
 <style>
     .bg-red-400 {
-        background-color: #f03535;
+        background-color: #F44336;
         /* Red color */
     }
 
     .bg-green-400 {
-        background-color: #6fec6f;
+        background-color: #76FF03;
         /* Green color */
     }
 </style>
