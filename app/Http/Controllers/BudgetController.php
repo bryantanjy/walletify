@@ -17,7 +17,6 @@ class BudgetController extends Controller
         if (Auth::check()) {
             $user = auth()->user();
             $categories = Category::all();
-
             $budgets = Budget::where('user_id', $user->id)->get();
 
             $budgetData = [];
@@ -29,12 +28,13 @@ class BudgetController extends Controller
                 foreach ($budget->partAllocations as $part) {
                     $totalExpense = 0;
                     $totalIncome = 0;
-                    $categoryNames = [];
+                    $categoryIds = [];
 
                     foreach ($part->partAllocationCategories as $pac) {
                         $records = Record::where('user_id', $user->id)->where('category_id', $pac->category_id)->get();
-                        $categoryNames[] = Category::find($pac->category_id)->category_name;
-                        
+                        $category = Category::find($pac->category_id);
+                        $categoryIds[] = $category->category_id;
+
 
                         foreach ($records as $record) {
                             if ($record->record_type == 'Expense') {
@@ -55,7 +55,7 @@ class BudgetController extends Controller
                         'allocation_amount' => $part->allocation_amount,
                         'percentage' => $percentage,
                         'percentage_for_width' => $percentageWidth,
-                        'category_names' => $categoryNames,
+                        'category_ids' => $categoryIds,
                     ];
 
                     $totalAllocationAmount += $part->allocation_amount;
@@ -117,8 +117,6 @@ class BudgetController extends Controller
                 }
             }
 
-
-
             return redirect()->route('budget.index')->with('success', 'Default template created successfully');
         } catch (\Exception $e) {
             // Handle the error as needed, e.g., log it or return an error response
@@ -171,12 +169,47 @@ class BudgetController extends Controller
         }
     }
 
-    public function edit()
+    public function editDefaultTemplate($budgetId)
     {
+        $budget = Budget::find($budgetId);
+        $categories = Category::all();
+
+        if (!$budget) {
+            return redirect()->back()->with('error', 'Budget not found');
+        }
+
+        $budgetData = [];
+
+        foreach ($budget->partAllocations as $part) {
+            $categoryIds = [];
+
+            foreach ($part->partAllocationCategories as $pac) {
+                $category = Category::find($pac->category_id);
+                $categoryIds[] = $category->category_id;
+            }
+
+            $partData[] = [
+                'part_id' => $part->part_allocation_id,
+                'part_name' => $part->part_name,
+                'allocation_amount' => $part->allocation_amount,
+                'category_ids' => $categoryIds,
+            ];
+        }
+
+        return view('budget.editDefaultTemplate', compact('budget', 'partData', 'categories'));
+    }
+
+    public function editUserTemplate($budgetId)
+    {
+        $budget = Budget::find($budgetId);
+        $categories = Category::all();
+
+        return view('budget.editUserTemplate', compact('budget', 'categories'));
     }
 
     public function update()
     {
+        //
     }
 
     public function delete(Budget $budget)

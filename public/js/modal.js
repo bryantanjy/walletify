@@ -90,7 +90,7 @@ function recordDeleteModal(recordId) {
 }
 
 // Budget Section
-// 
+// open create modal
 $(document).on('click', '.createTemplate', function () {
     const selectionModal = $('#budgetTemplateSelectionModal');
     const createTemplate = $('#createBudgetTemplateModal');
@@ -107,14 +107,16 @@ $(document).on('click', '.defaultTemplate', function () {
     defaultTemplate.modal('show');
 });
 
-document.addEventListener("DOMContentLoaded", function() {
+
+// js for create budget template
+document.addEventListener("DOMContentLoaded", function () {
     // user template js
     const generateButton = document.getElementById("generateFields");
     const partContainer = document.getElementById("partContainer");
     const buttonsDiv = document.getElementById('buttons');
-    
 
-    generateButton.addEventListener("click", function() {
+
+    generateButton.addEventListener("click", function () {
         const numberOfParts = parseInt(document.getElementById('input').value);
 
         if (numberOfParts >= 1 && numberOfParts <= 5) {
@@ -166,7 +168,7 @@ document.addEventListener("DOMContentLoaded", function() {
     $('#category_id2').filterMultiSelect();
     $('#category_id3').filterMultiSelect();
 
-    document.getElementById("setAllocation").addEventListener("click", function() {
+    document.getElementById("setAllocation").addEventListener("click", function () {
         const totalBudget = parseFloat(document.getElementById("totalBudget").value);
 
         // Calculate allocation amounts based on percentages
@@ -180,6 +182,16 @@ document.addEventListener("DOMContentLoaded", function() {
         document.getElementById("part3Amount").value = part3Amount.toFixed(2);
     });
 });
+
+// js for edit budget
+
+
+
+// document.addEventListener("DOMContentLoaded", function () {
+//     $('#categoryId1').filterMultiSelect();
+//     $('#categoryId2').filterMultiSelect();
+//     $('#categoryId3').filterMultiSelect();
+// });
 
 // modal delete for budget
 function budgetDeleteModal(budgetId) {

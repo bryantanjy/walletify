@@ -34,12 +34,12 @@
                 </ul>
             </div>
         </aside>
-        <div class="flex  p-4 sm:ml-64 items-center justify-center"
-            style="width: 80%; margin-left:20%; margin-top: 120px;">
+        <div class="p-4 sm:ml-64 items-center justify-center" style="width: 80%; margin-left:20%; margin-top: 100px;">
             @if ($budgetData && count($budgetData) > 0)
                 @foreach ($budgetData as $budgetIndex => $budget)
-                    <div class="bg-white" style="width: 60%; height:auto; border-radius:15px; padding:50px 80px;">
-                        <div class="flex justify-between mb-5">
+                    <div class="bg-white mt-5 ml-10"
+                        style="width: 60%; height:auto; border-radius:15px; padding:60px 80px;">
+                        <div class="flex justify-between mb-8">
                             <p class="text-gray-400">Current month</p>
                             <p>Allocation amount: RM {{ $budget['total_allocation_amount'] }}</p>
                         </div>
@@ -53,8 +53,8 @@
                                     </button>
                                     <div id="tooltip-default-{{ $budgetIndex }}-{{ $partIndex }}" role="tooltip"
                                         class="absolute z-10 invisible inline-block px-3 py-2 text-sm font-medium text-white transition-opacity duration-300 bg-gray-900 rounded-lg shadow-sm opacity-0 tooltip dark:bg-gray-700">
-                                        @foreach ($part['category_names'] as $categoryName)
-                                            <div>{{ $categoryName }}</div>
+                                        @foreach ($part['category_ids'] as $categoryId)
+                                            <div>{{ App\Models\Category::find($categoryId)->category_name }}</div>
                                         @endforeach
                                         <div class="tooltip-arrow" data-popper-arrow></div>
                                     </div>
@@ -74,11 +74,13 @@
                         {{-- button --}}
                         <div class="float-right mt-3">
                             @if ($budget['budget']->template_name == 'Default Template')
-                                <button type="button"
-                                    class="bg-blue-500 w-20 rounded editDefaultTemplateBtn">Edit</button>
+                                <button type="button" class="bg-blue-500 w-20 rounded editDefaultBudgetBtn"
+                                    data-toggle="modal" data-target="#editDefaultBudgetModal"
+                                    value="{{ $budget['budget']->budget_id }}">Edit</button>
                             @else
-                                <button type="button"
-                                    class="bg-blue-500 w-20 rounded editUserTemplateBtn">Edit</button>
+                                <button type="button" class="bg-blue-500 w-20 rounded editUserBudgetBtn"
+                                    data-toggle="modal" data-target="#editUserBudgetModal"
+                                    value="{{ $budget['budget']->budget_id }}">Edit</button>
                             @endif
                             <button type="button" class="bg-red-500 w-20 rounded ml-2 deleteBudgetBtn"
                                 onclick="budgetDeleteModal({{ $budget['budget']->budget_id }})">Delete</button>
@@ -92,6 +94,8 @@
     </main>
     @include('budget.createUserTemplate')
     @include('budget.createDefaultTemplate')
+    @include('budget.editUserTemplate')
+    @include('budget.editDefaultTemplate')
 </x-app-layout>
 
 {{-- budget template selection modal --}}
@@ -105,11 +109,9 @@
                 <button type="button" class="close" data-dismiss="modal" aria-label="Close">&times;</button>
             </div>
             <div class="modal-body flex justify-evenly my-10">
-                <button class="bg-blue-500 rounded-md createTemplate" style="width: 250px; height: 240px"
-                    data-template-type="user_defined">Create a new
+                <button class="bg-blue-500 rounded-md createTemplate" style="width: 250px; height: 240px">Create a new
                     template?</button>
-                <button class="bg-green-500 rounded-md defaultTemplate" style="width: 250px; height: 240px"
-                    data-template-type="default">Apply the
+                <button class="bg-green-500 rounded-md defaultTemplate" style="width: 250px; height: 240px">Apply the
                     default template</button>
             </div>
         </div>

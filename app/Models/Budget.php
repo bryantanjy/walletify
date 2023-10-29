@@ -2,8 +2,6 @@
 
 namespace App\Models;
 
-use App\Models\User;
-use App\Models\BudgetTemplate;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 
@@ -17,6 +15,11 @@ class Budget extends Model
         'user_id',
         'group_id',
     ];
+
+    public function user()
+    {
+        return $this->belongsTo(User::class, 'user_id', 'id');
+    }
 
     public function partAllocations()
     {
