@@ -9,10 +9,10 @@
             </div>
             <div class="modal-body flex flex-col">
                 <div>
-                    <label for="part_input">Total Budget Allocation</label>
-                    <input class="rounded-md text-right mx-3" type="number" name="totalBudget" id="totalBudget"
-                        step="0.01" style="height: 30px; width:150px" placeholder="e.g. 1000" required>
-                    <button type="submit" id="setAllocation" class="bg-green-400 rounded"
+                    <label for="total_allocation">Total Budget Allocation</label>
+                    <input class="rounded-md text-right mx-3" type="number" name="total_allocation"
+                        id="total_allocation" step="0.01" style="height: 30px; width:150px" placeholder="e.g. 1000">
+                    <button type="button" id="setAllocation" class="bg-green-400 rounded"
                         style="width: 80px;height: 30px;">Set</button>
                     <div id="totalBudgetError" class="text-red-500"></div>
                 </div>
@@ -30,41 +30,37 @@
                         </div>
                     @endif
 
-                    @foreach ($budgetData as $budget)
-                        <input type="hidden" name="budget_id" id="budget_id"
-                            value="{{ $budget['budget']->budget_id }}">
-                        @foreach ($budget['parts'] as $partIndex => $part)
-                            <h4 style="font-size:20px; margin-top:25px"><b>Part {{$partIndex + 1}}</b></h4>
-                            <div class="flex items-center">
-                                <label for="partName1" class="w-32 pr-2 mt-4">Name</label>
-                                <input class="rounded-md" type="text" name="part_name[]" id="part1_name"
-                                    placeholder="Name" style="height: 30px; margin:15px 0px 0px 20px;width:175px;"
-                                    value="{{ $part['part_name'] }}" readonly>
-                            </div>
-                            <div class="flex items-center">
-                                <label for="partAmount1" class="w-32 pr-2 mt-4">Amount</label>
-                                <input class="rounded-md" type="number" step="0.01" name="allocation_amount[]"
-                                    id="part1Amount" placeholder="0.00" value="{{ $part['allocation_amount'] }}"
-                                    style="height: 30px; margin:15px 0px 0px 20px;text-align:right;width:175px;"
-                                    readonly required>
-                            </div>
-                            <div class="flex">
-                                <label for="partCategory1" class="w-32 pr-2 mt-4">Category</label>
-                                <select lass="rounded-md" name="category_id[1][]" id="categoryId1" multiple disabled>
-                                    @foreach ($categories as $category)
-                                        <option value="{{ $category->category_id }}"
-                                            @if (in_array($category->category_id, $part['category_ids'])) selected @endif>
-                                            {{ $category->category_name }}
-                                        </option>
-                                    @endforeach
-                                </select>
-                            </div>
-                            <div id="part1AmountError" class="text-red-500"></div>
-                        @endforeach
+                    @foreach ($budget['parts'] as $partIndex => $part)
+                        <h4 style="font-size:20px; margin-top:25px"><b>Part {{ $partIndex + 1 }}</b></h4>
+                        <div class="flex items-center">
+                            <label for="partName{{ $partIndex + 1 }}" class="w-32 pr-2 mt-4">Name</label>
+                            <input class="rounded-md" type="text" name="part_name[{{ $partIndex + 1 }}]"
+                                id="part{{ $partIndex + 1 }}_name" placeholder="Name"
+                                style="height: 30px; margin:15px 0px 0px 20px;width:175px;"
+                                value="{{ $part['part_name'] }}" readonly>
+                        </div>
+                        <div class="flex items-center">
+                            <label for="partAmount{{ $partIndex + 1 }}" class="w-32 pr-2 mt-4">Amount</label>
+                            <input class="rounded-md" type="number" step="0.01"
+                                name="allocation_amount[{{ $partIndex + 1 }}]" id="part{{ $partIndex + 1 }}Amount"
+                                placeholder="0.00" value="{{ $part['allocation_amount'] }}"
+                                style="height: 30px; margin:15px 0px 0px 20px;text-align:right;width:175px;" readonly
+                                required>
+                        </div>
+                        <div class="flex">
+                            <label for="partCategory{{ $partIndex + 1 }}" class="w-32 pr-2 mt-4">Category</label>
+                            <select lass="rounded-md" name="category_id[{{ $partIndex + 1 }}][]"
+                                id="categoryId{{ $partIndex + 1 }}" multiple disabled>
+                                @foreach ($categories as $category)
+                                    <option value="{{ $category->category_id }}"
+                                        @if (in_array($category->category_id, $part['category_ids'])) selected @endif>
+                                        {{ $category->category_name }}
+                                    </option>
+                                @endforeach
+                            </select>
+                        </div>
+                        <div id="part1AmountError" class="text-red-500"></div>
                     @endforeach
-
-                    <input type="hidden" name="template_name" id="template_name"
-                        value="{{ $budget['budget']->template_name }}">
 
                     <div class="float-right mt-4">
                         <button type="submit" class="bg-blue-400 rounded hover:bg-blue-300"
@@ -80,6 +76,32 @@
         </div>
     </div>
 </div>
+
+<script>
+    document.getElementById("setAllocation").addEventListener("click", function () {
+        const totalAllocation = parseFloat(document.getElementById("total_allocation").value);
+
+        if (totalAllocation < 1) {
+            document.getElementById('totalBudgetError').innerHTML =
+                'Total allocation must be greater than or equal to 1.';
+            return;
+        }
+
+        // Calculate allocation amounts based on percentages
+        const part1Amount = totalAllocation * 0.5;
+        const part2Amount = totalAllocation * 0.3;
+        const part3Amount = totalAllocation * 0.2;
+
+        // Update the readonly input fields with calculated amounts
+        document.getElementById("part1Amount").value = part1Amount.toFixed(2);
+        document.getElementById("part2Amount").value = part2Amount.toFixed(2);
+        document.getElementById("part3Amount").value = part3Amount.toFixed(2);
+    });
+
+    $(document).ready(function() {
+        $('#categoryId1, #categoryId2, #categoryId3').filterMultiSelect();
+    });
+</script>
 
 <style>
     .filter-multi-select {

@@ -35,7 +35,6 @@ class BudgetController extends Controller
                         $category = Category::find($pac->category_id);
                         $categoryIds[] = $category->category_id;
 
-
                         foreach ($records as $record) {
                             if ($record->record_type == 'Expense') {
                                 $totalExpense += $record->amount;
@@ -178,7 +177,7 @@ class BudgetController extends Controller
             return redirect()->back()->with('error', 'Budget not found');
         }
 
-        $budgetData = [];
+        $partData = [];
 
         foreach ($budget->partAllocations as $part) {
             $categoryIds = [];
@@ -196,7 +195,12 @@ class BudgetController extends Controller
             ];
         }
 
-        return view('budget.editDefaultTemplate', compact('budget', 'partData', 'categories'));
+        $budgetData[] = [
+            'budget' => $budget,
+            'parts' => $partData,
+        ];
+
+        return view('budget.editDefaultTemplate', compact('budgetData', 'categories'));
     }
 
     public function editUserTemplate($budgetId)
