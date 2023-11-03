@@ -25,7 +25,7 @@
 </div>
 
 <script>
-    const categories = @json($categories);
+    // const categories = @json($categories);
 </script>
 
 <style>

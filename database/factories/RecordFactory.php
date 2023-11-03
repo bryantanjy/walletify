@@ -22,7 +22,7 @@ class RecordFactory extends Factory
         return [
 
             
-            'user_id' => rand(1, 2),
+            'user_id' => 1,
             'account_id' => rand(1, 2),
             'category_id' => $this->faker->randomElement($categories),
             'group_id' => null,

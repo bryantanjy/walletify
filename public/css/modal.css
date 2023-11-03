@@ -29,13 +29,12 @@ body.modal-open {
   padding: 20px;
   border: 1px solid #888;
   width: 800px;
-  height: 500px;
-  overflow-y: auto;
+  height: auto;
 }
 
 .modal-content-l {
   background-color: #E1F1FA;
-  margin: 5% auto;
+  margin: auto;
   padding: 20px;
   border: 1px solid #888;
   width: 800px;
