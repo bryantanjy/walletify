@@ -168,7 +168,7 @@ document.addEventListener("DOMContentLoaded", function () {
     $('#category_id2').filterMultiSelect();
     $('#category_id3').filterMultiSelect();
 
-    document.getElementById("setAllocation").addEventListener("click", function () {
+    document.getElementById("setButton").addEventListener("click", function () {
         const totalBudget = parseFloat(document.getElementById("totalBudget").value);
 
         // Calculate allocation amounts based on percentages
@@ -184,14 +184,20 @@ document.addEventListener("DOMContentLoaded", function () {
 });
 
 // js for edit budget
+$(document).on('click', '.editDefaultBudgetBtn', function () {
+    const categorySelectElements = document.querySelectorAll('[id^=categoryId]');
+    for (const categorySelectElement of categorySelectElements) {
+        $(categorySelectElement).filterMultiSelect();
+    }
 
+    const percentages = {
+        part1: 0.5,
+        part2: 0.3,
+        part3: 0.2,
+    };
 
-
-// document.addEventListener("DOMContentLoaded", function () {
-//     $('#categoryId1').filterMultiSelect();
-//     $('#categoryId2').filterMultiSelect();
-//     $('#categoryId3').filterMultiSelect();
-// });
+    
+});
 
 // modal delete for budget
 function budgetDeleteModal(budgetId) {
