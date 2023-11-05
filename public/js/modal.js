@@ -158,46 +158,11 @@ document.addEventListener("DOMContentLoaded", function () {
     });
 
     // Default template js
-    const percentages = {
-        part1: 0.5,
-        part2: 0.3,
-        part3: 0.2,
-    };
-
-    $('#category_id1').filterMultiSelect();
-    $('#category_id2').filterMultiSelect();
-    $('#category_id3').filterMultiSelect();
-
-    document.getElementById("setButton").addEventListener("click", function () {
-        const totalBudget = parseFloat(document.getElementById("totalBudget").value);
-
-        // Calculate allocation amounts based on percentages
-        const part1Amount = totalBudget * percentages.part1;
-        const part2Amount = totalBudget * percentages.part2;
-        const part3Amount = totalBudget * percentages.part3;
-
-        // Update the readonly input fields with calculated amounts
-        document.getElementById("part1Amount").value = part1Amount.toFixed(2);
-        document.getElementById("part2Amount").value = part2Amount.toFixed(2);
-        document.getElementById("part3Amount").value = part3Amount.toFixed(2);
-    });
+    
 });
 
 // js for edit budget
-$(document).on('click', '.editDefaultBudgetBtn', function () {
-    const categorySelectElements = document.querySelectorAll('[id^=categoryId]');
-    for (const categorySelectElement of categorySelectElements) {
-        $(categorySelectElement).filterMultiSelect();
-    }
 
-    const percentages = {
-        part1: 0.5,
-        part2: 0.3,
-        part3: 0.2,
-    };
-
-    
-});
 
 // modal delete for budget
 function budgetDeleteModal(budgetId) {
