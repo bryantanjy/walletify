@@ -9,6 +9,7 @@ use App\Models\PartAllocation;
 use Illuminate\Support\Facades\Auth;
 use App\Models\PartAllocationCategory;
 use App\Models\Record;
+use Symfony\Component\Console\Input\Input;
 
 class BudgetController extends Controller
 {
@@ -19,11 +20,11 @@ class BudgetController extends Controller
             $categories = Category::all();
             $budgets = Budget::where('user_id', $user->id)->get();
 
-            $budgetData = [];
-
+            // $budgetData = [];
+            $partData = [];
             foreach ($budgets as $budget) {
+                $partAllocations = PartAllocation::where('budget_id', $budget->budget_id)->get();
                 $totalAllocationAmount = 0;
-                $partData = [];
 
                 foreach ($budget->partAllocations as $part) {
                     $totalExpense = 0;
@@ -49,25 +50,23 @@ class BudgetController extends Controller
                     $percentageWidth = min(max($percentage, 0), 100);
 
                     $partData[] = [
-                        'part_name' => $part->part_name,
-                        'current_budget' => $currentBudget,
-                        'allocation_amount' => $part->allocation_amount,
+                        'part' => $part,
+                        'currentBudget' => $currentBudget,
                         'percentage' => $percentage,
-                        'percentage_for_width' => $percentageWidth,
-                        'category_ids' => $categoryIds,
+                        'percentageWidth' => $percentageWidth,
                     ];
 
                     $totalAllocationAmount += $part->allocation_amount;
                 }
 
-                $budgetData[] = [
-                    'budget' => $budget,
-                    'total_allocation_amount' => $totalAllocationAmount,
-                    'parts' => $partData,
-                ];
+                // $budgetData[] = [
+                //     'budget' => $budget,
+                //     'total_allocation_amount' => $totalAllocationAmount,
+                //     'parts' => $partData,
+                // ];
             }
 
-            return view('budget.index', compact('categories', 'budgetData'));
+            return view('budget.index', compact('categories', 'budgets', 'partData', 'totalAllocationAmount', 'partAllocations'));
         } else {
             return redirect()->route('login');
         }
@@ -89,7 +88,6 @@ class BudgetController extends Controller
 
     public function storeDefaultTemplate(Request $request)
     {
-
         try {
             // Create a new budget record
             $budget = Budget::create([
@@ -177,30 +175,24 @@ class BudgetController extends Controller
             return redirect()->back()->with('error', 'Budget not found');
         }
 
-        $partData = [];
+        $partAllocations = PartAllocation::where('budget_id', $budgetId)->get();
+        // $partData = [];
 
-        foreach ($budget->partAllocations as $part) {
-            $categoryIds = [];
+        // foreach ($budget->partAllocations as $part) {
+        //     $categoryIds = [];
 
-            foreach ($part->partAllocationCategories as $pac) {
-                $category = Category::find($pac->category_id);
-                $categoryIds[] = $category->category_id;
-            }
+        //     foreach ($part->partAllocationCategories as $pac) {
+        //         $category = Category::find($pac->category_id);
+        //         $categoryIds[] = $category->category_id;
+        //     }
+        // }
 
-            $partData[] = [
-                'part_id' => $part->part_allocation_id,
-                'part_name' => $part->part_name,
-                'allocation_amount' => $part->allocation_amount,
-                'category_ids' => $categoryIds,
-            ];
-        }
+        // $budgetData[] = [
+        //     'budget' => $budget,
+        //     'parts' => $partData,
+        // ];
 
-        $budgetData[] = [
-            'budget' => $budget,
-            'parts' => $partData,
-        ];
-
-        return view('budget.editDefaultTemplate', compact('budgetData', 'categories'));
+        return view('budget.editDefaultTemplate', compact('budget', 'categories','partAllocations'));
     }
 
     public function editUserTemplate($budgetId)
@@ -211,7 +203,37 @@ class BudgetController extends Controller
         return view('budget.editUserTemplate', compact('budget', 'categories'));
     }
 
-    public function update()
+    public function updateDefaultTemplate(Request $request, $budgetId)
+    {
+        $validatedData = $request->validate($request, [
+            'template_name' => 'required|max:50',
+            'part_name' => 'required|max:50',
+            'allocation_amount' => 'required|numeric|min:0.01',
+            'category_id.*.*' => 'required|string',
+        ]);
+        // dd($request->input());
+        $budget = Budget::find($budgetId);
+        if (!$budget) {
+            return redirect()->back()->with('error', 'Budget not found');
+        }
+
+        $budget->template_name = $request->input('template_name');
+        $budget->save();
+
+        foreach ($request->input('part_name') as $i => $partName) {
+            $partAllocation = $budget->partAllocations()->where('part_name', $partName)->first();
+            $partAllocation->update([
+                'part_name' => $validatedData['part_name'][$i],
+                'allocation_amount' => $validatedData['allocation_amount'][$i],
+            ]);
+
+            $partAllocation->partAllocationCategories()->sync($validatedData['category_id'][$i]);
+        }
+
+        return redirect()->route('budget.index')->with('success', 'Budget updated successfully');
+    }
+
+    public function updateUserTemplate()
     {
         //
     }
