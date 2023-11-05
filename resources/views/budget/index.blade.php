@@ -35,56 +35,58 @@
             </div>
         </aside>
         <div class="p-4 sm:ml-64 items-center justify-center" style="width: 80%; margin-left:20%; margin-top: 100px;">
-            @if ($budgetData && count($budgetData) > 0)
-                @foreach ($budgetData as $budgetIndex => $budget)
+            @if ($budgets && count($budgets) > 0)
+                @foreach ($budgets as $budget)
                     <div class="bg-white mt-5 ml-10"
                         style="width: 60%; height:auto; border-radius:15px; padding:60px 80px;">
                         <div class="flex justify-between mb-8">
-                            <p class="text-gray-400">Current month</p>
-                            <p>Allocation amount: RM {{ $budget['total_allocation_amount'] }}</p>
+                            <p class="text-gray-500">Current month</p>
+                            <p>Allocation amount: RM {{ $totalAllocationAmount }}</p>
                         </div>
-                        @foreach ($budget['parts'] as $partIndex => $part)
+                        @foreach ($partData as $part)
                             <div class="text-base font-medium dark:text-black flex justify-between">
-                                <label for="part-name">{{ $part['part_name'] }}
+                                <label for="part-name">{{ $part['part']->part_name }}
                                     <button
-                                        data-tooltip-target="tooltip-default-{{ $budgetIndex }}-{{ $partIndex }}"
+                                        data-tooltip-target="tooltip-default-{{ $loop->parent->index }}-{{ $loop->index }}"
                                         type="button" class="focus:ring-4 focus:outline-none focus:ring-gray-300 ">
                                         <i class="fa-solid fa-circle-info"></i>
                                     </button>
-                                    <div id="tooltip-default-{{ $budgetIndex }}-{{ $partIndex }}" role="tooltip"
+                                    <div id="tooltip-default-{{ $loop->parent->index }}-{{ $loop->index }}"
+                                        role="tooltip"
                                         class="absolute z-10 invisible inline-block px-3 py-2 text-sm font-medium text-white transition-opacity duration-300 bg-gray-900 rounded-lg shadow-sm opacity-0 tooltip dark:bg-gray-700">
                                         <label for="category">Category:</label>
-                                        @foreach ($part['category_ids'] as $categoryId)
-                                            <div>{{ App\Models\Category::find($categoryId)->category_name }}</div>
+                                        @foreach ($part['part']->partAllocationCategories as $pac)
+                                            {{-- <div>{{ App\Models\Category::find($categoryId)->category_name }}</div> --}}
+                                            <div>{{ $pac->category->category_name }}</div>
                                         @endforeach
                                         <div class="tooltip-arrow" data-popper-arrow></div>
                                     </div>
                                 </label>
                                 <div>
-                                    RM {{ $part['current_budget'] }} /
-                                    RM {{ $part['allocation_amount'] }}
+                                    RM {{ $part['currentBudget'] }} /
+                                    RM {{ $part['part']->allocation_amount }}
                                     ({{ round($part['percentage'], 2) }}%)
                                 </div>
                             </div>
                             <div class="w-full bg-gray-200 rounded-full h-4 mb-4">
-                                <div class="bg-{{ $part['percentage_for_width'] >= 80 ? 'red' : 'green' }}-400 h-4 rounded-full"
-                                    style="width: {{ $part['percentage_for_width'] }}%">
+                                <div class="bg-{{ $part['percentageWidth'] >= 80 ? 'red' : 'green' }}-400 h-4 rounded-full"
+                                    style="width: {{ $part['percentageWidth'] }}%">
                                 </div>
                             </div>
                         @endforeach
                         {{-- button --}}
                         <div class="float-right mt-3">
-                            @if ($budget['budget']->template_name == 'Default Template')
+                            @if ($budget->template_name == 'Default Template')
                                 <button type="button" class="bg-blue-500 w-20 rounded editDefaultBudgetBtn"
                                     data-toggle="modal" data-target="#editDefaultBudgetModal"
-                                    value="{{ $budget['budget']->budget_id }}">Edit</button>
+                                    value="{{ $budget->budget_id }}">Edit</button>
                             @else
                                 <button type="button" class="bg-blue-500 w-20 rounded editUserBudgetBtn"
                                     data-toggle="modal" data-target="#editUserBudgetModal"
-                                    value="{{ $budget['budget']->budget_id }}">Edit</button>
+                                    value="{{ $budget->budget_id }}">Edit</button>
                             @endif
                             <button type="button" class="bg-red-500 w-20 rounded ml-2 deleteBudgetBtn"
-                                onclick="budgetDeleteModal({{ $budget['budget']->budget_id }})">Delete</button>
+                                onclick="budgetDeleteModal({{ $budget->budget_id }})">Delete</button>
                         </div>
                     </div>
                 @endforeach
@@ -135,7 +137,7 @@
             <div class="flex justify-center items-center space-x-4">
                 @if (isset($budget))
                     <form id="deleteForm" method="POST"
-                        action="{{ route('budget.delete', ['budget' => $budget['budget']->budget_id]) }}">
+                        action="{{ route('budget.delete', ['budget' => $budget->budget_id]) }}">
                         @csrf
                         @method('DELETE')
                         <button type="submit" style="width: 120px"
