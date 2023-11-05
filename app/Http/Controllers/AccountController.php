@@ -13,16 +13,11 @@ class AccountController extends Controller
     public function index(Request $request)
     {
         if (Auth::check()) {
-            // The user is authenticated, fetch the finance accounts
             $user = Auth::user();
             $accounts = Account::where('user_id', $user->id)->oldest()->get();
-            if ($request->ajax()) {
-                return response()->json($accounts); // Return accounts data as JSON for AJAX request
-            }
-        
+
             return view('account.index', compact('accounts'));
         } else {
-            // Redirect to the login page or take appropriate action
             return redirect()->route('login');
         }
     }
@@ -54,11 +49,6 @@ class AccountController extends Controller
 
     public function edit($accountId)
     {
-        // $user = Auth::user();
-        // if ($account->user_id !== $user->id) {
-        //     return redirect('/login');
-        // }
-        //return view('account.edit', compact('account'));
         $account = Account::find($accountId);
         if (!$account) {
             return response()->json(['error' => 'Account not found'], 404);
@@ -74,13 +64,11 @@ class AccountController extends Controller
             return response()->json(['error' => 'Account not found'], 404);
         }
 
-        // Validate the request data
         $request->validate([
             'account_type' => 'required|string',
             'account_name' => 'required|string|max:50',
         ]);
 
-        // Update the account details
         $account->account_type = $request->input('account_type');
         $account->account_name = $request->input('account_name');
         $account->save();

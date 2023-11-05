@@ -38,10 +38,10 @@
                         <div class="card rounded-md bg-white">
                             <div class="flex mb-4 data-row">
                                 <div class="w-1/5 h-12 ml-4 flex items-center">
-                                    {{ $account['account_name'] }}
+                                    {{ $account->account_name }}
                                 </div>
                                 <div class="w-2/5 h-12 flex items-center" style="font-size: 14px; color:gray">
-                                    {{ $account['account_type'] }}
+                                    {{ $account->account_type }}
                                 </div>
                                 <div class="w-1/5 h-12 flex items-center">
                                     RM 0.00
