@@ -13,7 +13,7 @@
                     <label for="part_input">Total Budget Allocation</label>
                     <input class="rounded-md text-right mx-3" type="number" name="totalBudget" id="totalBudget"
                         step="0.01" style="height: 30px; width:150px" placeholder="e.g. 1000" required>
-                    <button type="submit" id="setAllocation" class="bg-green-400 rounded"
+                    <button type="submit" id="setBtn" class="bg-green-400 rounded"
                         style="width: 80px;height: 30px;">Set</button>
                     <div id="totalBudgetError" class="text-red-500"></div>
                 </div>
@@ -45,7 +45,7 @@
                     </div>
                     <div class="flex">
                         <label for="partCategory1" class="w-32 pr-2 mt-4">Category</label>
-                        <select lass="rounded-md" name="category_id[1][]" id="category_id1" multiple disabled>
+                        <select lass="rounded-md" name="category_id[][]" id="category_id1" multiple disabled>
                             @foreach ($categories as $category)
                                 <option value="{{ $category->category_id }}"
                                     @if (in_array($category->category_name, [
@@ -135,6 +135,30 @@
 </div>
 
 <script>
+    const percentages = {
+        part1: 0.5,
+        part2: 0.3,
+        part3: 0.2,
+    };
+
+    $('#category_id1').filterMultiSelect();
+    $('#category_id2').filterMultiSelect();
+    $('#category_id3').filterMultiSelect();
+
+    document.getElementById("setBtn").addEventListener("click", function() {
+        const totalBudget = parseFloat(document.getElementById("totalBudget").value);
+
+        // Calculate allocation amounts based on percentages
+        const part1Amount = totalBudget * percentages.part1;
+        const part2Amount = totalBudget * percentages.part2;
+        const part3Amount = totalBudget * percentages.part3;
+
+        // Update the readonly input fields with calculated amounts
+        document.getElementById("part1Amount").value = part1Amount.toFixed(2);
+        document.getElementById("part2Amount").value = part2Amount.toFixed(2);
+        document.getElementById("part3Amount").value = part3Amount.toFixed(2);
+    });
+
     // Function to validate the form
     function validateForm() {
         // Reset any previous error messages
