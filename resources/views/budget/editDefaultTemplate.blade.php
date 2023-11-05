@@ -33,42 +33,38 @@
                             </div>
                         @endif
 
-                        {{-- @foreach ($budget['parts'] as $partIndex => $part)
-                            <input type="hidden" name="part_allocation_id[{{ $partIndex + 1 }}]"
-                                id="part_allocation_id[{{ $partIndex + 1 }}]" value="{{ $part['part_allocation_id'] }}">
-                            <h4 style="font-size:20px; margin-top:25px"><b>Part {{ $partIndex + 1 }}</b></h4>
+                        @foreach ($partAllocations as $part)
+                            <h4 style="font-size:20px; margin-top:25px"><b>Part {{ $loop->index + 1 }}</b></h4>
                             <div class="flex items-center">
-                                <label for="partName{{ $partIndex + 1 }}" class="w-32 pr-2 mt-4">Name</label>
-                                <input class="rounded-md" type="text" name="part_name[{{ $partIndex + 1 }}]"
-                                    id="part{{ $partIndex + 1 }}_name" placeholder="Name"
-                                    style="height: 30px; margin:15px 0px 0px 20px;width:175px;"
-                                    value="{{ $part['part_name'] }}" disabled readonly>
+                                <label for="partName" class="w-32 pr-2 mt-4">Name</label>
+                                <input class="rounded-md" type="text" name="part_name[]" id="part_name[]"
+                                    placeholder="Name" style="height: 30px; margin:15px 0px 0px 20px;width:175px;"
+                                    value="{{ $part->part_name }}" disabled readonly>
                             </div>
                             <div class="flex items-center">
-                                <label for="partAmount{{ $partIndex + 1 }}" class="w-32 pr-2 mt-4">Amount</label>
-                                <input class="rounded-md" type="number" step="0.01"
-                                    name="allocation_amount[{{ $partIndex + 1 }}]"
-                                    id="allocation_amount{{ $partIndex + 1 }}" placeholder="0.00"
-                                    value="{{ $part['allocation_amount'] }}"
+                                <label for="partAmount" class="w-32 pr-2 mt-4">Amount</label>
+                                <input class="rounded-md" type="number" step="0.01" name="allocation_amount[]"
+                                    id="allocation_amount{{ $loop->index + 1 }}" placeholder="0.00"
+                                    value="{{ $part->allocation_amount }}"
                                     style="height: 30px; margin:15px 0px 0px 20px;text-align:right;width:175px;"
                                     disabled readonly required>
                             </div>
                             <div class="flex">
-                                <label for="partCategory{{ $partIndex + 1 }}" class="w-32 pr-2 mt-4">Category</label>
-                                <select lass="rounded-md" name="category_id[{{ $partIndex + 1 }}][]"
-                                    id="categoryId{{ $partIndex + 1 }}" multiple disabled>
+                                <label for="partCategory" class="w-32 pr-2 mt-4">Category</label>
+                                <select lass="rounded-md" name="category_id[{{ $loop->index }}][]"
+                                    id="categoryId{{ $loop->index + 1 }}" multiple disabled>
+
                                     @foreach ($categories as $category)
                                         <option value="{{ $category->category_id }}"
-                                            @if (in_array($category->category_id, $part['category_ids'])) selected @endif>
+                                            @if (in_array($category->category_id, $part->partAllocationCategories->pluck('category_id')->toArray())) selected @endif>
                                             {{ $category->category_name }}
-                                        </option>
                                     @endforeach
                                 </select>
                             </div>
                             <div id="part1AmountError" class="text-red-500"></div>
                         @endforeach
 
-                        <input type="hidden" name="template_name" value="{{ $budget['budget']->template_name }}"> --}}
+                        <input type="hidden" name="template_name" value="{{ $budget->template_name }}">
 
                         <div class="float-right mt-4">
                             <button type="submit" class="bg-blue-400 rounded hover:bg-blue-300"
