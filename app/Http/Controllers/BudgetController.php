@@ -176,21 +176,6 @@ class BudgetController extends Controller
         }
 
         $partAllocations = PartAllocation::where('budget_id', $budgetId)->get();
-        // $partData = [];
-
-        // foreach ($budget->partAllocations as $part) {
-        //     $categoryIds = [];
-
-        //     foreach ($part->partAllocationCategories as $pac) {
-        //         $category = Category::find($pac->category_id);
-        //         $categoryIds[] = $category->category_id;
-        //     }
-        // }
-
-        // $budgetData[] = [
-        //     'budget' => $budget,
-        //     'parts' => $partData,
-        // ];
 
         return view('budget.editDefaultTemplate', compact('budget', 'categories','partAllocations'));
     }
@@ -205,30 +190,41 @@ class BudgetController extends Controller
 
     public function updateDefaultTemplate(Request $request, $budgetId)
     {
-        $validatedData = $request->validate($request, [
-            'template_name' => 'required|max:50',
-            'part_name' => 'required|max:50',
-            'allocation_amount' => 'required|numeric|min:0.01',
-            'category_id.*.*' => 'required|string',
+        $request->validate([
+            'template_name' => 'required|string|max:255',
+            'part_name.*' => 'required|string|max:255',
+            'allocation_amount.*' => 'required|numeric|min:0',
+            'category_id.*.*' => 'required|string', 
         ]);
         // dd($request->input());
         $budget = Budget::find($budgetId);
+
         if (!$budget) {
             return redirect()->back()->with('error', 'Budget not found');
         }
 
-        $budget->template_name = $request->input('template_name');
-        $budget->save();
+        $budget->update([
+            'template_name' => $request->input('template_name'),
+        ]);
 
-        foreach ($request->input('part_name') as $i => $partName) {
-            $partAllocation = $budget->partAllocations()->where('part_name', $partName)->first();
-            $partAllocation->update([
-                'part_name' => $validatedData['part_name'][$i],
-                'allocation_amount' => $validatedData['allocation_amount'][$i],
-            ]);
+        $partNames = $request->input('part_name');
+        $allocationAmounts = $request->input('allocation_amount');
+        $categoryIds = $request->input('category_id');
 
-            $partAllocation->partAllocationCategories()->sync($validatedData['category_id'][$i]);
+        // Loop through the part allocations and update them
+        foreach ($partNames as $index => $partName) {
+            $partAllocation = PartAllocation::find($request->input('part_allocation_id')[$index]);
+
+            if ($partAllocation) {
+                $partAllocation->update([
+                    'part_name' => $partName,
+                    'allocation_amount' => $allocationAmounts[$index],
+                ]);
+
+                $partAllocation->partAllocationCategories($categoryIds[$index]);
+            }
         }
+
 
         return redirect()->route('budget.index')->with('success', 'Budget updated successfully');
     }
