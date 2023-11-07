@@ -34,12 +34,14 @@
                         @endif
 
                         @foreach ($partAllocations as $part)
+                            <input type="hidden" name="part_allocation_id[]" value="{{$part->part_allocation_id}}">
+
                             <h4 style="font-size:20px; margin-top:25px"><b>Part {{ $loop->index + 1 }}</b></h4>
                             <div class="flex items-center">
                                 <label for="partName" class="w-32 pr-2 mt-4">Name</label>
                                 <input class="rounded-md" type="text" name="part_name[]" id="part_name[]"
                                     placeholder="Name" style="height: 30px; margin:15px 0px 0px 20px;width:175px;"
-                                    value="{{ $part->part_name }}" disabled readonly>
+                                    value="{{ $part->part_name }}" readonly>
                             </div>
                             <div class="flex items-center">
                                 <label for="partAmount" class="w-32 pr-2 mt-4">Amount</label>
@@ -47,7 +49,7 @@
                                     id="allocation_amount{{ $loop->index + 1 }}" placeholder="0.00"
                                     value="{{ $part->allocation_amount }}"
                                     style="height: 30px; margin:15px 0px 0px 20px;text-align:right;width:175px;"
-                                    disabled readonly required>
+                                     readonly required>
                             </div>
                             <div class="flex">
                                 <label for="partCategory" class="w-32 pr-2 mt-4">Category</label>
@@ -85,7 +87,6 @@
         for (const categorySelectElement of categorySelectElements) {
             $(categorySelectElement).filterMultiSelect();
         }
-
     });
 
     document.getElementById('setButton').addEventListener('click', function() {
