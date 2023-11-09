@@ -13,9 +13,9 @@ return new class extends Migration
     {
         Schema::create('part_allocation_categories', function (Blueprint $table) {
             $table->unsignedBigInteger('part_allocation_id');
-            $table->foreign('part_allocation_id')->references('part_allocation_id')->on('part_allocations')->onUpdate('cascade')->onDelete('cascade');
+            $table->foreign('part_allocation_id')->references('id')->on('part_allocations')->onUpdate('cascade')->onDelete('cascade');
             $table->unsignedBigInteger('category_id');
-            $table->foreign('category_id')->references('category_id')->on('categories')->onUpdate('cascade')->onDelete('cascade');
+            $table->foreign('category_id')->references('id')->on('categories')->onUpdate('cascade')->onDelete('cascade');
             $table->timestamps();
             $table->softDeletes();
         });
