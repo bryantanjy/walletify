@@ -29,15 +29,19 @@ class AccountController extends Controller
 
     public function store(Request $request)
     {
-        $incomingDatas = $request->validate([
-            'type' => 'required|string|max:255',
-            'name' => 'required|string|max:255',
-        ]);
+        $validator = Validator::make(
+            $request->all(),
+            [
+                'type' => 'required|string|max:255',
+                'name' => 'required|string|max:255',
+            ]
+        );
 
-        $incomingDatas['type'] = strip_tags($incomingDatas['type']);
-        $incomingDatas['name'] = strip_tags($incomingDatas['name']);
-        $incomingDatas['user_id'] = auth()->id();
-        Account::create($incomingDatas);
+        Account::create([
+            "name" => $request->name,
+            "type" => $request->type,
+            "user_id" => Auth::user()->id,
+        ]);
 
         return redirect()->route('account.index')->with('success', 'Account created successfully');
     }
@@ -50,9 +54,11 @@ class AccountController extends Controller
     public function edit($accountId)
     {
         $account = Account::find($accountId);
+
         if (!$account) {
             return response()->json(['error' => 'Account not found'], 404);
         }
+    
         return response()->json($account);
     }
 
@@ -65,12 +71,12 @@ class AccountController extends Controller
         }
 
         $request->validate([
-            'type' => 'required|string',
-            'name' => 'required|string|max:50',
+            'account_type' => 'required|string|max:255',
+            'account_name' => 'required|string|max:255',
         ]);
 
-        $account->account_type = $request->input('type');
-        $account->account_name = $request->input('name');
+        $account->type = $request->input('account_type');
+        $account->name = $request->input('account_name');
         $account->save();
 
         return response()->json(['message' => 'Account updated successfully'], 200);
