@@ -118,7 +118,7 @@
                     </div>
                     <div id="part3AmountError" class="text-red-500"></div>
 
-                    <input type="hidden" name="template_name" id="template_name" value="Default Template">
+                    <input type="hidden" name="type" id="type" value="Default Template">
                     <div class="float-right mt-4">
                         <button type="submit" class="bg-blue-400 rounded hover:bg-blue-300"
                             style="width: 100px">Create</button>

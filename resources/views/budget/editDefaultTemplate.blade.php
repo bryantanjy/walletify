@@ -66,7 +66,7 @@
                             <div id="part1AmountError" class="text-red-500"></div>
                         @endforeach
 
-                        <input type="hidden" name="template_name" value="{{ $budget->template_name }}">
+                        <input type="hidden" name="type" value="{{ $budget->type }}">
 
                         <div class="float-right mt-4">
                             <button type="submit" class="bg-blue-400 rounded hover:bg-blue-300"

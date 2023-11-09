@@ -41,6 +41,7 @@
                         style="width: 60%; height:auto; border-radius:15px; padding:60px 80px;">
                         <div class="flex justify-between mb-8">
                             <p class="text-gray-500">Current month</p>
+                            
                             <p>Allocation amount: RM {{ $totalAllocationAmount }}</p>
                         </div>
                         @foreach ($partData as $part)
@@ -56,7 +57,6 @@
                                         class="absolute z-10 invisible inline-block px-3 py-2 text-sm font-medium text-white transition-opacity duration-300 bg-gray-900 rounded-lg shadow-sm opacity-0 tooltip dark:bg-gray-700">
                                         <label for="category">Category:</label>
                                         @foreach ($part['part']->partAllocationCategories as $pac)
-                                            {{-- <div>{{ App\Models\Category::find($categoryId)->category_name }}</div> --}}
                                             <div>{{ $pac->category->category_name }}</div>
                                         @endforeach
                                         <div class="tooltip-arrow" data-popper-arrow></div>
@@ -76,7 +76,7 @@
                         @endforeach
                         {{-- button --}}
                         <div class="float-right mt-3">
-                            @if ($budget->template_name == 'Default Template')
+                            @if ($budget->type == 'Default Template')
                                 <button type="button" class="bg-blue-500 w-20 rounded editDefaultBudgetBtn"
                                     data-toggle="modal" data-target="#editDefaultBudgetModal"
                                     value="{{ $budget->budget_id }}">Edit</button>

@@ -19,7 +19,7 @@
                 <form method="POST" action="{{ route('budget.storeUserTemplate') }}">
                     @csrf
                     <div id="partContainer"></div>
-                    <input type="hidden" name="template_name" id="template_name" value="User Template">
+                    <input type="hidden" name="type" id="type" value="User Template">
                     <div class="float-right mt-4" id="buttons" style="display: none">
                         <button type="submit" class="bg-blue-400 rounded hover:bg-blue-300"
                             style="width: 100px">Create</button>
