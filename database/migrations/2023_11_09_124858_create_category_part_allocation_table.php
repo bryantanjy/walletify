@@ -11,7 +11,7 @@ return new class extends Migration
      */
     public function up(): void
     {
-        Schema::create('part_allocation_categories', function (Blueprint $table) {
+        Schema::create('category_part_allocation', function (Blueprint $table) {
             $table->unsignedBigInteger('part_allocation_id');
             $table->foreign('part_allocation_id')->references('id')->on('part_allocations')->onUpdate('cascade')->onDelete('cascade');
             $table->unsignedBigInteger('category_id');
