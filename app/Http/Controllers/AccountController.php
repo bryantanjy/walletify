@@ -30,12 +30,12 @@ class AccountController extends Controller
     public function store(Request $request)
     {
         $incomingDatas = $request->validate([
-            'account_type' => 'required|string',
-            'account_name' => 'required|string|max:50',
+            'type' => 'required|string|max:255',
+            'name' => 'required|string|max:255',
         ]);
 
-        $incomingDatas['account_type'] = strip_tags($incomingDatas['account_type']);
-        $incomingDatas['account_name'] = strip_tags($incomingDatas['account_name']);
+        $incomingDatas['type'] = strip_tags($incomingDatas['type']);
+        $incomingDatas['name'] = strip_tags($incomingDatas['name']);
         $incomingDatas['user_id'] = auth()->id();
         Account::create($incomingDatas);
 
@@ -65,12 +65,12 @@ class AccountController extends Controller
         }
 
         $request->validate([
-            'account_type' => 'required|string',
-            'account_name' => 'required|string|max:50',
+            'type' => 'required|string',
+            'name' => 'required|string|max:50',
         ]);
 
-        $account->account_type = $request->input('account_type');
-        $account->account_name = $request->input('account_name');
+        $account->account_type = $request->input('type');
+        $account->account_name = $request->input('name');
         $account->save();
 
         return response()->json(['message' => 'Account updated successfully'], 200);
