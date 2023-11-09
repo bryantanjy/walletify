@@ -12,21 +12,22 @@ return new class extends Migration
     public function up(): void
     {
         Schema::create('records', function (Blueprint $table) {
-            $table->bigIncrements('record_id'); // Big integer auto-incrementing primary key 'record_id'
+            $table->id(); 
             $table->unsignedBigInteger('user_id');
-            $table->foreign('user_id')->references('id')->on('users')->onDelete('cascade');
+            $table->foreign('user_id')->references('id')->on('users')->onUpdate('cascade')->onDelete('cascade');
             $table->unsignedBigInteger('account_id')->nullable();
-            $table->foreign('account_id')->references('account_id')->on('accounts')->onDelete('cascade');
+            $table->foreign('account_id')->references('account_id')->on('accounts')->onUpdate('cascade')->onDelete('cascade');
             $table->string('category_id', 3);
-            $table->foreign('category_id')->references('category_id')->on('categories')->onDelete('cascade');
+            $table->foreign('category_id')->references('category_id')->on('categories')->onUpdate('cascade')->onDelete('cascade');
             // $table->unsignedBigInteger('group_id');
             // $table->foreign('group_id')->references('group_id')->on('expense_sharing_groups')->onDelete('cascade');
-            $table->string('record_type', 50);
+            $table->string('type');
             $table->decimal('amount', 10, 2);
             $table->date('date');
             $table->string('time');
-            $table->string('record_description', 50)->nullable();
+            $table->string('description')->nullable();
             $table->timestamps();
+            $table->softDeletes();
         });
     }
 

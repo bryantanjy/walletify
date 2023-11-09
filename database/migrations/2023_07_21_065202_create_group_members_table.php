@@ -12,13 +12,14 @@ return new class extends Migration
     public function up(): void
     {
         Schema::create('group_members', function (Blueprint $table) {
-            $table->bigIncrements('member_id');
+            $table->id();
             $table->unsignedBigInteger('user_id');
-            $table->foreign('user_id')->references('id')->on('users')->onDelete('cascade');
+            $table->foreign('user_id')->references('id')->on('users')->onUpdate('cascade')->onDelete('cascade');
             // $table->unsignedBigInteger('group_id');
             // $table->foreign('group_id')->references('group_id')->on('expense_sharing_groups')->onDelete('cascade');
             $table->string('role', 20);
             $table->timestamps();
+            $table->softDeletes();
         });
     }
 

@@ -14,10 +14,11 @@ return new class extends Migration
         Schema::create('part_allocations', function (Blueprint $table) {
             $table->id('part_allocation_id');
             $table->unsignedBigInteger('budget_id');
-            $table->foreign('budget_id')->references('budget_id')->on('budgets')->onDelete('cascade');
-            $table->string('part_name', 50);
-            $table->decimal('allocation_amount', 10, 2);
+            $table->foreign('budget_id')->references('budget_id')->on('budgets')->onUpdate('cascade')->onDelete('cascade');
+            $table->string('name');
+            $table->decimal('amount', 10, 2);
             $table->timestamps();
+            $table->softDeletes();
         });
     }
 

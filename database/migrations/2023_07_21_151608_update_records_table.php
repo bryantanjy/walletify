@@ -14,7 +14,7 @@ return new class extends Migration
         Schema::table('records', function (Blueprint $table) {
             // Add a new column to the table
             $table->unsignedBigInteger('group_id')->nullable();
-            $table->foreign('group_id')->references('group_id')->on('expense_sharing_groups')->onDelete('cascade');
+            $table->foreign('group_id')->references('group_id')->on('expense_sharing_groups')->onUpdate('cascade')->onDelete('cascade');
         });
     }
 
