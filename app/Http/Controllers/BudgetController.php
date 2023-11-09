@@ -9,7 +9,6 @@ use App\Models\PartAllocation;
 use Illuminate\Support\Facades\Auth;
 use App\Models\PartAllocationCategory;
 use App\Models\Record;
-use Symfony\Component\Console\Input\Input;
 
 class BudgetController extends Controller
 {
@@ -23,6 +22,11 @@ class BudgetController extends Controller
             // $budgetData = [];
             $partData = [];
             foreach ($budgets as $budget) {
+                if (!$budget) {
+                    continue;
+                }
+
+
                 $partAllocations = PartAllocation::where('budget_id', $budget->budget_id)->get();
                 $totalAllocationAmount = 0;
 
@@ -66,7 +70,11 @@ class BudgetController extends Controller
                 // ];
             }
 
-            return view('budget.index', compact('categories', 'budgets', 'partData', 'totalAllocationAmount', 'partAllocations'));
+            if ($budgets->count() > 0) {
+                return view('budget.index', compact('categories', 'budgets', 'partData', 'totalAllocationAmount', 'partAllocations'));
+            } else {
+                return view('budget.index', compact('categories', 'budgets', 'partData'));
+            }
         } else {
             return redirect()->route('login');
         }
@@ -91,7 +99,7 @@ class BudgetController extends Controller
         try {
             // Create a new budget record
             $budget = Budget::create([
-                'template_name' => $request->template_name,
+                'type' => $request->type,
                 'user_id' => auth()->id(),
                 'group_id' => null,
             ]);
@@ -124,7 +132,7 @@ class BudgetController extends Controller
     public function storeUserTemplate(Request $request)
     {
         $userTemplateRules = [
-            'template_name' => 'required|string|max:50',
+            'type' => 'required|string|max:50',
             'part_name.*' => 'required|string|max:50',
             'allocation_amount.*' => 'required|numeric|min:0.01',
             'category_id.*.*' => 'required|string',
@@ -136,7 +144,7 @@ class BudgetController extends Controller
         try {
             // Create a new budget record
             $budget = Budget::create([
-                'template_name' => $request->input('template_name'),
+                'type' => $request->input('type'),
                 'user_id' => auth()->id(),
                 'group_id' => null,
             ]);
@@ -177,7 +185,7 @@ class BudgetController extends Controller
 
         $partAllocations = PartAllocation::where('budget_id', $budgetId)->get();
 
-        return view('budget.editDefaultTemplate', compact('budget', 'categories','partAllocations'));
+        return view('budget.editDefaultTemplate', compact('budget', 'categories', 'partAllocations'));
     }
 
     public function editUserTemplate($budgetId)
@@ -191,10 +199,10 @@ class BudgetController extends Controller
     public function updateDefaultTemplate(Request $request, $budgetId)
     {
         $request->validate([
-            'template_name' => 'required|string|max:255',
+            'type' => 'required|string|max:255',
             'part_name.*' => 'required|string|max:255',
             'allocation_amount.*' => 'required|numeric|min:0',
-            'category_id.*.*' => 'required|string', 
+            'category_id.*.*' => 'required|string',
         ]);
         // dd($request->input());
         $budget = Budget::find($budgetId);
@@ -204,7 +212,7 @@ class BudgetController extends Controller
         }
 
         $budget->update([
-            'template_name' => $request->input('template_name'),
+            'type' => $request->input('type'),
         ]);
 
         $partNames = $request->input('part_name');
