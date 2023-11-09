@@ -1,4 +1,3 @@
-
 <div id="editAccountModal" class="modal fade" tabindex="-1" role="dialog">
     <div class="modal-dialog" role="document">
         <!--Modal Content-->
@@ -9,10 +8,11 @@
             </div>
             <x-section-border />
             <div class="modal-body">
-                <form id="edit-form" method="POST" >
+                <form id="edit-form" method="POST" action="{{route('account.update', ['account' => $account->id])}}">
                     @csrf
                     @method('PUT')
                     <div class="mb-3">
+                        <input type="hidden" name="account_id" id="account_id">
                         <label for="accountType">Account Type</label>
                         <select name="account_type" id="account_type" class="rounded-md"
                             style="height: 30px; padding:0px 10px; margin:15px 0px 0px 20px; width:50%">
@@ -31,7 +31,6 @@
                             style="height: 30px; padding:0px 10px; margin:15px 0px 0px 11px; width:50%"
                             required>
                     </div>
-                    <input type="hidden" id="account_id" name="account_id">
                     <div class="flex mt-6 justify-center text-white">
                         <button type="submit"
                             style="background: #4D96EB; width:100px; height:26px; border:0px solid; border-radius: 5px">Save</button>
