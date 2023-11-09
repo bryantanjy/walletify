@@ -12,9 +12,9 @@ return new class extends Migration
     public function up(): void
     {
         Schema::create('part_allocations', function (Blueprint $table) {
-            $table->id('part_allocation_id');
+            $table->id();
             $table->unsignedBigInteger('budget_id');
-            $table->foreign('budget_id')->references('budget_id')->on('budgets')->onUpdate('cascade')->onDelete('cascade');
+            $table->foreign('budget_id')->references('id')->on('budgets')->onUpdate('cascade')->onDelete('cascade');
             $table->string('name');
             $table->decimal('amount', 10, 2);
             $table->timestamps();

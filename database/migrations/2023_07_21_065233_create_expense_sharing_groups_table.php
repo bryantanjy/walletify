@@ -12,7 +12,7 @@ return new class extends Migration
     public function up(): void
     {
         Schema::create('expense_sharing_groups', function (Blueprint $table) {
-            $table->bigIncrements('group_id');
+            $table->id();
             $table->string('name');
             $table->string('description')->nullable();
             $table->timestamps();
