@@ -19,7 +19,7 @@ class AccountFactory extends Factory
         return [
             'user_id' => 1,
             'type' => $this->faker->randomElement(['General', 'Saving Account', 'Credit/Debit Card', 'Cash', 'Insurance', 'Loan', 'Investment']),
-            'name' => $this->faker->name,
+            'name' => $this->faker->word,
         ];
     }
 }

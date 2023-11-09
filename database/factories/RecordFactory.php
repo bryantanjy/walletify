@@ -19,8 +19,8 @@ class RecordFactory extends Factory
     {
         return [
             'user_id' => 1,
-            'account_id' => rand(1, 2),
-            'category_id' => $this->faker->rand(1,14),
+            'account_id' => $this->faker->numberBetween(2, 6),
+            'category_id' => $this->faker->numberBetween(1, 14),
             'group_id' => null,
             'type' => $this->faker->randomElement(['Expense', 'Income']),
             'amount' => $this->faker->randomFloat(2, 1, 100),
