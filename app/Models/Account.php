@@ -11,11 +11,11 @@ use Illuminate\Database\Eloquent\Factories\HasFactory;
 class Account extends Model
 {
     use HasFactory;
-    protected $primaryKey = 'account_id';
+
     protected $fillable = [
         'user_id',
-        'account_type',
-        'account_name',
+        'type',
+        'name',
     ];
 
     public function user()
@@ -25,6 +25,6 @@ class Account extends Model
 
     public function records()
     {
-        return $this->hasMany(Record::class, 'account_id', 'account_id');
+        return $this->hasMany(Record::class, 'account_id');
     }
 }

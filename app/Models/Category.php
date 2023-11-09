@@ -9,11 +9,8 @@ class Category extends Model
 {
     use HasFactory;
 
-    protected $primaryKey = 'category_id';
-    public $incrementing = false;
-    protected $keyType = 'string';
     protected $fillable = [
-        'category_name',
+        'name',
     ];
     
     public function pac()

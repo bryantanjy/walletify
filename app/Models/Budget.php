@@ -9,9 +9,8 @@ class Budget extends Model
 {
     use HasFactory;
 
-    protected $primaryKey = 'budget_id';
     protected $fillable = [
-        'template_name',
+        'type',
         'user_id',
         'group_id',
     ];

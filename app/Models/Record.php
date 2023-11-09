@@ -11,17 +11,16 @@ class Record extends Model
 {
     use HasFactory;
 
-    protected $primaryKey = 'record_id';
     protected $fillable = [
         'user_id',
         'account_id',
         'category_id',
         'group_id',
-        'record_type',
+        'type',
         'amount',
         'date',
         'time',
-        'record_description',
+        'description',
     ];
 
     public function user()
@@ -31,11 +30,11 @@ class Record extends Model
 
     public function account()
     {
-        return $this->belongsTo(Account::class, 'account_id', 'account_id');
+        return $this->belongsTo(Account::class, 'account_id', 'id');
     }
 
     public function category()
     {
-        return $this->belongsTo(Category::class, 'category_id', 'category_id');
+        return $this->belongsTo(Category::class, 'category_id', 'id');
     }
 }
