@@ -5,11 +5,13 @@ namespace App\Models;
 use App\Models\BudgetTemplatePart;
 use App\Models\PartAllocationCategory;
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Database\Eloquent\SoftDeletes;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 
 class PartAllocation extends Model
 {
     use HasFactory;
+    use SoftDeletes;
 
     protected $fillable = [
         'budget_id',
