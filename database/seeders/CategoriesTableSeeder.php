@@ -14,20 +14,20 @@ class CategoriesTableSeeder extends Seeder
     public function run()
     {
         $categories = [
-            ['category_name' => 'Food & Drink'],
-            ['category_name' => 'Housing'],
-            ['category_name' => 'Shopping'],
-            ['category_name' => 'Travel'],
-            ['category_name' => 'Transportation'],
-            ['category_name' => 'Utilities'],
-            ['category_name' => 'Entertainment'],
-            ['category_name' => 'Education'],
-            ['category_name' => 'Personal Care'],
-            ['category_name' => 'Gift & Donations'],
-            ['category_name' => 'Investments'],
-            ['category_name' => 'Health & Fitness'],
-            ['category_name' => 'Miscellaneous'],
-            ['category_name' => 'Income'],
+            ['name' => 'Food & Drink'],
+            ['name' => 'Housing'],
+            ['name' => 'Shopping'],
+            ['name' => 'Travel'],
+            ['name' => 'Transportation'],
+            ['name' => 'Utilities'],
+            ['name' => 'Entertainment'],
+            ['name' => 'Education'],
+            ['name' => 'Personal Care'],
+            ['name' => 'Gift & Donations'],
+            ['name' => 'Investments'],
+            ['name' => 'Health & Fitness'],
+            ['name' => 'Miscellaneous'],
+            ['name' => 'Income'],
         ];
 
         // Insert the categories into the 'categories' table
