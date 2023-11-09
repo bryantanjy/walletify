@@ -23,7 +23,7 @@ class RecordFactory extends Factory
             'category_id' => $this->faker->rand(1,14),
             'group_id' => null,
             'type' => $this->faker->randomElement(['Expense', 'Income']),
-            'amount' => $this->faker->randomFloat(2, 0, 70),
+            'amount' => $this->faker->randomFloat(2, 1, 100),
             'date' => $this->faker->date,
             'time' => $this->faker->time,
             'description' => $this->faker->sentence(2),
