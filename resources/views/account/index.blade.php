@@ -38,20 +38,20 @@
                         <div class="card rounded-md bg-white">
                             <div class="flex mb-4 data-row">
                                 <div class="w-1/5 h-12 ml-4 flex items-center">
-                                    {{ $account->account_name }}
+                                    {{ $account->name }}
                                 </div>
                                 <div class="w-2/5 h-12 flex items-center" style="font-size: 14px; color:gray">
-                                    {{ $account->account_type }}
+                                    {{ $account->type }}
                                 </div>
                                 <div class="w-1/5 h-12 flex items-center">
                                     RM 0.00
                                 </div>
                                 <div class="w-1/5 flex justify-end mr-4">
-                                    <button class="editAccountBtn mr-4" value="{{ $account->account_id }}">
+                                    <button class="editAccountBtn mr-4" value="{{ $account->id }}">
                                         <i class="fas fa-edit"></i>
                                     </button>
                                     <button class="deleteAccountBtn"
-                                        onclick="showDeleteModal({{ $account->account_id }})">
+                                        onclick="showDeleteModal({{ $account->id }})">
                                         <i class="fas fa-trash"></i>
                                     </button>
                                 </div>
@@ -84,7 +84,7 @@
             <div class="flex justify-center items-center space-x-4">
                 @if(isset($account))
                 <form id="deleteForm" method="POST"
-                    action="{{ route('account.delete', ['account' => $account->account_id]) }}">
+                    action="{{ route('account.delete', ['account' => $account->id]) }}">
                     @csrf
                     @method('DELETE')
                     <button type="submit" style="width: 120px"

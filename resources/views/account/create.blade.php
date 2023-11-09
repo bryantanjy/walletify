@@ -14,7 +14,7 @@
                         @csrf
                         <div class="mb-3">
                             <label for="accountType">Account Type</label>
-                            <select name="account_type" class="rounded-md"
+                            <select name="type" class="rounded-md"
                                 style="height: 30px; padding:0px 10px; margin:15px 0px 0px 20px; width:50%" required>
                                 <option value="General">General</option>
                                 <option value="Saving Account">Saving Account</option>
@@ -27,7 +27,7 @@
                         </div>
                         <div class="mb-3">
                             <label for="accountName">Account Name</label>
-                            <input type="text" name="account_name" class="rounded-md" style="height: 30px; padding:0px 10px; margin:15px 0px 0px 11px; width:50%" placeholder="Account Name" required>
+                            <input type="text" name="name" class="rounded-md" style="height: 30px; padding:0px 10px; margin:15px 0px 0px 11px; width:50%" placeholder="Account Name" required>
                         </div>
                         <div class="flex mt-6 justify-center text-white">
                             <button type="submit"
