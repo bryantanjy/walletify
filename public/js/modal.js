@@ -11,9 +11,9 @@ $(document).on('click', '.editAccountBtn', function () {
         type: 'GET',
         url: '/account/edit/' + accountId,
         success: function (data) {
-            editModal.find('#account_id').val(data.account_id);
-            editModal.find('#account_type').val(data.account_type);
-            editModal.find('#account_name').val(data.account_name);
+            editModal.find('#account_id').val(data.id);
+            editModal.find('#account_type').val(data.type);
+            editModal.find('#account_name').val(data.name);
 
             editModal.modal('show');
         },
@@ -158,7 +158,7 @@ document.addEventListener("DOMContentLoaded", function () {
     });
 
     // Default template js
-    
+
 });
 
 // js for edit budget
