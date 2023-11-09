@@ -17,20 +17,16 @@ class RecordFactory extends Factory
      */
     public function definition(): array
     {
-        $categories = ['C01', 'C02', 'C03', 'C04', 'C05', 'C06', 'C07', 'C08', 'C09', 'C10', 'C11', 'C12', 'C13', 'C14'];
-
         return [
-
-            
             'user_id' => 1,
             'account_id' => rand(1, 2),
-            'category_id' => $this->faker->randomElement($categories),
+            'category_id' => $this->faker->rand(1,14),
             'group_id' => null,
-            'record_type' => $this->faker->randomElement(['Expense', 'Income']),
+            'type' => $this->faker->randomElement(['Expense', 'Income']),
             'amount' => $this->faker->randomFloat(2, 0, 70),
             'date' => $this->faker->date,
             'time' => $this->faker->time,
-            'record_description' => $this->faker->sentence(2),
+            'description' => $this->faker->sentence(2),
         ];
     }
 }

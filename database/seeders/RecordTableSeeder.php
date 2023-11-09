@@ -13,6 +13,6 @@ class RecordTableSeeder extends Seeder
      */
     public function run(): void
     {
-        Record::factory()->count(10)->create();
+        Record::factory()->count(20)->create();
     }
 }
