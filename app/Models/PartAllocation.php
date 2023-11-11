@@ -2,8 +2,8 @@
 
 namespace App\Models;
 
-use App\Models\BudgetTemplatePart;
-use App\Models\PartAllocationCategory;
+use App\Models\Budget;
+use App\Models\CategoryPartAllocation;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\SoftDeletes;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
@@ -24,8 +24,8 @@ class PartAllocation extends Model
         return $this->belongsTo(Budget::class, 'budget_id', 'id');
     }
 
-    public function partAllocationCategories()
+    public function categoryPartAllocations()
     {
-        return $this->hasMany(PartAllocationCategory::class, 'part_allocation_id');
+        return $this->hasMany(CategoryPartAllocation::class, 'part_allocation_id');
     }
 }
