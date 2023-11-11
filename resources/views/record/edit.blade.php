@@ -83,11 +83,3 @@
         </div>
     </div>
 </div>
-
-<script>
-    document.getElementById("date").valueAsDate = new Date();
-    const now = new Date();
-    const currentTime = `${now.getHours()}:${(now.getMinutes()<10?'0':'') + now.getMinutes()}`;
-    const timeInput = document.getElementById('time');
-    timeInput.value = currentTime;
-</script>
