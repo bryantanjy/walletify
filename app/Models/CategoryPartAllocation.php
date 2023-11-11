@@ -7,11 +7,10 @@ use App\Models\PartAllocation;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 
-class PartAllocationCategory extends Model
+class CategoryPartAllocation extends Model
 {
     use HasFactory;
 
-    protected $primaryKey = 'pac_id';
     protected $fillable = [
         'part_allocation_id',
         'category_id',
