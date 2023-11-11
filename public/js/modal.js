@@ -59,24 +59,24 @@ function showDeleteModal(accountId) {
 // modal edit for record
 $(document).on('click', '.editRecordBtn', function () {
     var editRecord = $('#editRecordModal');
-    var recordId = $(this).data('record-id');
+    var recordId = $(this).data('id');
     var accountId = $(this).data('account-id');
-    var recordType = $(this).data('record-type');
+    var recordType = $(this).data('type');
     var categoryId = $(this).data('category-id');
     var amount = $(this).data('amount');
     var date = $(this).data('date');
     var time = $(this).data('time');
-    var recordDescription = $(this).data('record-description');
+    var recordDescription = $(this).data('description');
 
     // Populate the modal fields with the record data
     editRecord.find('#record_id').val(recordId);
     editRecord.find('#account_id').val(accountId);
-    editRecord.find('#record_type').val(recordType);
+    editRecord.find('#type').val(recordType);
     editRecord.find('#category_id').val(categoryId);
     editRecord.find('#amount').val(amount);
     editRecord.find('#date').val(date);
     editRecord.find('#time').val(time);
-    editRecord.find('#record_description').val(recordDescription);
+    editRecord.find('#description').val(recordDescription);
 
     editRecord.modal('show');
 });
@@ -142,7 +142,7 @@ document.addEventListener("DOMContentLoaded", function () {
                         <label for="partCategory${partIndex}" class="w-32 pr-2 mt-4">Category</label>
                         <select class="rounded-md categorySelect"  name="category_id[${partIndex}][]" id="category_id${partIndex}" multiple
                             required>
-                            ${categories.map(category => `<option value="${category.category_id}">${category.category_name}</option>`).join('')}
+                            ${categories.map(category => `<option value="${category.id}">${category.name}</option>`).join('')}
                         </select>
                     </div>
                 `;
