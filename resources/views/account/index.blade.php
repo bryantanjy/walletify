@@ -23,7 +23,7 @@
                     <div class="flex justify-center">
                         <button class="justify-center rounded text-white createAccountBtn"
                             style="background: #4D96EB; width: 125px; height: 26px" data-toggle="modal"
-                            data-target="#createAccountModal">
+                            data-target="#createAccountModal" >
                             <i class="far fa-plus-square mr-1" style="color: #ffffff;"></i>
                             <span>Add</span>
                         </button>

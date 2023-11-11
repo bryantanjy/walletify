@@ -9,24 +9,24 @@
             <x-section-border />
             <div class="modal-body">
                 @if(isset($record))
-                <form id="editRecord" method="POST" action="{{ route('record.update', ['record'=> $record->record_id]) }}">
+                <form id="editRecord" method="POST" action="{{ route('record.update', ['record'=> $record->id]) }}">
                     @csrf
                     @method('PUT')
                     <div class="grid grid-cols-1 gap-1">
                         <div class="flex items-center">
                             <label for="accountName" class="w-32 text-left pr-2 mt-4">Account</label>
-                            <select name="account_id" id="account_id" class="rounded-md" value="{{$record->account_id}}"
+                            <select name="account_id" id="account_id" class="rounded-md" 
                                 style="height: 30px; padding:0px 10px; margin:15px 0px 0px 20px;width:175px;"
                                 required>
                                 <option value="" selected disabled>Select an account</option>
                                 @foreach ($accounts as $account)
-                                    <option value="{{ $account->account_id }}" >{{ $account->account_name }}</option>
+                                    <option value="{{ $account->id }}" >{{ $account->name }}</option>
                                 @endforeach
                             </select>
                         </div>
                         <div class="flex items-center">
                             <label for="recordType" class="w-32 text-left pr-2 mt-4">Type of Record</label>
-                            <select name="record_type" id="record_type" class="rounded-md" value="{{$record->record_type}}"
+                            <select name="type" id="type" class="rounded-md" 
                                 style="height: 30px;width:175px; padding:0px 10px; margin:15px 0px 0px 20px;"
                                 required>
                                 <option value="Expense" >Expense</option>
@@ -35,12 +35,12 @@
                         </div>
                         <div class="flex items-center">
                             <label for="category" class="w-32 text-left pr-2 mt-4">Category</label>
-                            <select name="category_id" id="category_id" class="rounded-md" value="{{$record->category_id}}"
+                            <select name="category_id" id="category_id" class="rounded-md" 
                                 style="height: 30px; padding:0px 10px; margin:15px 0px 0px 20px;width:175px;"
                                 required>
                                 <option value="" selected disabled>Select a category</option>
                                 @foreach ($categories as $category)
-                                    <option value="{{ $category->category_id }}" >{{ $category->category_name }}</option>
+                                    <option value="{{ $category->id }}" >{{ $category->name }}</option>
                                 @endforeach
                             </select>
                         </div>
@@ -65,8 +65,8 @@
                         </div>
                         <div class="flex items-center">
                             <label for="description" class="w-32 text-left pr-2 mt-4">Description</label>
-                            <textarea type="text" name="record_description" id="record_description" class="rounded-md flex-grow"
-                                placeholder="Remarks" maxlength="50" style="height: 60px; padding:0px 10px; margin:15px 0px 0px 20px;"></textarea>
+                            <textarea type="text" name="description" id="description" class="rounded-md flex-grow"
+                                placeholder="Remarks" maxlength="255" style="height: 60px; padding:0px 10px; margin:15px 0px 0px 20px;"></textarea>
                         </div>
                     </div>
                     <input type="hidden" id="record_id" name="record_id">
@@ -83,3 +83,11 @@
         </div>
     </div>
 </div>
+
+<script>
+    document.getElementById("date").valueAsDate = new Date();
+    const now = new Date();
+    const currentTime = `${now.getHours()}:${(now.getMinutes()<10?'0':'') + now.getMinutes()}`;
+    const timeInput = document.getElementById('time');
+    timeInput.value = currentTime;
+</script>

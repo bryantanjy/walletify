@@ -41,7 +41,7 @@
                             <label class="flex items-center">
                                 <input type="checkbox" class="mr-4 category-filter" name="category[]"
                                     value="{{ $category->category_id }}">
-                                {{ $category->category_name }}
+                                {{ $category->name }}
                             </label>
                         @endforeach
 
@@ -101,14 +101,14 @@
                         <div class="grid grid-cols-9 px-5 bg-gray-200 items-center record-list mt-1 rounded-md">
                             <div class="flex items-center col-start-1 col-end-1"><input type="checkbox" name="row"
                                     id="row"></div>
-                            <div class="col-start-2 col-end-2">{{ $record->category->category_name }}</div>
+                            <div class="col-start-2 col-end-2">{{ $record->category->name }}</div>
                             <div class="col-start-3 col-end-5 flex justify-evenly">
                                 {{ Carbon\Carbon::parse($record->date)->format('d/m/Y') }} &nbsp;
                                 {{ Carbon\Carbon::parse($record->time)->format('h:i A') }}</div>
-                            <div class="col-start-5 col-end-7">{{ $record->record_description }}</div>
+                            <div class="col-start-5 col-end-7">{{ $record->description }}</div>
                             <div class="col-start-8 col-end-8">{{ $record->user->name }}</div>
                             <div class="text-right dropdown-container col-start-9 col-end-9" tabindex="-1">
-                                @if ($record->record_type === 'Expense')
+                                @if ($record->type === 'Expense')
                                     <span style="color: rgb(250, 56, 56); font-weight:bold;">-RM
                                         {{ $record->amount }}</span>
                                 @else
@@ -117,16 +117,16 @@
                                 @endif
                                 <i class="fa-solid fa-ellipsis-vertical ml-3 menu"></i>
                                 <div class="dropdown shadow">
-                                    <button class="editRecordBtn" data-record-id="{{ $record->record_id }}"
+                                    <button class="editRecordBtn" data-id="{{ $record->id }}"
                                         data-account-id="{{ $record->account_id }}"
-                                        data-record-type="{{ $record->record_type }}"
+                                        data-type="{{ $record->type }}"
                                         data-category-id="{{ $record->category_id }}"
                                         data-amount="{{ $record->amount }}" data-date="{{ $record->date }}"
                                         data-time="{{ $record->time }}"
-                                        data-record-description="{{ $record->record_description }}">Edit</button>
+                                        data-description="{{ $record->description }}">Edit</button>
                                     {{-- <a href="{{ route('record.edit', ['record' => $record->record_id]) }}">Edit</a> --}}
                                     <button class="deleteRecordBtn"
-                                        onclick="recordDeleteModal({{ $record->record_id }})">Delete</button>
+                                        onclick="recordDeleteModal({{ $record->id }})">Delete</button>
                                 </div>
                             </div>
                         </div>
@@ -157,7 +157,7 @@
             <div class="flex justify-center items-center space-x-4">
                 @if (isset($record))
                     <form id="deleteForm" method="POST"
-                        action="{{ route('record.delete', ['record' => $record->record_id]) }}">
+                        action="{{ route('record.delete', ['record' => $record->id]) }}">
                         @csrf
                         @method('DELETE')
                         <button type="submit" style="width: 120px"
