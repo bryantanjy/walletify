@@ -21,8 +21,7 @@ class Record extends Model
         'group_id',
         'type',
         'amount',
-        'date',
-        'time',
+        'datetime',
         'description',
     ];
 
