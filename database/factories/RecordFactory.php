@@ -18,14 +18,13 @@ class RecordFactory extends Factory
     public function definition(): array
     {
         return [
-            'user_id' => 1,
-            'account_id' => $this->faker->numberBetween(1, 3),
+            'user_id' => $this->faker->numberBetween(1,2),
+            'account_id' => $this->faker->numberBetween(1, 9),
             'category_id' => $this->faker->numberBetween(1, 14),
             'group_id' => null,
             'type' => $this->faker->randomElement(['Expense', 'Income']),
             'amount' => $this->faker->randomFloat(2, 1, 100),
-            'date' => $this->faker->date,
-            'time' => $this->faker->time,
+            'datetime' => $this->faker->dateTime(),
             'description' => $this->faker->sentence(2),
         ];
     }

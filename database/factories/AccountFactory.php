@@ -17,9 +17,9 @@ class AccountFactory extends Factory
     public function definition(): array
     {
         return [
-            'user_id' => 1,
+            'user_id' => $this->faker->numberBetween(1,2),
             'type' => $this->faker->randomElement(['General', 'Saving Account', 'Credit/Debit Card', 'Cash', 'Insurance', 'Loan', 'Investment']),
-            'name' => $this->faker->word,
+            'name' => $this->faker->word(),
         ];
     }
 }
