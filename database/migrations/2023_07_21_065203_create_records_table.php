@@ -23,8 +23,7 @@ return new class extends Migration
             // $table->foreign('group_id')->references('group_id')->on('expense_sharing_groups')->onDelete('cascade');
             $table->string('type');
             $table->decimal('amount', 10, 2);
-            $table->date('date');
-            $table->string('time');
+            $table->timestamps('datetime');
             $table->string('description')->nullable();
             $table->timestamps();
             $table->softDeletes();
