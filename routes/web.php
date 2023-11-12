@@ -42,6 +42,7 @@ Route::group(['prefix' => 'account'], function () {
 Route::group(['prefix' => 'record'], function () {
     Route::get('/create', [RecordController::class, 'create'])->name('record.create');
     Route::get('/', [RecordController::class, 'index'])->name('record.index');
+    Route::get('/recordList', [RecordController::class, 'recordList'])->name('record.recordList');
     Route::post('/store', [RecordController::class, 'store'])->name('record.store');
     Route::get('/edit/{record}', [RecordController::class, 'edit'])->name('record.edit');
     Route::put('/update/{record}', [RecordController::class, 'update'])->name('record.update');
