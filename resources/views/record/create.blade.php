@@ -1,71 +1,72 @@
-
 <div id="createRecordModal" class="modal fade" tabindex="-1" role="dialog" aria-labelledby="createRecordModalLabel"
     aria-hidden="true">
-    <div class="modal-dialog relative p-4 w-full  h-full md:h-auto" role="document">
+    <div class="modal-dialog modal-lg relative p-4">
+
         <!--Modal Content-->
-        <div class="modal-content-m relative p-4 bg-white rounded-lg shadow sm:p-5">
+        <div class="modal-content relative p-4 rounded-lg" style="background-color: #E1F1FA">
             <div class="modal-header flex justify-between items-center pb-3">
-                <h2 class="font-semibold " style="font-size:20px">Add Record</h2>
-                <button type="button" class="close" data-dismiss="modal" aria-label="Close">&times;</button>
+                <h2 class="font-semibold" style="font-size:20px">Add Record</h2>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close">
+                    <i class="fa-solid fa-xmark"></i>
+                </button>
             </div>
-            <x-section-border />
-            <div class="modal-body flex flex-col items-center">
-                <form action="{{ route('record.store') }}" method="POST">
+            <div class="modal-body">
+                <form id="createForm" action="{{ route('record.store') }}" method="POST">
                     @csrf
-                    <div class="grid grid-cols-1 gap-1">
-                        <div class="flex items-center">
-                            <label for="accountName" class="w-32 pr-2 mt-4">Account</label>
-                            <select name="account_id" id="account_id" class="rounded-md"
-                                style="height: 30px; padding:0px 10px; margin:15px 0px 0px 20px;width:175px;"
-                                required>
+                    <div>
+                        @if ($errors->any())
+                            <div class="text-red-500">
+                                <ul>
+                                    @foreach ($errors->all() as $error)
+                                        <li>{{ $error }}</li>
+                                    @endforeach
+                                </ul>
+                            </div>
+                        @endif
+                        <div class="flex items-center form-group">
+                            <label for="account_id" class="w-32 pr-2 mt-4">Account Type</label>
+                            <select name="account_id" class="rounded-md border-0" value="{{ old('account_id') }}"
+                                style="height: 30px; width:225px; padding:0px 10px; margin:15px 0px 0px 20px;" required>
                                 <option value="" selected disabled>Select an account</option>
                                 @foreach ($accounts as $account)
                                     <option value="{{ $account->id }}">{{ $account->name }}</option>
                                 @endforeach
                             </select>
                         </div>
-                        <div class="flex items-center">
-                            <label for="recordType" class="w-32 pr-2 mt-4">Type of Record</label>
-                            <select name="record_type" class="rounded-md"
-                                style="height: 30px;width:175px; padding:0px 10px; margin:15px 0px 0px 20px;"
-                                required>
+                        <div class="flex items-center form-group">
+                            <label for="type" class="w-32 pr-2 mt-4">Type of record</label>
+                            <select name="type" class="rounded-md border-0" value="{{ old('type') }}"
+                                style="height: 30px; width:225px; padding:0px 10px; margin:15px 0px 0px 20px;" required>
                                 <option value="Expense">Expense</option>
                                 <option value="Income">Income</option>
                             </select>
                         </div>
-                        <div class="flex items-center">
-                            <label for="category" class="w-32 pr-2 mt-4">Category</label>
-                            <select name="category_id" id="category_id" class="rounded-md"
-                                style="height: 30px; padding:0px 10px; margin:15px 0px 0px 20px;width:175px;"
-                                required>
+                        <div class="flex items-center form-group">
+                            <label for="category_id" class="w-32 pr-2 mt-4">Category</label>
+                            <select name="category_id" class="rounded-md border-0" value="{{ old('category_id') }}"
+                                style="height: 30px; width:225px; padding:0px 10px; margin:15px 0px 0px 20px;" required>
                                 <option value="" selected disabled>Select a category</option>
                                 @foreach ($categories as $category)
                                     <option value="{{ $category->id }}">{{ $category->name }}</option>
                                 @endforeach
                             </select>
                         </div>
-                        <div class="flex items-center">
+                        <div class="flex items-center form-group">
                             <label for="amount" class="w-32 pr-2 mt-4">Amount</label>
-                            <input type="number" step="0.01" class="rounded-md" name="amount" id="amount" placeholder="0.00"
-                                style="height: 30px; padding:0px 10px; margin:15px 0px 0px 20px;text-align:right;width:175px;"
-                                required>
+                            <input type="number" step="0.01" class="rounded-md border-0" name="amount"
+                                placeholder="0.00" value="{{ old('amount') }}"
+                                style="height: 30px; width:225px; padding:0px 10px; margin:15px 0px 0px 20px; text-align:right;" required>
                         </div>
-                        <div class="flex items-center">
-                            <label for="date" class="w-32 pr-2 mt-4">Date</label>
-                            <input type="date" class="rounded-md" name="date" id="date"
-                                placeholder="1/1/2023"
-                                style="height: 30px;  margin:15px 0px 0px 20px;width:175px;"
-                                required>
-                            <label for="time" class="w-32 pr-2 mt-4 ml-10">Time</label>
-                            <input type="time" class="rounded-md" name="time" id="time"
-                                placeholder="00:00 AM"
-                                style="height: 30px; margin:15px 0px 0px 20px;width:175px;"
-                                required>
+                        <div class="flex items-center form-group">
+                            <label for="datetime" class="w-32 pr-2 mt-4">Date</label>
+                            <input type="datetime-local" class="rounded-md border-0" name="datetime"
+                                value="{{ old('datetime') }}"
+                                style="height: 30px; width:225px; margin:15px 0px 0px 20px;" required>
                         </div>
-                        <div class="flex items-center">
+                        <div class="flex items-center form-group">
                             <label for="description" class="w-32 pr-2 mt-4">Description</label>
-                            <textarea type="text" name="record_description" id="record_description" class="rounded-md flex-grow" placeholder="Remarks"
-                                maxlength="50" style="height: 60px; padding:0px 10px; margin:15px 0px 0px 20px;"></textarea>
+                            <textarea type="text" name="description" class="rounded-md flex-grow border-0" value="{{ old('description') }}"
+                                placeholder="Remarks" maxlength="255" style="height: 60px; padding:0px 10px; margin:15px 0px 0px 20px;"></textarea>
                         </div>
                         <div class="flex mt-6 justify-center">
                             <button type="submit"
@@ -78,11 +79,3 @@
         </div>
     </div>
 </div>
-
-<script>
-    document.getElementById("date").valueAsDate = new Date();
-    const now = new Date();
-    const currentTime = `${now.getHours()}:${(now.getMinutes()<10?'0':'') + now.getMinutes()}`;
-    const timeInput = document.getElementById('time');
-    timeInput.value = currentTime;
-</script>
