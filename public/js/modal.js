@@ -57,37 +57,15 @@ function showDeleteModal(accountId) {
 
 // Record Section
 // modal edit for record
-$(document).on('click', '.editRecordBtn', function () {
-    var editRecord = $('#editRecordModal');
-    var recordId = $(this).data('id');
-    var accountId = $(this).data('account-id');
-    var recordType = $(this).data('type');
-    var categoryId = $(this).data('category-id');
-    var amount = $(this).data('amount');
-    var date = $(this).data('date');
-    var time = $(this).data('time');
-    var recordDescription = $(this).data('description');
 
-    // Populate the modal fields with the record data
-    editRecord.find('#record_id').val(recordId);
-    editRecord.find('#account_id').val(accountId);
-    editRecord.find('#type').val(recordType);
-    editRecord.find('#category_id').val(categoryId);
-    editRecord.find('#amount').val(amount);
-    editRecord.find('#date').val(date);
-    editRecord.find('#time').val(time);
-    editRecord.find('#description').val(recordDescription);
-
-    editRecord.modal('show');
-});
 
 // modal delete for record
-function recordDeleteModal(recordId) {
-    var deleteForm = document.getElementById('deleteForm');
-    var modal = new bootstrap.Modal(document.getElementById('deleteModal'));
-    deleteForm.action = '/record/delete/' + recordId;
-    modal.show();
-}
+// function recordDeleteModal(recordId) {
+//     var deleteForm = document.getElementById('deleteForm');
+//     var modal = new bootstrap.Modal(document.getElementById('deleteModal'));
+//     deleteForm.action = '/record/delete/' + recordId;
+//     modal.show();
+// }
 
 // Budget Section
 // open create modal
