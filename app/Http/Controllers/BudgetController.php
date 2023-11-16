@@ -4,6 +4,7 @@ namespace App\Http\Controllers;
 
 use App\Models\Budget;
 use App\Models\Category;
+use App\Models\CategoryPartAllocation;
 use Illuminate\Http\Request;
 use App\Models\PartAllocation;
 use Illuminate\Support\Facades\Auth;
@@ -18,62 +19,45 @@ class BudgetController extends Controller
             $user = auth()->user();
             $categories = Category::all();
             $budgets = Budget::where('user_id', $user->id)->get();
-
-            // $budgetData = [];
-            $partData = [];
+    
             foreach ($budgets as $budget) {
-                if (!$budget) {
-                    continue;
-                }
-
-
-                $partAllocations = PartAllocation::where('budget_id', $budget->budget_id)->get();
                 $totalAllocationAmount = 0;
-
-                foreach ($budget->partAllocations as $part) {
+    
+                foreach ($budget->partAllocations as $partAllocation) {
                     $totalExpense = 0;
                     $totalIncome = 0;
-                    $categoryIds = [];
-
-                    foreach ($part->partAllocationCategories as $pac) {
-                        $records = Record::where('user_id', $user->id)->where('category_id', $pac->category_id)->get();
-                        $category = Category::find($pac->category_id);
-                        $categoryIds[] = $category->category_id;
-
+    
+                    foreach ($partAllocation->categories as $category) {
+    
+                        $records = Record::where('user_id', $user->id)
+                            ->where('category_id', $category->id)
+                            ->get();
+    
                         foreach ($records as $record) {
-                            if ($record->record_type == 'Expense') {
+                            if ($record->type == 'Expense') {
                                 $totalExpense += $record->amount;
                             } else {
                                 $totalIncome += $record->amount;
                             }
                         }
                     }
-
+    
                     $currentBudget = $totalExpense - $totalIncome;
-                    $percentage = ($currentBudget / $part->allocation_amount) * 100;
+                    $percentage = ($currentBudget / $partAllocation->amount) * 100;
                     $percentageWidth = min(max($percentage, 0), 100);
-
-                    $partData[] = [
-                        'part' => $part,
-                        'currentBudget' => $currentBudget,
-                        'percentage' => $percentage,
-                        'percentageWidth' => $percentageWidth,
-                    ];
-
-                    $totalAllocationAmount += $part->allocation_amount;
+    
+                    $partAllocation->currentBudget = $currentBudget;
+                    $partAllocation->percentage = $percentage;
+                    $partAllocation->percentageWidth = $percentageWidth;
+                    $totalAllocationAmount += $partAllocation->amount;
                 }
 
-                // $budgetData[] = [
-                //     'budget' => $budget,
-                //     'total_allocation_amount' => $totalAllocationAmount,
-                //     'parts' => $partData,
-                // ];
             }
-
+    
             if ($budgets->count() > 0) {
-                return view('budget.index', compact('categories', 'budgets', 'partData', 'totalAllocationAmount', 'partAllocations'));
+                return view('budget.index', compact('categories', 'budgets', 'totalAllocationAmount'));
             } else {
-                return view('budget.index', compact('categories', 'budgets', 'partData'));
+                return view('budget.index', compact('categories', 'budgets'));
             }
         } else {
             return redirect()->route('login');
@@ -96,37 +80,32 @@ class BudgetController extends Controller
 
     public function storeDefaultTemplate(Request $request)
     {
-        try {
-            // Create a new budget record
-            $budget = Budget::create([
-                'type' => $request->type,
-                'user_id' => auth()->id(),
-                'group_id' => null,
+
+        // Create a new budget record
+        $budget = Budget::create([
+            'user_id' => auth()->id(),
+            'type' => $request->type,
+            'group_id' => null,
+        ]);
+
+        foreach ($request->input('part_name') as $key => $partName) {
+            $partAllocation = new PartAllocation([
+                'budget_id' => $budget->id,
+                'name' => $partName,
+                'amount' => $request->input('allocation_amount')[$key],
             ]);
+            // Save the part allocation
+            $partAllocation->save();
 
-            // Loop through the form data
-            for ($i = 0; $i < count($request->input('part_name')); $i++) {
-                // Create a new budget template part record
-                $partAllocation = PartAllocation::create([
-                    'budget_id' => $budget->budget_id,
-                    'part_name' => $request->input('part_name')[$i],
-                    'allocation_amount' => $request->input('allocation_amount')[$i],
-                ]);
+            // Attach categories to the part allocation
+            $categoryIds = $request->input('category_id')[$key];
+            $partAllocation->categories()->attach($categoryIds);
 
-                // Create a new part allocation category record for each category selected for this part
-                foreach ($request->input('category_id.' . ($i + 1)) as $categoryId) {
-                    PartAllocationCategory::create([
-                        'part_allocation_id' => $partAllocation->part_allocation_id,
-                        'category_id' => $categoryId,
-                    ]);
-                }
-            }
-
-            return redirect()->route('budget.index')->with('success', 'Default template created successfully');
-        } catch (\Exception $e) {
-            // Handle the error as needed, e.g., log it or return an error response
-            return redirect()->route('budget.index')->with('error', 'Error creating default template');
+            // Store the part allocation in the array
+            $partAllocations[] = $partAllocation;
         }
+
+        return redirect()->route('budget.index')->with('success', 'Default template created successfully');
     }
 
     public function storeUserTemplate(Request $request)
@@ -160,7 +139,7 @@ class BudgetController extends Controller
 
                 // Create a new part allocation category record for each category selected for this part
                 foreach ($request->input('category_id.' . $key) as $categoryId) {
-                    PartAllocationCategory::create([
+                    CategoryPartAllocation::create([
                         'part_allocation_id' => $partAllocation->part_allocation_id,
                         'category_id' => $categoryId,
                     ]);
