@@ -1,8 +1,6 @@
 <head>
     <script src="https://code.jquery.com/jquery-3.7.1.min.js"
         integrity="sha256-/JqT3SQfawRcv/BIHPThkBvs0OEvtFFmqPF/lYI/Cxo=" crossorigin="anonymous"></script>
-    {{-- <script src="https://cdnjs.cloudflare.com/ajax/libs/twitter-bootstrap/4.5.0/js/bootstrap.min.js"
-        integrity="sha256-OFRAJNoaD8L3Br5lglV7VyLRf0itmoBzWUoM+Sji4/8=" crossorigin="anonymous"></script> --}}
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"></script>
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css">
     <link rel="stylesheet" href="https://cdn.datatables.net/1.13.7/css/jquery.dataTables.min.css">
@@ -32,7 +30,6 @@
                             <i class="far fa-plus-square mr-1"></i>
                             <span>Add</span>
                         </button>
-                        {{-- <a href="{{ route('record.create') }}">Create Record</a> --}}
                     </div>
                 </ul>
                 <div class="flex flex-col items-center mt-10">
@@ -130,13 +127,13 @@
                             </div>
                         </div>
                     @endforeach --}}
-                <div class="bg-gray-100 p-3 rounded-md mt-10">
+                <div class="bg-gray-100 p-3 rounded-md mt-6">
                     <div style="font-weight: bold; text-align:right; margin-right:50px; font-size:18px;">
-                        <label for="">Total Balance: </label>
+                        <label for="total_balance">Total Balance: </label>
                         <span>RM {{ $totalBalance }}</span>
                     </div>
 
-                    <table class="hover" id="record-table">
+                    <table class="hover stripe order-column row-border" id="record-table">
                         <thead>
                             <th>Type</th>
                             <th>Date & Time</th>
@@ -163,25 +160,26 @@
 <div class="modal fade" id="deleteModal" tabindex="-1" role="dialog" aria-labelledby="deleteModalLabel"
     aria-hidden="true">
     <div class="modal-dialog" role="document">
-        <div class="modal-content-s relative p-4 text-center bg-white rounded-lg shadow sm:p-5">
+        <div class="modal-content relative p-4 rounded-lg sm:p-5" style="background-color: #E1F1FA">
             <div class="modal-header flex justify-end">
-                <button type="button" class="close " data-dismiss="modal" aria-label="Close">
-                    <span aria-hidden="true">&times;</span>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close">
+                    <i class="fa-solid fa-xmark"></i>
                 </button>
             </div>
+            <input type="hidden" id="recordId" value="">
             <div class="modal-body flex flex-col items-center">
                 Are you sure you want to delete this record?
             </div>
             <div class="flex justify-center items-center space-x-4">
-                @if (isset($record))
+                {{-- @if (isset($record)) --}}
                     <form id="deleteForm" method="POST"
-                        action="{{ route('record.delete', ['record' => $record->id]) }}">
+                        >
                         @csrf
                         @method('DELETE')
                         <button type="submit" style="width: 120px"
                             class="py-2 px-3 text-sm font-medium text-center text-white bg-red-600 rounded-lg hover:bg-red-700 mt-4">Yes</button>
                     </form>
-                @endif
+                {{-- @endif --}}
                 <button type="button" style="width: 120px"
                     class="py-2 px-3 text-sm font-medium text-gray-500 bg-white rounded-lg border border-gray-200 hover:bg-gray-100 hover:text-gray-900 focus:z-10"
                     data-dismiss="modal">Cancel</button>
@@ -265,7 +263,7 @@
 <script>
     $(document).ready(function() {
         var table = $('#record-table').DataTable({
-            iDisplayLength: 20,
+            iDisplayLength: 18,
             dom: '<"left"f>rt<"bottom"ip><"right">',
             processing: true,
             serverSide: true,
@@ -296,6 +294,7 @@
                     className: 'dt-body-center',
                     searchable: false,
                     orderable: false,
+                    
                 }
             ],
             columnDefs: [{
@@ -353,6 +352,7 @@
                 type: 'GET',
                 url: '/record/edit/' + recordId,
                 success: function(data) {
+                    $('#id').val(data.id);
                     $('#account_id').val(data.account_id);
                     $('#category_id').val(data.category_id);
                     $('#amount').val(data.amount);
@@ -362,9 +362,15 @@
                     editModal.modal('show');
                 },
                 error: function(error) {
-                    console.log(error);
+                    console.log('Error fetching record data for editing:', error);
                 }
             });
         });
+
+        $('.deleteRecord').on('click', function() {
+    var recordId = $(this).data('id');
+    $('#recordId').val(recordId);
+    $('#deleteForm').attr('action', '/record/delete/' + recordId);
+});
     });
 </script>

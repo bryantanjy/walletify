@@ -8,9 +8,7 @@ use App\Models\Category;
 use Illuminate\Http\Request;
 use Yajra\DataTables\DataTables;
 use Illuminate\Support\Facades\Auth;
-use Illuminate\Support\Facades\Redirect;
 use Illuminate\Support\Facades\Validator;
-use Symfony\Component\Console\Input\Input;
 
 class RecordController extends Controller
 {
@@ -19,19 +17,6 @@ class RecordController extends Controller
         if (auth()->check()) {
             $user = Auth::user();
             $records = Record::where('user_id', $user->id)->get();
-
-            // if ($request->has('sort')) {
-            //     $sortOption = $request->input('sort');
-            //     if ($sortOption == 'oldest') {
-            //         $query->orderBy('date', 'asc');
-            //     } else {
-            //         $query->orderBy('date', 'desc');
-            //     }
-            // } else {
-            //     $query->orderBy('date', 'desc');
-            // }
-
-            // $records = $query->get();
             $totalExpesne = 0;
             $totalIncome = 0;
 
@@ -74,12 +59,12 @@ class RecordController extends Controller
             ->addColumn('category', function (Record $record) {
                 return $record->category->name;
             })
-            ->addColumn('action', function ($record) {
+            ->addColumn('action', function (Record $record) {
                 // Update Button
-                $editButton = "<button class='editRecord' data-id='" . $record->id . "' data-bs-toggle='modal' data-bs-target='#editRecordModal'><i class='fa-solid fa-pen-to-square'></i></button>";
+                $editButton = "<button class='editRecord' data-id='" . $record->id . "' ><i class='fa-solid fa-pen-to-square'></i></button>";
 
                 // Delete Button
-                $deleteButton = "<button class='deleteRecord' data-id='" . $record->id . "'><i class='fa-solid fa-trash'></i></button>";
+                $deleteButton = "<button class='deleteRecord' data-id='" . $record->id . "' data-bs-toggle='modal' data-bs-target='#deleteModal'><i class='fa-solid fa-trash'></i></button>";
 
                 return $editButton . " " . $deleteButton;
             })
@@ -127,22 +112,11 @@ class RecordController extends Controller
         return redirect()->route('record.index')->with('success', 'Record added successfully');
     }
 
-    public function show(Record $record)
-    {
-        //
-    }
-
     public function edit($recordId)
     {
         $record = Record::find($recordId);
-        if (!$record) {
-            // Handle the case where the record is not found, for example, redirect to an error page.
-            return response()->json(['errors' => 'Record not found']);
-        }
-        // $categories = Category::all();
-        // $accounts = Account::where('user_id', Auth::user()->id)->get();
+
         return response()->json($record);
-        // return view('record.edit', compact('record', 'accounts', 'categories'));
     }
 
     public function update(Request $request, $recordId)
@@ -168,14 +142,14 @@ class RecordController extends Controller
         }
 
         $record->update([
-            'user_id' => $request->input('user_id'),
-            'account_id' => $request->input('account_id'),
-            'category_id' => $request->input('category_id'),
-            'type' => $request->input('type'),
-            'amount' => $request->input('amount'),
-            'datetime' => $request->input('datetime'),
-            'description' => $request->input('description'),
-            'group_id' => $request->input('group_id'),
+            $record->user_id => $request->input('user_id'),
+            $record->account_id => $request->input('account_id'),
+            $record->category_id => $request->input('category_id'),
+            $record->type => $request->input('type'),
+            $record->amount => $request->input('amount'),
+            $record->datetime => $request->input('datetime'),
+            $record->description => $request->input('description'),
+            $record->group_id => $request->input('group_id'),
         ]);
 
         return redirect()->route('record.index')->with('success', 'Record updated successfully');

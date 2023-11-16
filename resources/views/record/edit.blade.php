@@ -64,7 +64,7 @@
                     <input type="hidden" id="id" name="id">
                     <input type="hidden" id="user_id" name="user_id">
                     <div class="flex mt-6 justify-center text-black">
-                        <button type="submit" class="mr-5"
+                        <button type="submit" class="mr-5" onclick="updateRecord()"
                             style="background: #4D96EB; width:100px; height:26px; border:0px solid; border-radius: 5px">Save</button>
                         <button
                             style="background: #e5e5e5;width:100px; height:26px; border:0px solid; border-radius: 5px"
@@ -77,27 +77,26 @@
 </div>
 
 <script>
-    $('#editRecord').submit(function(e) {
-        e.preventDefault();
-        var formData = $(this).serialize();
-        var recordId = $('#id').val(); 
+    function updateRecord() {
+        var formData = new FormData(document.getElementById('editRecord'));
+        var recordId = $('#editRecordModal .editRecord').data('id');
 
         $.ajax({
-            headers: {
-                'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')
-            },
             type: 'PUT',
             url: '/record/update/' + recordId,
             data: formData,
+            processData: false,
+            contentType: false,
+            headers: {
+                'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')
+            },
             success: function(response) {
-                
-                window.location.reload();
+                console.log('Record updated successfully:', response);
                 $('#editRecordModal').modal('hide');
             },
             error: function(error) {
-                console.error('Error:', error);
-                alert('An error occurred while updating the record.');
+                console.error('Error updating record:', error);
             }
         });
-    });
+    }
 </script>
