@@ -16,8 +16,6 @@ return new class extends Migration
             $table->foreign('part_allocation_id')->references('id')->on('part_allocations')->onUpdate('cascade')->onDelete('cascade');
             $table->unsignedBigInteger('category_id');
             $table->foreign('category_id')->references('id')->on('categories')->onUpdate('cascade')->onDelete('cascade');
-            $table->timestamps();
-            $table->softDeletes();
         });
     }
 
