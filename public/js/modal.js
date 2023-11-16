@@ -68,22 +68,6 @@ function showDeleteModal(accountId) {
 // }
 
 // Budget Section
-// open create modal
-$(document).on('click', '.createTemplate', function () {
-    const selectionModal = $('#budgetTemplateSelectionModal');
-    const createTemplate = $('#createBudgetTemplateModal');
-
-    selectionModal.modal('hide');
-    createTemplate.modal('show');
-});
-
-$(document).on('click', '.defaultTemplate', function () {
-    const selectionModal = $('#budgetTemplateSelectionModal');
-    const defaultTemplate = $('#defaultBudgetTemplateModal');
-
-    selectionModal.modal('hide');
-    defaultTemplate.modal('show');
-});
 
 
 // js for create budget template
