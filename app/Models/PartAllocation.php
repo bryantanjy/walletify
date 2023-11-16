@@ -24,8 +24,8 @@ class PartAllocation extends Model
         return $this->belongsTo(Budget::class, 'budget_id', 'id');
     }
 
-    public function categoryPartAllocations()
+    public function categories()
     {
-        return $this->hasMany(CategoryPartAllocation::class, 'part_allocation_id');
+        return $this->belongsToMany(Category::class,'category_part_allocation', 'part_allocation_id', 'category_id');
     }
 }

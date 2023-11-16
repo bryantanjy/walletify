@@ -16,8 +16,8 @@ class Category extends Model
         'name',
     ];
     
-    public function categoryPartAllocations()
+    public function partAlocations()
     {
-        return $this->hasMany(CategoryPartAllocation::class, 'category_id');
+        return $this->belongsToMany(PartAllocation::class, 'category_part_allocation', 'category_id', 'part_allocation_id');
     }
 }
