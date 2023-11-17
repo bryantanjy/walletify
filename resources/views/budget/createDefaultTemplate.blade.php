@@ -4,13 +4,14 @@
         {{-- Modal Content --}}
         <div class="modal-content relative p-4 rounded-lg sm:p-5" style="background-color: #E1F1FA">
             <div class="modal-header flex justify-between items-center">
-                <h2 style="font-size:20px;"><b>Set Monthly Budget</b></h2>
+                <h2 style="font-size:20px;"><b>Create Default Budget</b></h2>
                 <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close">
                     <i class="fa-solid fa-xmark"></i>
                 </button>
             </div>
             <div class="modal-body flex flex-col">
                 <div>
+                    <p style="font-size:16px;"><b>Set your monthly budget here:</b></p><br>
                     <label for="part_input">Total Budget Allocation</label>
                     <input class="rounded-md text-right mx-3 border-0" type="number" name="totalBudget" id="totalBudget"
                         step="0.01" style="height: 30px; width:150px" placeholder="e.g. 1000" required>
