@@ -78,7 +78,6 @@ class BudgetController extends Controller
 
     public function storeDefaultTemplate(Request $request)
     {
-
         // Create a new budget record
         $budget = Budget::create([
             'user_id' => auth()->id(),
@@ -108,47 +107,39 @@ class BudgetController extends Controller
 
     public function storeUserTemplate(Request $request)
     {
-        $userTemplateRules = [
-            'type' => 'required|string|max:50',
-            'part_name.*' => 'required|string|max:50',
-            'allocation_amount.*' => 'required|numeric|min:0.01',
-            'category_id.*.*' => 'required|string',
-        ];
+        $validator = Validator::make(
+            $request->all(),
+            [
+                'type' => 'required|string|in:User Template',
+                'part_name.*' => 'required|string|max:255',
+                'amount.*' => 'required|numeric|min:0.01',
+                'categoryId.*.*' => 'exists:categories,id',
+            ]
+        );
 
-        // Validate the request for default template
-        $validatedUserTemplateData = $request->validate($userTemplateRules);
+        // Create a new budget record
+        $budget = Budget::create([
+            'type' => $request->input('type'),
+            'user_id' => auth()->id(),
+            'group_id' => null,
+        ]);
 
-        try {
-            // Create a new budget record
-            $budget = Budget::create([
-                'type' => $request->input('type'),
-                'user_id' => auth()->id(),
-                'group_id' => null,
+        // Create a new budget template part record and part allocation record for each part
+        foreach ($request->input('part_name') as $key => $partName) {
+            $partAllocation = PartAllocation::create([
+                'budget_id' => $budget->id,
+                'name' => $partName,
+                'amount' => $request->input('amount')[$key],
             ]);
 
-            // Create a new budget template part record and part allocation record for each part
-            foreach ($request->input('part_name') as $key => $name) {
-                // Create a new budget template part record
-                $partAllocation = PartAllocation::create([
-                    'budget_id' => $budget->budget_id,
-                    'part_name' => $name,
-                    'allocation_amount' => $request->input('allocation_amount')[$key],
-                ]);
+            $categoryIds = $request->input('categoryId')[$key];
+            $partAllocation->partCategories()->attach($categoryIds);
 
-                // Create a new part allocation category record for each category selected for this part
-                foreach ($request->input('category_id.' . $key) as $categoryId) {
-                    // CategoryPartAllocation::create([
-                    //     'part_allocation_id' => $partAllocation->part_allocation_id,
-                    //     'category_id' => $categoryId,
-                    // ]);
-                }
-            }
-
-            return redirect()->route('budget.index')->with('success', 'User template created successfully');
-        } catch (\Exception $e) {
-            // Handle the error as needed, e.g., log it or return an error response
-            return redirect()->route('budget.index')->with('error', 'Error creating user template');
+            // Store the part allocation in the array
+            $partAllocations[] = $partAllocation;
         }
+
+        return redirect()->route('budget.index')->with('success', 'User template created successfully');
     }
 
     public function editDefaultTemplate($budgetId)
@@ -201,12 +192,12 @@ class BudgetController extends Controller
         // Loop through the part allocations and update them
         foreach ($request->input('part_name') as $index => $partName) {
             $partAllocation = $budget->partAllocations()->where('id', $request->input('part_allocation_id')[$index])->first();
-            
+
             $partAllocation->update([
                 'name' => $partName,
                 'amount' => $request->input('allocation_amount')[$index],
             ]);
-        
+
             // Sync the associated categories
             foreach ($request->input('category_id.' . $index) as $categoryId) {
                 $partAllocation->partCategories()->attach($categoryId);
