@@ -19,6 +19,21 @@ class Budget extends Model
         'group_id',
     ];
 
+    protected static function boot()
+    {
+        parent::boot();
+
+        // Attach an event listener to the deleting event
+        static::deleting(function ($budget) {
+            // Delete associated PartAllocations
+            $budget->partAllocations()->each(function ($partAllocation) {
+                $partAllocation->partCategories()->detach();
+                // Delete the PartAllocation
+                $partAllocation->delete();
+            });
+        });
+    }
+
     public function user()
     {
         return $this->belongsTo(User::class, 'user_id', 'id');
