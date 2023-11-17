@@ -1,11 +1,13 @@
 <head>
-    <script src="https://code.jquery.com/jquery-3.7.1.min.js" integrity="sha256-/JqT3SQfawRcv/BIHPThkBvs0OEvtFFmqPF/lYI/Cxo=" crossorigin="anonymous"></script>
+    <script src="https://code.jquery.com/jquery-3.7.1.min.js"
+        integrity="sha256-/JqT3SQfawRcv/BIHPThkBvs0OEvtFFmqPF/lYI/Cxo=" crossorigin="anonymous"></script>
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"></script>
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css">
     <script src="https://cdnjs.cloudflare.com/ajax/libs/flowbite/1.8.1/flowbite.min.js"></script>
     <link href="https://cdnjs.cloudflare.com/ajax/libs/flowbite/1.8.1/flowbite.min.css" rel="stylesheet" />
     <link rel="stylesheet" href="{{ asset('css/filter_multi_select.css') }}" />
     <script src="{{ asset('js/filter-multi-select-bundle.min.js') }}"></script>
+    {{-- <link rel="stylesheet" href="{{ asset('css/modal.css') }}"> --}}
     <script src="{{ asset('js/modal.js') }}"></script>
 </head>
 <x-app-layout>
@@ -32,13 +34,13 @@
             </div>
         </aside>
         <div class="p-4 sm:ml-64 items-center justify-center" style="width: 80%; margin-left:20%; margin-top: 100px;">
-            @if ($budgets  && count($budgets) > 0)
+            @if ($budgets && count($budgets) > 0)
                 @foreach ($budgets as $budget)
                     <div class="bg-white mt-5 ml-10"
                         style="width: 60%; height:auto; border-radius:15px; padding:60px 80px;">
                         <div class="flex justify-between mb-8">
                             <p class="text-gray-500">Current month</p>
-                            
+
                             <p>Allocation amount: RM {{ $totalAllocationAmount }}</p>
                         </div>
 
@@ -55,14 +57,15 @@
                                         role="tooltip"
                                         class="absolute z-10 invisible inline-block px-3 py-2 text-sm font-medium text-white transition-opacity duration-300 bg-gray-900 rounded-lg shadow-sm opacity-0 tooltip dark:bg-gray-700">
                                         <label for="category">Category:</label>
-                                        @foreach ($partAllocation->categories as $category)
+                                        @foreach ($partAllocation->partCategories as $category)
                                             <div>{{ $category->name }}</div>
                                         @endforeach
                                         <div class="tooltip-arrow" data-popper-arrow></div>
                                     </div>
                                 </label>
                                 <div>
-                                    RM {{ $partAllocation->currentBudget }} / RM {{ $partAllocation->amount }} ({{ round($partAllocation->percentage, 0) }}%)
+                                    RM {{ $partAllocation->currentBudget }} / RM {{ $partAllocation->amount }}
+                                    ({{ round($partAllocation->percentage, 0) }}%)
                                 </div>
                             </div>
                             <div class="w-full bg-gray-200 rounded-full h-4 mb-4">
@@ -71,7 +74,7 @@
                                 </div>
                             </div>
                         @endforeach
-                        
+
                         <div class="float-right mt-3">
                             @if ($budget->type == 'Default Template')
                                 <button type="button" class="bg-blue-500 w-20 rounded editDefaultBudgetBtn"
@@ -99,21 +102,24 @@
 </x-app-layout>
 
 {{-- budget template selection modal --}}
-<div id="selection" class="modal fade" tabindex="-1" role="dialog"
-    aria-labelledby="selectionModalLabel" aria-hidden="true">
+<div id="selection" class="modal fade" tabindex="-1" role="dialog" aria-labelledby="selectionModalLabel"
+    aria-hidden="true">
     <div class="modal-dialog modal-lg relative p-4 " role="document">
         {{-- Modal Content --}}
         <div class="modal-content rounded-lg sm:p-5" style="background-color: #E1F1FA">
             <div class="modal-header flex justify-between items-center pb-3 rounded-t">
-                <h2 style="font-size:20px; margin-left:150px; margin-right:auto">Choose one from the selection below</h2>
+                <h2 style="font-size:20px; margin-left:150px; margin-right:auto">Choose one from the selection below
+                </h2>
                 <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close">
                     <i class="fa-solid fa-xmark"></i>
                 </button>
             </div>
             <div class="modal-body flex justify-evenly">
-                <button class="bg-blue-500 rounded-md hover:bg-blue-600" data-bs-toggle="modal" data-bs-target="#createBudgetTemplateModal" style="width: 200px; height: 240px">Create a new
+                <button class="bg-blue-500 rounded-md hover:bg-blue-600" data-bs-toggle="modal"
+                    data-bs-target="#createBudgetTemplateModal" style="width: 200px; height: 240px">Create a new
                     template?</button>
-                <button class="bg-green-500 rounded-md hover:bg-green-600" data-bs-toggle="modal" data-bs-target="#defaultBudgetTemplateModal" style="width: 200px; height: 240px">Apply the
+                <button class="bg-green-500 rounded-md hover:bg-green-600" data-bs-toggle="modal"
+                    data-bs-target="#defaultBudgetTemplateModal" style="width: 200px; height: 240px">Apply the
                     default template</button>
             </div>
         </div>
