@@ -170,7 +170,7 @@ class BudgetController extends Controller
             [
                 'part_name.*' => 'required|string|max:255',
                 'allocation_amount.*' => 'required|numeric|min:0',
-                'category_id.*.*' => 'exists:categories,id',
+                'categories.*.*' => 'exists:categories,id',
                 'type' => 'required|string|in:Default Template',
             ]
         );
@@ -199,17 +199,49 @@ class BudgetController extends Controller
             ]);
 
             // Sync the associated categories
-            foreach ($request->input('category_id.' . $index) as $categoryId) {
-                $partAllocation->partCategories()->attach($categoryId);
-            }
+            // foreach ($request->input('categories.' . $index) as $categoryId) {
+            //     $partAllocation->partCategories()->attach($categoryId);
+            // }
+            $partAllocation->partCategories()->sync($request->input('categories.' . $index), false);
         }
 
         return redirect()->route('budget.index')->with('success', 'Budget updated successfully');
     }
 
-    public function updateUserTemplate()
+    public function updateUserTemplate(Request $request, $budgetId)
     {
-        //
+        $validator = Validator::make(
+            $request->all(),
+            [
+                'part_name.*' => 'required|string|max:255',
+                'amount.*' => 'required|numeric|min:0',
+                'partCategory.*.*' => 'exists:categories,id',
+                'type' => 'required|string|in:User Template',
+            ]
+        );
+
+        $budget = Budget::find($budgetId);
+
+        if($validator->fails()) {
+            return back()->withErrors($validator)->withInput();
+        }
+
+        $budget->update([
+            'type' => $request->input('type'),
+        ]);
+
+        // Loop through the part allocations and update them
+        foreach ($request->input('part_name') as $index => $partName) {
+            $partAllocation = $budget->partAllocations()->where('id', $request->input('part_allocation_id')[$index])->first();
+
+            $partAllocation->update([
+                'name' => $partName,
+                'amount' => $request->input('amount')[$index],
+            ]);
+
+            $partAllocation->partCategories()->sync($request->input('partCategory.' . $index), true);
+        }
+        return redirect()->route('budget.index')->with('success', 'Budget updated successfully');
     }
 
     public function delete(Budget $budget)
