@@ -1,26 +1,28 @@
 <div id="editDefaultBudgetModal" class="modal fade" tabindex="-1" role="dialog"
     aria-labelledby="editDefaultBudgetModalLabel" aria-hidden="true">
-    <div class="modal-dialog relative p-4 w-full h-full md:h-auto" role="document">
+    <div class="modal-dialog modal-lg relative p-4 w-full h-full md:h-auto" role="document">
         {{-- Modal Content --}}
-        <div class="modal-content-l relative p-4 bg-white rounded-lg shadow sm:p-5">
+        <div class="modal-content relative p-4 rounded-lg shadow sm:p-5" style="background-color: #E1F1FA">
             <div class="modal-header flex justify-between items-center">
                 <h2 style="font-size:20px;"><b>Edit Default Budget</b></h2>
-                <button type="button" class="close" data-dismiss="modal" aria-label="Close">&times;</button>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close">
+                    <i class="fa-solid fa-xmark"></i>
+                </button>
             </div>
             <div class="modal-body flex flex-col">
                 @if (isset($budget))
                     <div>
                         <label for="total_allocation">Total Budget Allocation</label>
-                        <input class="rounded-md text-right mx-3" type="number" name="total_allocation"
+                        <input class="rounded-md text-right mx-3 border-0" type="number" name="total_allocation"
                             id="total_allocation" step="0.01" style="height: 30px; width:150px"
                             placeholder="e.g. 1000">
-                        <button type="submit" id="setButton" class="bg-green-400 rounded"
+                        <button type="submit" id="setButton" class="bg-green-400 rounded hover:bg-green-500"
                             style="width: 80px;height: 30px;">Set</button>
                         <div id="errorAmount" class="text-red-500"></div>
                     </div>
 
                     <form id="budget_form" method="POST"
-                        action="{{ route('budget.updateDefaultTemplate', ['budget' => $budget->budget_id]) }}">
+                        action="{{ route('budget.updateDefaultTemplate', ['budget' => $budget->id]) }}">
                         @csrf
                         @method('PUT')
                         @if ($errors->any())
@@ -33,45 +35,44 @@
                             </div>
                         @endif
 
-                        @foreach ($partAllocations as $part)
-                            <input type="hidden" name="part_allocation_id[]" value="{{$part->part_allocation_id}}">
+                        @foreach ($budget->partAllocations as $part)
+                            <input type="hidden" name="part_allocation_id[]" value="{{$part->id}}">
 
                             <h4 style="font-size:20px; margin-top:25px"><b>Part {{ $loop->index + 1 }}</b></h4>
                             <div class="flex items-center">
                                 <label for="partName" class="w-32 pr-2 mt-4">Name</label>
-                                <input class="rounded-md" type="text" name="part_name[]" id="part_name[]"
+                                <input class="rounded-md border-0" type="text" name="part_name[]" id="part_name{{ $loop->index }}"
                                     placeholder="Name" style="height: 30px; margin:15px 0px 0px 20px;width:175px;"
-                                    value="{{ $part->part_name }}" readonly>
+                                    value="{{ $part->name }}" readonly>
                             </div>
                             <div class="flex items-center">
                                 <label for="partAmount" class="w-32 pr-2 mt-4">Amount</label>
-                                <input class="rounded-md" type="number" step="0.01" name="allocation_amount[]"
-                                    id="allocation_amount{{ $loop->index + 1 }}" placeholder="0.00"
-                                    value="{{ $part->allocation_amount }}"
+                                <input class="rounded-md border-0" type="number" step="0.01" name="allocation_amount[]"
+                                    id="allocation_amount{{ $loop->index }}" placeholder="0.00"
+                                    value="{{ $part->amount }}"
                                     style="height: 30px; margin:15px 0px 0px 20px;text-align:right;width:175px;"
                                      readonly required>
                             </div>
                             <div class="flex">
                                 <label for="partCategory" class="w-32 pr-2 mt-4">Category</label>
-                                <select lass="rounded-md" name="category_id[{{ $loop->index }}][]"
-                                    id="categoryId{{ $loop->index + 1 }}" multiple disabled>
-
+                                <select class="rounded-md border-0" name="category_id[{{ $loop->index }}][]"
+                                    id="categoryId{{ $loop->index }}" multiple disabled>
                                     @foreach ($categories as $category)
-                                        <option value="{{ $category->category_id }}"
-                                            @if (in_array($category->category_id, $part->partAllocationCategories->pluck('category_id')->toArray())) selected @endif>
-                                            {{ $category->category_name }}
+                                        <option value="{{ $category->id }}"
+                                            @if ($part->partCategories->contains('id', $category->id)) selected @endif>
+                                            {{ $category->name }}
                                     @endforeach
                                 </select>
                             </div>
                             <div id="part1AmountError" class="text-red-500"></div>
                         @endforeach
 
-                        <input type="hidden" name="type" value="{{ $budget->type }}">
+                        <input type="hidden" name="type" id="type" value="{{$budget->type}}">
 
                         <div class="float-right mt-4">
                             <button type="submit" class="bg-blue-400 rounded hover:bg-blue-300"
                                 style="width: 100px">Save</button>
-                            <button data-dismiss="modal" class="border bg-white rounded hover:bg-gray-100"
+                            <button type="button" data-bs-dismiss="modal" class="border bg-white rounded hover:bg-gray-100"
                                 style="width: 100px; margin-left:10px">Cancel</button>
                         </div>
                     </form>
@@ -80,7 +81,6 @@
         </div>
     </div>
 </div>
-
 <script>
     $(document).on('click', '.editDefaultBudgetBtn', function() {
         const categorySelectElements = document.querySelectorAll('[id^=categoryId]');
@@ -100,7 +100,7 @@
 
 
         // Check if the total allocation is valid
-        if (totalAllocation <= 0 || isNaN(totalAllocation)) {
+        if (totalAllocation <= 1 || isNaN(totalAllocation)) {
             const errorAmount = document.getElementById('errorAmount');
             errorAmount.textContent = 'Your input must be more than 1';
             return;
@@ -114,9 +114,9 @@
         const part3Allocation = (totalAllocation * percent.p3).toFixed(2);
 
         // Update the input fields with the calculated amounts
-        document.getElementById('allocation_amount1').value = part1Allocation;
-        document.getElementById('allocation_amount2').value = part2Allocation;
-        document.getElementById('allocation_amount3').value = part3Allocation;
+        document.getElementById('allocation_amount0').value = part1Allocation;
+        document.getElementById('allocation_amount1').value = part2Allocation;
+        document.getElementById('allocation_amount2').value = part3Allocation;
     });
 </script>
 
