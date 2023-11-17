@@ -29,7 +29,7 @@
                             </ul>
                         </div>
                     @endif
-                    <input type="hidden" name="budget_form" value="1">
+
                     {{-- Part 1 --}}
                     <h4 style="font-size:20px; margin-top:25px"><b>Part 1 (50%)</b></h4>
                     <div class="flex items-center">
@@ -123,7 +123,7 @@
                     <div class="float-right mt-4">
                         <button type="submit" class="bg-blue-400 rounded hover:bg-blue-300"
                             style="width: 100px">Create</button>
-                        <button data-bs-dismiss="modal" class="border bg-white rounded hover:bg-gray-100"
+                        <button type="button" data-bs-dismiss="modal" class="border bg-white rounded hover:bg-gray-100"
                             style="width: 100px; margin-left:10px">Cancel</button>
                     </div>
                 </form>
@@ -158,57 +158,6 @@
         document.getElementById("part1Amount").value = part1Amount.toFixed(2);
         document.getElementById("part2Amount").value = part2Amount.toFixed(2);
         document.getElementById("part3Amount").value = part3Amount.toFixed(2);
-    });
-
-    // Function to validate the form
-    function validateForm() {
-        // Reset any previous error messages
-        const errorMessages = document.querySelectorAll('.error-message');
-        errorMessages.forEach((errorMessage) => {
-            errorMessage.textContent = '';
-        });
-
-        const part1Amount = parseFloat(document.getElementById('part1Amount').value);
-        const part2Amount = parseFloat(document.getElementById('part2Amount').value);
-        const part3Amount = parseFloat(document.getElementById('part3Amount').value);
-
-        let isValid = true;
-
-        // Example validation: Check if allocation amount is a positive number or empty
-        if (isNaN(part1Amount) || part1Amount <= 0) {
-            const part1AmountError = document.getElementById('part1AmountError');
-            part1AmountError.textContent = 'Part 1 Amount must be a positive number';
-            isValid = false;
-        }
-
-        if (isNaN(part2Amount) || part2Amount <= 0) {
-            const part2AmountError = document.getElementById('part2AmountError');
-            part2AmountError.textContent = 'Part 2 Amount must be a positive number';
-            isValid = false;
-        }
-
-        if (isNaN(part3Amount) || part3Amount <= 0) {
-            const part3AmountError = document.getElementById('part3AmountError');
-            part3AmountError.textContent = 'Part 3 Amount must be a positive number';
-            isValid = false;
-        }
-
-        return isValid;
-    }
-
-    // Handle form submission
-    document.addEventListener('DOMContentLoaded', function() {
-        const form = document.getElementById('budget_form');
-
-        form.addEventListener('submit', function(event) {
-            event.preventDefault(); // Prevent default form submission
-
-            if (validateForm()) {
-                // If validation succeeds, you can submit the form via AJAX or allow normal form submission
-                document.querySelector('input[name="budget_form"]').value = 1;
-                form.submit(); // This will submit the form normally
-            }
-        });
     });
 </script>
 
