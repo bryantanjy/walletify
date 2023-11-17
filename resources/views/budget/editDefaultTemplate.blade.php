@@ -21,7 +21,7 @@
                         <div id="errorAmount" class="text-red-500"></div>
                     </div>
 
-                    <form id="budget_form" method="POST"
+                    <form method="POST"
                         action="{{ route('budget.updateDefaultTemplate', ['budget' => $budget->id]) }}">
                         @csrf
                         @method('PUT')
@@ -36,27 +36,28 @@
                         @endif
 
                         @foreach ($budget->partAllocations as $part)
-                            <input type="hidden" name="part_allocation_id[]" value="{{$part->id}}">
+                            <input type="hidden" name="part_allocation_id[]" value="{{ $part->id }}">
 
                             <h4 style="font-size:20px; margin-top:25px"><b>Part {{ $loop->index + 1 }}</b></h4>
                             <div class="flex items-center">
                                 <label for="partName" class="w-32 pr-2 mt-4">Name</label>
-                                <input class="rounded-md border-0" type="text" name="part_name[]" id="part_name{{ $loop->index }}"
-                                    placeholder="Name" style="height: 30px; margin:15px 0px 0px 20px;width:175px;"
+                                <input class="rounded-md border-0" type="text" name="part_name[]"
+                                    id="part_name{{ $loop->index }}" placeholder="Name"
+                                    style="height: 30px; margin:15px 0px 0px 20px;width:175px;"
                                     value="{{ $part->name }}" readonly>
                             </div>
                             <div class="flex items-center">
                                 <label for="partAmount" class="w-32 pr-2 mt-4">Amount</label>
-                                <input class="rounded-md border-0" type="number" step="0.01" name="allocation_amount[]"
-                                    id="allocation_amount{{ $loop->index }}" placeholder="0.00"
-                                    value="{{ $part->amount }}"
+                                <input class="rounded-md border-0" type="number" step="0.01"
+                                    name="allocation_amount[]" id="allocation_amount{{ $loop->index }}"
+                                    placeholder="0.00" value="{{ $part->amount }}"
                                     style="height: 30px; margin:15px 0px 0px 20px;text-align:right;width:175px;"
-                                     readonly required>
+                                    readonly required>
                             </div>
                             <div class="flex">
                                 <label for="partCategory" class="w-32 pr-2 mt-4">Category</label>
-                                <select class="rounded-md border-0" name="category_id[{{ $loop->index }}][]"
-                                    id="categoryId{{ $loop->index }}" multiple disabled>
+                                <select class="rounded-md border-0" name="categories[{{ $loop->index }}][]"
+                                    id="categories{{ $loop->index }}" multiple disabled>
                                     @foreach ($categories as $category)
                                         <option value="{{ $category->id }}"
                                             @if ($part->partCategories->contains('id', $category->id)) selected @endif>
@@ -67,12 +68,13 @@
                             <div id="part1AmountError" class="text-red-500"></div>
                         @endforeach
 
-                        <input type="hidden" name="type" id="type" value="{{$budget->type}}">
+                        <input type="hidden" name="type" id="type" value="{{ $budget->type }}">
 
                         <div class="float-right mt-4">
                             <button type="submit" class="bg-blue-400 rounded hover:bg-blue-300"
                                 style="width: 100px">Save</button>
-                            <button type="button" data-bs-dismiss="modal" class="border bg-white rounded hover:bg-gray-100"
+                            <button type="button" data-bs-dismiss="modal"
+                                class="border bg-white rounded hover:bg-gray-100"
                                 style="width: 100px; margin-left:10px">Cancel</button>
                         </div>
                     </form>
@@ -83,7 +85,7 @@
 </div>
 <script>
     $(document).on('click', '.editDefaultBudgetBtn', function() {
-        const categorySelectElements = document.querySelectorAll('[id^=categoryId]');
+        const categorySelectElements = document.querySelectorAll('[id^=categories]');
         for (const categorySelectElement of categorySelectElements) {
             $(categorySelectElement).filterMultiSelect();
         }
