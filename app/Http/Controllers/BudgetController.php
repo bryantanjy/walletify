@@ -3,13 +3,12 @@
 namespace App\Http\Controllers;
 
 use App\Models\Budget;
+use App\Models\Record;
 use App\Models\Category;
-use App\Models\CategoryPartAllocation;
 use Illuminate\Http\Request;
 use App\Models\PartAllocation;
 use Illuminate\Support\Facades\Auth;
-use App\Models\PartAllocationCategory;
-use App\Models\Record;
+use Illuminate\Support\Facades\Validator;
 
 class BudgetController extends Controller
 {
@@ -19,20 +18,20 @@ class BudgetController extends Controller
             $user = auth()->user();
             $categories = Category::all();
             $budgets = Budget::where('user_id', $user->id)->get();
-    
+
             foreach ($budgets as $budget) {
                 $totalAllocationAmount = 0;
-    
+
                 foreach ($budget->partAllocations as $partAllocation) {
                     $totalExpense = 0;
                     $totalIncome = 0;
-    
-                    foreach ($partAllocation->categories as $category) {
-    
+
+                    foreach ($partAllocation->partCategories as $category) {
+
                         $records = Record::where('user_id', $user->id)
                             ->where('category_id', $category->id)
                             ->get();
-    
+
                         foreach ($records as $record) {
                             if ($record->type == 'Expense') {
                                 $totalExpense += $record->amount;
@@ -41,19 +40,18 @@ class BudgetController extends Controller
                             }
                         }
                     }
-    
+
                     $currentBudget = $totalExpense - $totalIncome;
                     $percentage = ($currentBudget / $partAllocation->amount) * 100;
                     $percentageWidth = min(max($percentage, 0), 100);
-    
+
                     $partAllocation->currentBudget = $currentBudget;
                     $partAllocation->percentage = $percentage;
                     $partAllocation->percentageWidth = $percentageWidth;
                     $totalAllocationAmount += $partAllocation->amount;
                 }
-
             }
-    
+
             if ($budgets->count() > 0) {
                 return view('budget.index', compact('categories', 'budgets', 'totalAllocationAmount'));
             } else {
@@ -99,7 +97,7 @@ class BudgetController extends Controller
 
             // Attach categories to the part allocation
             $categoryIds = $request->input('category_id')[$key];
-            $partAllocation->categories()->attach($categoryIds);
+            $partAllocation->partCategories()->attach($categoryIds);
 
             // Store the part allocation in the array
             $partAllocations[] = $partAllocation;
@@ -139,10 +137,10 @@ class BudgetController extends Controller
 
                 // Create a new part allocation category record for each category selected for this part
                 foreach ($request->input('category_id.' . $key) as $categoryId) {
-                    CategoryPartAllocation::create([
-                        'part_allocation_id' => $partAllocation->part_allocation_id,
-                        'category_id' => $categoryId,
-                    ]);
+                    // CategoryPartAllocation::create([
+                    //     'part_allocation_id' => $partAllocation->part_allocation_id,
+                    //     'category_id' => $categoryId,
+                    // ]);
                 }
             }
 
@@ -161,10 +159,8 @@ class BudgetController extends Controller
         if (!$budget) {
             return redirect()->back()->with('error', 'Budget not found');
         }
-
-        $partAllocations = PartAllocation::where('budget_id', $budgetId)->get();
-
-        return view('budget.editDefaultTemplate', compact('budget', 'categories', 'partAllocations'));
+        return view('budget.editDefaultTemplate', compact('budget', 'categories'));
+        // return response()->json(['budget' => $budget]);
     }
 
     public function editUserTemplate($budgetId)
@@ -177,41 +173,45 @@ class BudgetController extends Controller
 
     public function updateDefaultTemplate(Request $request, $budgetId)
     {
-        $request->validate([
-            'type' => 'required|string|max:255',
-            'part_name.*' => 'required|string|max:255',
-            'allocation_amount.*' => 'required|numeric|min:0',
-            'category_id.*.*' => 'required|string',
-        ]);
-        // dd($request->input());
+        // dd($request->all());
+        $validator = Validator::make(
+            $request->all(),
+            [
+                'part_name.*' => 'required|string|max:255',
+                'allocation_amount.*' => 'required|numeric|min:0',
+                'category_id.*.*' => 'exists:categories,id',
+                'type' => 'required|string|in:Default Template',
+            ]
+        );
+
         $budget = Budget::find($budgetId);
 
         if (!$budget) {
             return redirect()->back()->with('error', 'Budget not found');
         }
 
+        if ($validator->fails()) {
+            return back()->withErrors($validator)->withInput();
+        }
+
         $budget->update([
             'type' => $request->input('type'),
         ]);
 
-        $partNames = $request->input('part_name');
-        $allocationAmounts = $request->input('allocation_amount');
-        $categoryIds = $request->input('category_id');
-
         // Loop through the part allocations and update them
-        foreach ($partNames as $index => $partName) {
-            $partAllocation = PartAllocation::find($request->input('part_allocation_id')[$index]);
-
-            if ($partAllocation) {
-                $partAllocation->update([
-                    'part_name' => $partName,
-                    'allocation_amount' => $allocationAmounts[$index],
-                ]);
-
-                $partAllocation->partAllocationCategories($categoryIds[$index]);
+        foreach ($request->input('part_name') as $index => $partName) {
+            $partAllocation = $budget->partAllocations()->where('id', $request->input('part_allocation_id')[$index])->first();
+            
+            $partAllocation->update([
+                'name' => $partName,
+                'amount' => $request->input('allocation_amount')[$index],
+            ]);
+        
+            // Sync the associated categories
+            foreach ($request->input('category_id.' . $index) as $categoryId) {
+                $partAllocation->partCategories()->attach($categoryId);
             }
         }
-
 
         return redirect()->route('budget.index')->with('success', 'Budget updated successfully');
     }
