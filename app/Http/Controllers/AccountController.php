@@ -2,8 +2,8 @@
 
 namespace App\Http\Controllers;
 
+use App\Models\Record;
 use App\Models\Account;
-use App\Models\User;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Validator;
@@ -13,10 +13,30 @@ class AccountController extends Controller
     public function index(Request $request)
     {
         if (Auth::check()) {
-            $user = Auth::user();
+            $user = auth()->user();
             $accounts = Account::where('user_id', $user->id)->oldest()->get();
+            $balance = [];
 
-            return view('account.index', compact('accounts'));
+            foreach ($accounts as $account) {
+                $records = Record::where('user_id', $user->id)->where('account_id', $account->id)->get();
+
+                $totalExpense = 0;
+                $totalIncome = 0;
+
+                if (isset($records)) {
+                    foreach ($records as $record) {
+                        if ($record->type == 'Expense') {
+                            $totalExpense += $record->amount;
+                        } else {
+                            $totalIncome += $record->amount;
+                        }
+                    }
+                } 
+                $balance = $totalIncome - $totalExpense;
+                $balances[$account->id] = $balance;
+            }
+            
+            return view('account.index', compact('accounts', 'balances'));
         } else {
             return redirect()->route('login');
         }
@@ -58,7 +78,7 @@ class AccountController extends Controller
         if (!$account) {
             return response()->json(['error' => 'Account not found'], 404);
         }
-    
+
         return response()->json($account);
     }
 
