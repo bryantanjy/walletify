@@ -44,7 +44,7 @@
                                     {{ $account->type }}
                                 </div>
                                 <div class="w-1/5 h-12 flex items-center">
-                                    RM 0.00
+                                    RM {{$balances[$account->id]}}
                                 </div>
                                 <div class="w-1/5 flex justify-end mr-4">
                                     <button class="editAccountBtn mr-4" value="{{ $account->id }}">
