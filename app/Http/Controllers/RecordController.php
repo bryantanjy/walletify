@@ -16,7 +16,8 @@ class RecordController extends Controller
     {
         if (auth()->check()) {
             $user = Auth::user();
-            $records = Record::where('user_id', $user->id)->get();
+            $records = Record::where('user_id', $user->id)->paginate(14);
+
             $totalExpesne = 0;
             $totalIncome = 0;
 
@@ -36,39 +37,6 @@ class RecordController extends Controller
         } else {
             return redirect('/login');
         }
-    }
-
-    // rendering datatable
-    public function recordList()
-    {
-        $user = Auth::user();
-        $records = Record::where('user_id', $user->id)->with('user', 'category')
-            ->with(['user' => function ($query) {
-                $query->select('id', 'name');
-            }, 'category' => function ($query) {
-                $query->select('id', 'name');
-            }])
-            ->select(['id','user_id', 'category_id', 'type', 'datetime', 'description', 'amount'])
-            ->get();
-
-
-        return DataTables::of($records)
-            ->addColumn('user', function (Record $record) {
-                return $record->user->name;
-            })
-            ->addColumn('category', function (Record $record) {
-                return $record->category->name;
-            })
-            ->addColumn('action', function (Record $record) {
-                // Update Button
-                $editButton = "<button class='editRecord' data-id='" . $record->id . "' ><i class='fa-solid fa-pen-to-square'></i></button>";
-
-                // Delete Button
-                $deleteButton = "<button class='deleteRecord' data-id='" . $record->id . "' data-bs-toggle='modal' data-bs-target='#deleteModal'><i class='fa-solid fa-trash'></i></button>";
-
-                return $editButton . " " . $deleteButton;
-            })
-            ->make(true);
     }
 
     public function create()
@@ -115,6 +83,10 @@ class RecordController extends Controller
     public function edit($recordId)
     {
         $record = Record::find($recordId);
+        $categories = Category::all();
+        $accounts = Account::all();
+
+        // return view('record.edit', compact('record', 'categories', 'accounts'));
 
         return response()->json($record);
     }
@@ -122,7 +94,6 @@ class RecordController extends Controller
     public function update(Request $request, $recordId)
     {
         $record = Record::find($recordId);
-
         $validator = Validator::make(
             $request->all(),
             [
@@ -142,14 +113,13 @@ class RecordController extends Controller
         }
 
         $record->update([
-            $record->user_id => $request->input('user_id'),
-            $record->account_id => $request->input('account_id'),
-            $record->category_id => $request->input('category_id'),
-            $record->type => $request->input('type'),
-            $record->amount => $request->input('amount'),
-            $record->datetime => $request->input('datetime'),
-            $record->description => $request->input('description'),
-            $record->group_id => $request->input('group_id'),
+            'account_id' => $request->input('account_id'),
+            'category_id' => $request->input('category_id'),
+            'type' => $request->input('type'),
+            'amount' => $request->input('amount'),
+            'datetime' => $request->input('datetime'),
+            'description' => $request->input('description'),
+            'group_id' => $request->input('group_id'),
         ]);
 
         return redirect()->route('record.index')->with('success', 'Record updated successfully');
