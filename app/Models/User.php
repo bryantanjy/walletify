@@ -69,10 +69,10 @@ class User extends Authenticatable
 
     public function records()
     {
-        return $this->hasMany(Record::class, 'account_id', 'account_id');
+        return $this->hasMany(Record::class, 'user_id', 'id');
     }
-    
 
+    
     // public function belongsToGroup(Group $group)
     // {
     //     return $this->groups()->where('group_id', $group->id)->exists();
