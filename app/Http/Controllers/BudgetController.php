@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers;
 
+use Carbon\Carbon;
 use App\Models\Budget;
 use App\Models\Record;
 use App\Models\Category;
@@ -27,9 +28,11 @@ class BudgetController extends Controller
                     $totalIncome = 0;
 
                     foreach ($partAllocation->partCategories as $category) {
-
+                        $now = Carbon::now();
                         $records = Record::where('user_id', $user->id)
                             ->where('category_id', $category->id)
+                            ->whereYear('datetime', $now->year)
+                            ->whereMonth('datetime', $now->month)
                             ->get();
 
                         foreach ($records as $record) {
@@ -66,14 +69,30 @@ class BudgetController extends Controller
     {
         $categories = Category::all();
 
+        $existingBudget = Budget::where('user_id', auth()->id())->first();
+
+        if ($existingBudget) {
+            // Notify the user that they already have an active budget
+            return redirect()->back()->with('error', 'You already have an active budget.');
+        }
+
         return view('budget.createUserTemplate', compact('categories'));
     }
 
     public function createDefaultTemplate()
     {
         $categories = Category::all();
+        $existingBudget = Budget::where('user_id', auth()->id())->first();
 
-        return view('budget.createDefaultTemplate', compact('categories'));
+        if ($existingBudget->count() < 1) {
+            return view('budget.createDefaultTemplate', compact('categories'));
+            
+        } else {
+            return redirect()->route('budget.index')->with('error', 'You already have an active budget.');
+
+        }
+
+        
     }
 
     public function storeDefaultTemplate(Request $request)
@@ -222,7 +241,7 @@ class BudgetController extends Controller
 
         $budget = Budget::find($budgetId);
 
-        if($validator->fails()) {
+        if ($validator->fails()) {
             return back()->withErrors($validator)->withInput();
         }
 
