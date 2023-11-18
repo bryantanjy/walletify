@@ -11,10 +11,11 @@
                 </button>
             </div>
             <div class="modal-body">
-                <form id="editRecord" method="POST">
+                <form id="editRecord" method="POST" action="{{ route('record.update', ['record' => $record->id]) }}">
                     @csrf
                     @method('PUT')
                     <div>
+                        <input type="hidden" id="record_id" name="record_id">
                         <div class="flex items-center">
                             <label for="accountName" class="w-32 text-left pr-2 mt-4">Account</label>
                             <select name="account_id" id="account_id" class="rounded-md border-0"
@@ -61,12 +62,10 @@
                                 style="height: 60px; padding:0px 10px; margin:15px 0px 0px 20px;"></textarea>
                         </div>
                     </div>
-                    <input type="hidden" id="id" name="id">
-                    <input type="hidden" id="user_id" name="user_id">
                     <div class="flex mt-6 justify-center text-black">
-                        <button type="submit" class="mr-5" onclick="updateRecord()"
+                        <button type="submit" class="mr-5"
                             style="background: #4D96EB; width:100px; height:26px; border:0px solid; border-radius: 5px">Save</button>
-                        <button
+                        <button type="button"
                             style="background: #e5e5e5;width:100px; height:26px; border:0px solid; border-radius: 5px"
                             data-bs-dismiss="modal">Cancel</button>
                     </div>
@@ -75,28 +74,3 @@
         </div>
     </div>
 </div>
-
-<script>
-    function updateRecord() {
-        var formData = new FormData(document.getElementById('editRecord'));
-        var recordId = $('#editRecordModal .editRecord').data('id');
-
-        $.ajax({
-            type: 'PUT',
-            url: '/record/update/' + recordId,
-            data: formData,
-            processData: false,
-            contentType: false,
-            headers: {
-                'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')
-            },
-            success: function(response) {
-                console.log('Record updated successfully:', response);
-                $('#editRecordModal').modal('hide');
-            },
-            error: function(error) {
-                console.error('Error updating record:', error);
-            }
-        });
-    }
-</script>
