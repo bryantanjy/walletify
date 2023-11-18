@@ -101,7 +101,7 @@
                 </div>
             </div>
             @if ($records && count($records) > 0)
-                <div class="records">
+                <div class="records" id="records-container">
                     <div class="grid px-5 bg-white rounded-md border border-bottom">
                         <div class="text-right mr-5">Total: <b>{{ $totalBalance < 0 ? '-' : '' }}RM
                                 {{ number_format(abs($totalBalance), 2) }}</b></div>
@@ -132,7 +132,7 @@
                             </div>
                         </div>
                     @endforeach
-                    <div class="pagination justify-content-end mt-2">{{ $records->links() }}</div>
+                    <div class="pagination justify-content-end mt-2">{{ $records->appends(['startDate' => $startDate, 'endDate' => $endDate])->links() }}</div>
 
                 </div>
             @else
