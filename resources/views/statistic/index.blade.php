@@ -7,7 +7,6 @@
     <script src="https://cdn.jsdelivr.net/npm/daterangepicker/daterangepicker.min.js"></script>
     <link rel="stylesheet" type="text/css" href="https://cdn.jsdelivr.net/npm/daterangepicker/daterangepicker.css" />
     <script src="{{ asset('js/monthpicker.js') }}"></script>
-    <script src="{{ asset('js/statisticData.js') }}"></script>
 </head>
 <x-app-layout>
     <main class="flex">
