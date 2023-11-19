@@ -8,15 +8,12 @@ $(document).ready(function () {
         $('#month').html(formattedMonth);
 
         $.ajax({
-            url: '/statistic',  // replace with the actual URL
+            url: '/statistic',
             type: 'GET',
             data: {
-                month: selectedMonth.format('YYYY-MM')  // pass the month to the controller
+                month: selectedMonth.format('YYYY-MM')
             },
             success: function (response) {
-                console.log(response);
-                // $('#month').html(month);
-
                 $('#netAmount').html(response.netAmount.toFixed(2));
                 $('#totalIncome').html('<strong>RM ' + response.totalIncome.toFixed(2) + '</strong>');
                 $('#totalExpense').html('<strong>RM ' + response.totalExpense.toFixed(2) + '</strong>');
@@ -34,13 +31,13 @@ $(document).ready(function () {
     }
 
     $('#monthrange').daterangepicker({
-        singleDatePicker: true,  // Set to true for a single month picker
+        singleDatePicker: true,
         "startDate": selectedMonth,
         "opens": "left",
         "autoApply": true,
         "autoUpdateInput": true,
         "locale": {
-            "format": "MMM YYYY",  // Set the desired format for displaying the month
+            "format": "MMM YYYY",
         },
         ranges: {
             'This Month': [moment().startOf('month'), moment().endOf('month')],
