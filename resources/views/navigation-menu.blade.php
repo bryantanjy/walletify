@@ -37,8 +37,8 @@
                     </x-nav-link>
                 </div>
                 <div class="hidden space-x-8 sm:-my-px sm:ml-8 sm:flex">
-                    <x-nav-link href="" :active="request()->routeIs('statistics')" style="font-size: 16px; font-weight: bold;">
-                        {{ __('Statistics') }}
+                    <x-nav-link href="{{ route('statistic.index') }}" :active="request()->routeIs('statistic.index')" style="font-size: 16px; font-weight: bold;">
+                        {{ __('Statistic') }}
                     </x-nav-link>
                 </div>
             </div>
