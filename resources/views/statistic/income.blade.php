@@ -6,7 +6,8 @@
     <script src="https://cdn.jsdelivr.net/momentjs/latest/moment.min.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/daterangepicker/daterangepicker.min.js"></script>
     <link rel="stylesheet" type="text/css" href="https://cdn.jsdelivr.net/npm/daterangepicker/daterangepicker.css" />
-    <script src="{{ asset('js/monthpicker.js') }}"></script>
+    <script src="{{ asset('js/daterangepicker.js') }}"></script>
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
 </head>
 <x-app-layout>
     <main class="flex">
@@ -45,34 +46,80 @@
         <div class="p-4 sm:ml-64 items-center justify-center" style="width: 80%; margin-left:20%; margin-top: 70px;">
             <div class="feature-bar mx-auto">
                 <div></div>
-                <div class="flex items-center monthpicker">
-                    <i class="fa fa-caret-left ml-2 cursor-pointer" id="prevMonth"></i>
-                    <div id="monthrange" class="flex mx-auto rounded-md border-0 items-center">
+                <div class="flex items-center datepicker">
+                    <i class="fa fa-caret-left ml-2 cursor-pointer" id="prevPeriod"></i>
+                    <div id="reportrange" class="flex mx-auto rounded-md border-0 items-center">
                         <span></span>
                     </div>
-                    <i class="fa fa-caret-right mr-2 cursor-pointer" id="nextMonth"></i>
+                    <i class="fa fa-caret-right mr-2 cursor-pointer" id="nextPeriod"></i>
                 </div>
                 <div></div>
             </div>
             <div class="bg-white rounded-lg px-5 py-4 mt-3 container">
                 <h2 class="text-center" style="font-size: 20px">{{ __('Income') }}</h2>
+
+                <canvas id="incomeChart"></canvas>
             </div>
         </div>
     </main>
 </x-app-layout>
+<script>
+    var ctx = document.getElementById('incomeChart').getContext('2d');
+    var chart = new Chart(ctx, {
+        type: 'line',
+        data: {
+            labels: [],
+            datasets: [{
+                label: 'Current Period',
+                data: [],
+                borderColor: 'rgb(75, 192, 192)',
+                fill: false
+            }, {
+                label: 'Previous Period',
+                data: [],
+                borderColor: 'rgb(255, 99, 132)',
+                fill: false
+            }]
+        },
+        options: {
+            tension: 0.3,
+            scales: {
+                xAxes: [{
+                    type: 'time',
+                    time: {
+                        unit: 'day',
+                        tooltipFormat: 'll'
+                    }
+                }],
+                yAxes: [{
+                    ticks: {
+                        beginAtZero: true
+                    }
+                }]
+            }
+        }
+    });
+
+    function updateIncomeChart(data) {
+        chart.data.labels = Object.keys(data.currentPeriod);
+        chart.data.datasets[0].data = Object.values(data.currentPeriod);
+        chart.data.datasets[1].data = Object.values(data.previousPeriod);
+        chart.update();
+    }
+</script>
 <style>
     .table {
         --bs-table-bg: none;
     }
 
-    #monthrange {
+    #reportrange {
         width: 240px;
         background: #fff;
         cursor: pointer;
         padding: 5px 10px;
     }
 
-    .monthpicker {
+    .datepicker {
         width: 300px;
         margin-bottom: 10px;
     }
