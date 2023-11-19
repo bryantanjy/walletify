@@ -60,3 +60,9 @@ Route::group(['prefix' => 'budget'], function () {
     Route::put('/updateUserTemplate/{budget}', [BudgetController::class, 'updateUserTemplate'])->name('budget.updateUserTemplate');
     Route::delete('/delete/{budget}', [BudgetController::class, 'delete'])->name('budget.delete');
 });
+
+Route::group(['prefix' => 'statistic'], function () {
+    Route::get('/', [RecordController::class, 'index'])->name('record.index');
+    Route::get('/expense', [RecordController::class, 'expense'])->name('record.expense');
+    Route::get('/income', [RecordController::class, 'income'])->name('record.income');
+});
