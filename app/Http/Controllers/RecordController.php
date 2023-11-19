@@ -2,11 +2,11 @@
 
 namespace App\Http\Controllers;
 
+use Carbon\Carbon;
 use App\Models\Record;
 use App\Models\Account;
 use App\Models\Category;
 use Illuminate\Http\Request;
-use Yajra\DataTables\DataTables;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Validator;
 
@@ -16,7 +16,16 @@ class RecordController extends Controller
     {
         if (auth()->check()) {
             $user = Auth::user();
-            $records = Record::where('user_id', $user->id)->paginate(14);
+
+            $startDate = $request->input('startDate');
+            $endDate = $request->input('endDate');
+
+            $startDate = $startDate ? Carbon::parse($startDate)->startOfDay() : now()->startOfMonth();
+            $endDate = $endDate ? Carbon::parse($endDate)->endOfDay() : now()->endOfMonth();
+
+            $records = Record::where('user_id', $user->id)
+                ->whereBetween('datetime', [$startDate, $endDate])
+                ->paginate(14);
 
             $totalExpesne = 0;
             $totalIncome = 0;
@@ -33,7 +42,7 @@ class RecordController extends Controller
 
             $categories = Category::all();
             $accounts = Account::where('user_id', $user->id)->get();
-            return view('record.index', compact('records', 'categories', 'accounts', 'totalBalance'));
+            return view('record.index', compact('records', 'categories', 'accounts', 'totalBalance', 'startDate', 'endDate'));
         } else {
             return redirect('/login');
         }
