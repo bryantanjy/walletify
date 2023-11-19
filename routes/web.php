@@ -4,6 +4,7 @@ use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\AccountController;
 use App\Http\Controllers\BudgetController;
 use App\Http\Controllers\RecordController;
+use App\Http\Controllers\StatisticController;
 
 /*
 |--------------------------------------------------------------------------
@@ -62,7 +63,7 @@ Route::group(['prefix' => 'budget'], function () {
 });
 
 Route::group(['prefix' => 'statistic'], function () {
-    Route::get('/', [RecordController::class, 'index'])->name('record.index');
-    Route::get('/expense', [RecordController::class, 'expense'])->name('record.expense');
-    Route::get('/income', [RecordController::class, 'income'])->name('record.income');
+    Route::get('/', [StatisticController::class, 'index'])->name('statistic.index');
+    Route::get('/expense', [StatisticController::class, 'expense'])->name('statistic.expense');
+    Route::get('/income', [StatisticController::class, 'income'])->name('statistic.income');
 });
