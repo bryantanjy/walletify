@@ -54,8 +54,8 @@
                                             'Housing',
                                             'Transportation',
                                             'Utilities',
-                                            'Food & Drink',
-                                            'Health & Fitness',
+                                            'Food and Drink',
+                                            'Health and Fitness',
                                             'Education',
                                         ])) selected @endif>
                                     {{ $category->name }}
@@ -112,7 +112,7 @@
                         <select class="rounded-md border-0" name="category_id[2][]" id="category_id3" multiple disabled>
                             @foreach ($categories as $category)
                                 <option value="{{ $category->id }}"
-                                    @if (in_array($category->name, ['Investments', 'Gift & Donations', 'Income'])) selected @endif>
+                                    @if (in_array($category->name, ['Investments', 'Gift and Donations', 'Income'])) selected @endif>
                                     {{ $category->name }}
                                 </option>
                             @endforeach
