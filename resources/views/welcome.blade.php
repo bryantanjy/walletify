@@ -54,17 +54,14 @@
     <div class="flex fixed top-20 left-0 z-10 justify-center "
         style="background-color:aliceblue; height:100%; width:100%">
         <div class="flex items-center justify-center " style="width:40%;">
-            <div style="width:35%;height:300px;position:absolute;">
-                <h1 class="justify-center " style="font-size: 42px; font-weight:bold">Tracking Your Finance Now
-                </h1>
-            </div>
-            <div style="height:200px;position: relative;width:20%;top:20px">
-                <button class="flex items-center bg-black rounded">
+            <div class="ml-5" style="height:500px;position:absolute;">
+                <h1 class="justify-center " style="font-size: 42px; font-weight:bold">Tracking Your Finance Now</h1>
+                <p>Monitor your daily expenses, income, track your budget to help you spent your money wisely</p>
+                <button class="flex items-center bg-black rounded mt-5 mx-auto">
                     <a href="{{ route('register') }}"
                         class="ml-6 mr-6 mb-1 mt-1 font-semibold text-white hover:text-gray-400">Register</a>
                 </button>
             </div>
-
         </div>
         <div class="flex items-center justify-center" style="width:60%">
             <svg xmlns="http://www.w3.org/2000/svg" width="768.47" height="467.54" viewBox="0 0 768.47 467.54"
