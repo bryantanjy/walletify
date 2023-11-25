@@ -39,8 +39,14 @@ $(document).on('submit', '#edit-form', function (event) {
         data: formData,
         success: function (response) {
             console.log('Account updated successfully:', response);
-            editModal.modal('hide');
-            window.location.reload();
+            $.get(document.URL, function(data) {
+                // Find and replace the specific container content
+                var updatedContent = $(data).find('#account-container').html();
+                $('#account-container').html(updatedContent);
+
+                // Close the modal
+                editModal.modal('hide');
+            });
         },
         error: function (error) {
             console.log(error);
@@ -56,3 +62,9 @@ function showDeleteModal(accountId) {
     deleteForm.action = '/account/delete/' + accountId;
     modal.show();
 }
+
+
+// trigger toast @ notification
+$(document).ready(function () {
+    $('.toast').toast({ delay: 5000 }).toast('show');
+});
