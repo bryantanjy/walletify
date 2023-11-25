@@ -48,20 +48,11 @@ $(document).on('submit', '#edit-form', function (event) {
     });
 });
 
+
 // modal delete for account
 function showDeleteModal(accountId) {
     var deleteForm = document.getElementById('deleteForm');
     var modal = new bootstrap.Modal(document.getElementById('deleteModal'));
     deleteForm.action = '/account/delete/' + accountId;
-    modal.show();
-}
-
-
-
-// modal delete for budget
-function budgetDeleteModal(budgetId) {
-    var deleteForm = document.getElementById('deleteForm');
-    var modal = new bootstrap.Modal(document.getElementById('deleteModal'));
-    deleteForm.action = '/budget/delete/' + budgetId;
     modal.show();
 }
