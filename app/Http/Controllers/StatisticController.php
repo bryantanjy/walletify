@@ -9,36 +9,46 @@ use Illuminate\Http\Request;
 
 class StatisticController extends Controller
 {
+    /**
+     *  Index page controller
+     */
     public function index(Request $request)
     {
-        $currentMonth = $request->input('month', Carbon::now()->format('Y-m'));
-        $categories = Category::all();
+        if (auth()->check()) {
+            $currentMonth = $request->input('month', Carbon::now()->format('Y-m'));
+            $categories = Category::all();
 
-        $data = [];
-        foreach ($categories as $category) {
-            $data[$category->name] = [
-                'income' => $this->getTotal('Income', $category->id, $currentMonth),
-                'expense' => $this->getTotal('Expense', $category->id, $currentMonth),
-            ];
-        }
+            $data = [];
+            foreach ($categories as $category) {
+                $data[$category->name] = [
+                    'income' => $this->getTotal('Income', $category->id, $currentMonth),
+                    'expense' => $this->getTotal('Expense', $category->id, $currentMonth),
+                ];
+            }
 
-        $totalIncome = array_sum(array_column($data, 'income'));
-        $totalExpense = array_sum(array_column($data, 'expense'));
+            $totalIncome = array_sum(array_column($data, 'income'));
+            $totalExpense = array_sum(array_column($data, 'expense'));
 
-        $netAmount = $totalIncome - $totalExpense;
+            $netAmount = $totalIncome - $totalExpense;
 
-        if ($request->ajax()) {
-            return response()->json([
-                'totalIncome' => $totalIncome,
-                'totalExpense' => $totalExpense,
-                'netAmount' => $netAmount,
-                'data' => $data,
-            ]);
+            if ($request->ajax()) {
+                return response()->json([
+                    'totalIncome' => $totalIncome,
+                    'totalExpense' => $totalExpense,
+                    'netAmount' => $netAmount,
+                    'data' => $data,
+                ]);
+            } else {
+                return view('statistic.index', compact('data', 'totalIncome', 'totalExpense', 'netAmount'));
+            }
         } else {
-            return view('statistic.index', compact('data', 'totalIncome', 'totalExpense', 'netAmount'));
+            return redirect('/login');
         }
     }
 
+    /**
+     *  Calculate total expense and income
+     */
     private function getTotal($type, $category, $month)
     {
         return Record::where('type', $type)
@@ -48,28 +58,37 @@ class StatisticController extends Controller
             ->sum('amount');
     }
 
-
+    /**
+     *  Expense page controller
+     */
     public function expense(Request $request)
     {
-        $startDate = $request->input('startDate', Carbon::now()->startOfMonth()->toDateString());
-        $endDate = $request->input('endDate', Carbon::now()->startOfMonth()->toDateString());
+        if (auth()->check()) {
+            $startDate = $request->input('startDate', Carbon::now()->startOfMonth()->toDateString());
+            $endDate = $request->input('endDate', Carbon::now()->startOfMonth()->toDateString());
 
-        $currentPeriodExpenses = $this->calculateDailyExpenses($startDate, $endDate);
+            $currentPeriodExpenses = $this->calculateDailyExpenses($startDate, $endDate);
 
-        $previousPeriodStartDate = Carbon::parse($startDate)->subMonth()->startOfMonth()->toDateString();
-        $previousPeriodEndDate = Carbon::parse($endDate)->subMonth()->endOfMonth()->toDateString();
-        $previousPeriodExpenses = $this->calculateDailyExpenses($previousPeriodStartDate, $previousPeriodEndDate);
+            $previousPeriodStartDate = Carbon::parse($startDate)->subMonth()->startOfMonth()->toDateString();
+            $previousPeriodEndDate = Carbon::parse($endDate)->subMonth()->endOfMonth()->toDateString();
+            $previousPeriodExpenses = $this->calculateDailyExpenses($previousPeriodStartDate, $previousPeriodEndDate);
 
-        if ($request->ajax()) {
-            return response()->json([
-                'currentPeriod' => $currentPeriodExpenses,
-                'previousPeriod' => $previousPeriodExpenses,
-            ]);
+            if ($request->ajax()) {
+                return response()->json([
+                    'currentPeriod' => $currentPeriodExpenses,
+                    'previousPeriod' => $previousPeriodExpenses,
+                ]);
+            } else {
+                return view('statistic.expense', compact('currentPeriodExpenses', 'previousPeriodExpenses'));
+            }
         } else {
-            return view('statistic.expense', compact('currentPeriodExpenses', 'previousPeriodExpenses'));
+            return redirect('/login');
         }
     }
 
+    /**
+     *  Calculate daily expenses
+     */
     private function calculateDailyExpenses($startDate, $endDate)
     {
         $user = auth()->user();
@@ -90,28 +109,37 @@ class StatisticController extends Controller
         return $dailyExpenses;
     }
 
-
+    /**
+     *  Income page controller
+     */
     public function income(Request $request)
     {
-        $startDate = $request->input('startDate', Carbon::now()->startOfMonth()->toDateString());
-        $endDate = $request->input('endDate', Carbon::now()->startOfMonth()->toDateString());
+        if (auth()->check()) {
+            $startDate = $request->input('startDate', Carbon::now()->startOfMonth()->toDateString());
+            $endDate = $request->input('endDate', Carbon::now()->startOfMonth()->toDateString());
 
-        $currentPeriodIncomes = $this->calculateDailyIncomes($startDate, $endDate);
+            $currentPeriodIncomes = $this->calculateDailyIncomes($startDate, $endDate);
 
-        $previousPeriodStartDate = Carbon::parse($startDate)->subMonth()->startOfMonth()->toDateString();
-        $previousPeriodEndDate = Carbon::parse($endDate)->subMonth()->endOfMonth()->toDateString();
-        $previousPeriodIncomes = $this->calculateDailyIncomes($previousPeriodStartDate, $previousPeriodEndDate);
+            $previousPeriodStartDate = Carbon::parse($startDate)->subMonth()->startOfMonth()->toDateString();
+            $previousPeriodEndDate = Carbon::parse($endDate)->subMonth()->endOfMonth()->toDateString();
+            $previousPeriodIncomes = $this->calculateDailyIncomes($previousPeriodStartDate, $previousPeriodEndDate);
 
-        if ($request->ajax()) {
-            return response()->json([
-                'currentPeriod' => $currentPeriodIncomes,
-                'previousPeriod' => $previousPeriodIncomes,
-            ]);
+            if ($request->ajax()) {
+                return response()->json([
+                    'currentPeriod' => $currentPeriodIncomes,
+                    'previousPeriod' => $previousPeriodIncomes,
+                ]);
+            } else {
+                return view('statistic.income', compact('currentPeriodIncomes', 'previousPeriodIncomes'));
+            }
         } else {
-            return view('statistic.income', compact('currentPeriodIncomes', 'previousPeriodIncomes'));
+            return redirect('/login');
         }
     }
 
+    /**
+     *  Calculate daily incomes
+     */
     private function calculateDailyIncomes($startDate, $endDate)
     {
         $user = auth()->user();
