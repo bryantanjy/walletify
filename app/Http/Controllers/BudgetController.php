@@ -13,6 +13,9 @@ use Illuminate\Support\Facades\Validator;
 
 class BudgetController extends Controller
 {
+    /**
+     *  Index for budget
+     */
     public function index()
     {
         if (Auth::check()) {
@@ -65,6 +68,9 @@ class BudgetController extends Controller
         }
     }
 
+    /**
+     *  Create user budget template
+     */
     public function createUserTemplate()
     {
         $categories = Category::all();
@@ -79,6 +85,9 @@ class BudgetController extends Controller
         return view('budget.createUserTemplate', compact('categories'));
     }
 
+    /**
+     *  Create default budget template
+     */
     public function createDefaultTemplate()
     {
         $categories = Category::all();
@@ -86,15 +95,14 @@ class BudgetController extends Controller
 
         if ($existingBudget->count() < 1) {
             return view('budget.createDefaultTemplate', compact('categories'));
-            
         } else {
             return redirect()->route('budget.index')->with('error', 'You already have an active budget.');
-
         }
-
-        
     }
 
+    /**
+     *  Store default budget template
+     */
     public function storeDefaultTemplate(Request $request)
     {
         // Create a new budget record
@@ -124,6 +132,9 @@ class BudgetController extends Controller
         return redirect()->route('budget.index')->with('success', 'Default template created successfully');
     }
 
+    /**
+     *  Store user budget template
+     */
     public function storeUserTemplate(Request $request)
     {
         $validator = Validator::make(
@@ -161,6 +172,9 @@ class BudgetController extends Controller
         return redirect()->route('budget.index')->with('success', 'User template created successfully');
     }
 
+    /**
+     *  edit default budget template
+     */
     public function editDefaultTemplate($budgetId)
     {
         $budget = Budget::find($budgetId);
@@ -169,10 +183,14 @@ class BudgetController extends Controller
         if (!$budget) {
             return redirect()->back()->with('error', 'Budget not found');
         }
+        
         return view('budget.editDefaultTemplate', compact('budget', 'categories'));
         // return response()->json(['budget' => $budget]);
     }
 
+    /**
+     *  edit user budget template
+     */
     public function editUserTemplate($budgetId)
     {
         $budget = Budget::find($budgetId);
@@ -181,6 +199,9 @@ class BudgetController extends Controller
         return view('budget.editUserTemplate', compact('budget', 'categories'));
     }
 
+    /**
+     *  update default budget template
+     */
     public function updateDefaultTemplate(Request $request, $budgetId)
     {
         // dd($request->all());
@@ -217,16 +238,15 @@ class BudgetController extends Controller
                 'amount' => $request->input('allocation_amount')[$index],
             ]);
 
-            // Sync the associated categories
-            // foreach ($request->input('categories.' . $index) as $categoryId) {
-            //     $partAllocation->partCategories()->attach($categoryId);
-            // }
             $partAllocation->partCategories()->sync($request->input('categories.' . $index), false);
         }
 
         return redirect()->route('budget.index')->with('success', 'Budget updated successfully');
     }
 
+    /**
+     *  update user budget template
+     */
     public function updateUserTemplate(Request $request, $budgetId)
     {
         $validator = Validator::make(
@@ -260,15 +280,20 @@ class BudgetController extends Controller
 
             $partAllocation->partCategories()->sync($request->input('partCategory.' . $index), true);
         }
+
         return redirect()->route('budget.index')->with('success', 'Budget updated successfully');
     }
 
+    /**
+     *  delete budget
+     */
     public function delete(Budget $budget)
     {
         $user = Auth::id();
         if ($budget->user_id === $user) {
             $budget->delete();
         }
+
         return redirect()->route('budget.index')->with('success', 'Budget deleted successfully');
     }
 }
