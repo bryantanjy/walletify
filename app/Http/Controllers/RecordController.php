@@ -12,6 +12,9 @@ use Illuminate\Support\Facades\Validator;
 
 class RecordController extends Controller
 {
+    /**
+     *  Index record @ record list render
+     */
     public function index(Request $request)
     {
         if (auth()->check()) {
@@ -42,12 +45,16 @@ class RecordController extends Controller
 
             $categories = Category::all();
             $accounts = Account::where('user_id', $user->id)->get();
+            
             return view('record.index', compact('records', 'categories', 'accounts', 'totalBalance', 'startDate', 'endDate'));
         } else {
             return redirect('/login');
         }
     }
 
+    /**
+     *  Create record
+     */
     public function create()
     {
         $user = Auth::user();
@@ -57,6 +64,10 @@ class RecordController extends Controller
         return view('record.create', compact('accounts', 'categories'));
     }
 
+
+    /**
+     *  Store record
+     */
     public function store(Request $request)
     {
         $validator = Validator::make(
@@ -86,9 +97,14 @@ class RecordController extends Controller
             $record->group_id = $request->input('group_id');
             $record->save();
         }
+
         return redirect()->route('record.index')->with('success', 'Record added successfully');
     }
 
+
+    /**
+     *  Edit record
+     */
     public function edit($recordId)
     {
         $record = Record::find($recordId);
@@ -96,10 +112,12 @@ class RecordController extends Controller
         $accounts = Account::all();
 
         // return view('record.edit', compact('record', 'categories', 'accounts'));
-
         return response()->json($record);
     }
 
+    /**
+     *  Update record
+     */
     public function update(Request $request, $recordId)
     {
         $record = Record::find($recordId);
@@ -134,12 +152,16 @@ class RecordController extends Controller
         return redirect()->route('record.index')->with('success', 'Record updated successfully');
     }
 
+    /**
+     *  Delete record
+     */
     public function delete(Record $record)
     {
         $userId = Auth::id();
         if ($record->user_id === $userId) {
             $record->delete();
         }
+
         return redirect()->route('record.index')->with('success', 'Record deleted successfully');
     }
 }
