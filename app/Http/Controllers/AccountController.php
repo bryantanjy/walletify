@@ -10,6 +10,9 @@ use Illuminate\Support\Facades\Validator;
 
 class AccountController extends Controller
 {
+    /**
+     *  Index account
+     */
     public function index(Request $request)
     {
         if (Auth::check()) {
@@ -31,22 +34,29 @@ class AccountController extends Controller
                             $totalIncome += $record->amount;
                         }
                     }
-                } 
+                }
                 $balance = $totalIncome - $totalExpense;
                 $balances[$account->id] = $balance;
             }
-            
+
             return view('account.index', compact('accounts', 'balances'));
         } else {
             return redirect()->route('login');
         }
     }
 
+    /**
+     *  Create account
+     */
     public function create()
     {
         return view('account.create');
     }
 
+
+    /**
+     *  Store account
+     */
     public function store(Request $request)
     {
         $validator = Validator::make(
@@ -57,20 +67,30 @@ class AccountController extends Controller
             ]
         );
 
-        Account::create([
-            "name" => $request->name,
-            "type" => $request->type,
-            "user_id" => Auth::user()->id,
-        ]);
+        if ($validator->fails()) {
+            return back()->withErrors($validator)->withInput();
+        } else {
+            Account::create([
+                "name" => $request->name,
+                "type" => $request->type,
+                "user_id" => Auth::user()->id,
+            ]);
+        }
 
         return redirect()->route('account.index')->with('success', 'Account created successfully');
     }
 
+    /**
+     *  Show account
+     */
     public function show(Account $accounts)
     {
         //
     }
 
+    /**
+     *  Edit account
+     */
     public function edit($accountId)
     {
         $account = Account::find($accountId);
@@ -82,6 +102,10 @@ class AccountController extends Controller
         return response()->json($account);
     }
 
+
+    /**
+     *  Update account
+     */
     public function update(Request $request, $accountId)
     {
         $account = Account::find($accountId);
@@ -102,12 +126,16 @@ class AccountController extends Controller
         return response()->json(['message' => 'Account updated successfully'], 200);
     }
 
+    /**
+     *  Delete account
+     */
     public function delete(Account $account)
     {
         $userId = Auth::id();
         if ($account->user_id === $userId) {
             $account->delete();
         }
+
         return redirect()->route('account.index')->with('success', 'Account deleted successfully');
     }
 }
