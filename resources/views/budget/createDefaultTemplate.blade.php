@@ -136,32 +136,6 @@
     </div>
 </div>
 
-<script>
-    const percentages = {
-        part1: 0.5,
-        part2: 0.3,
-        part3: 0.2,
-    };
-
-    $('#category_id1').filterMultiSelect();
-    $('#category_id2').filterMultiSelect();
-    $('#category_id3').filterMultiSelect();
-
-    document.getElementById("setBtn").addEventListener("click", function() {
-        const totalBudget = parseFloat(document.getElementById("totalBudget").value);
-
-        // Calculate allocation amounts based on percentages
-        const part1Amount = totalBudget * percentages.part1;
-        const part2Amount = totalBudget * percentages.part2;
-        const part3Amount = totalBudget * percentages.part3;
-
-        // Update the readonly input fields with calculated amounts
-        document.getElementById("part1Amount").value = part1Amount.toFixed(2);
-        document.getElementById("part2Amount").value = part2Amount.toFixed(2);
-        document.getElementById("part3Amount").value = part3Amount.toFixed(2);
-    });
-</script>
-
 <style>
     .filter-multi-select {
         min-width: 500px;

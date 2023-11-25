@@ -83,44 +83,6 @@
         </div>
     </div>
 </div>
-<script>
-    $(document).on('click', '.editDefaultBudgetBtn', function() {
-        const categorySelectElements = document.querySelectorAll('[id^=categories]');
-        for (const categorySelectElement of categorySelectElements) {
-            $(categorySelectElement).filterMultiSelect();
-        }
-    });
-
-    document.getElementById('setButton').addEventListener('click', function() {
-        const totalAllocation = parseFloat(document.getElementById('total_allocation').value);
-        const totalBudgetError = document.getElementById('totalBudgetError');
-        const percent = {
-            p1: 0.5,
-            p2: 0.3,
-            p3: 0.2,
-        };
-
-
-        // Check if the total allocation is valid
-        if (totalAllocation <= 1 || isNaN(totalAllocation)) {
-            const errorAmount = document.getElementById('errorAmount');
-            errorAmount.textContent = 'Your input must be more than 1';
-            return;
-        }
-
-        totalBudgetError.textContent = ''; // Clear any previous error message
-
-        // Calculate the allocation amounts for three parts (50%, 30%, 20%)
-        const part1Allocation = (totalAllocation * percent.p1).toFixed(2);
-        const part2Allocation = (totalAllocation * percent.p2).toFixed(2);
-        const part3Allocation = (totalAllocation * percent.p3).toFixed(2);
-
-        // Update the input fields with the calculated amounts
-        document.getElementById('allocation_amount0').value = part1Allocation;
-        document.getElementById('allocation_amount1').value = part2Allocation;
-        document.getElementById('allocation_amount2').value = part3Allocation;
-    });
-</script>
 
 <style>
     .filter-multi-select {

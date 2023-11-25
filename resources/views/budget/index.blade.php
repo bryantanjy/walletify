@@ -7,8 +7,7 @@
     <link href="https://cdnjs.cloudflare.com/ajax/libs/flowbite/2.1.1/flowbite.min.css" rel="stylesheet" />
     <link rel="stylesheet" href="{{ asset('css/filter_multi_select.css') }}" />
     <script src="{{ asset('js/filter-multi-select-bundle.min.js') }}"></script>
-    {{-- <link rel="stylesheet" href="{{ asset('css/modal.css') }}"> --}}
-    <script src="{{ asset('js/modal.js') }}"></script>
+    <script type="text/javascript" src="{{ asset('js/budget.js') }}"></script>
 </head>
 <x-app-layout>
     <main class="flex">

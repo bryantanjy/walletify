@@ -70,17 +70,6 @@
     </div>
 </div>
 
-<script>
-    $(document).ready(function () {
-        $('.editUserBudgetBtn').on('click', function () {
-            const categorySelectElements = $('[id^=partCategory]');
-            categorySelectElements.each(function () {
-                $(this).filterMultiSelect();
-            });
-        });
-    });
-</script>
-
 <style>
     .filter-multi-select {
         min-width: 175px;
