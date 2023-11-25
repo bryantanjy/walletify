@@ -32,7 +32,7 @@
                     </x-nav-link>
                 </div>
                 <div class="hidden space-x-8 sm:-my-px sm:ml-8 sm:flex">
-                    <x-nav-link href="" :active="request()->routeIs('group')" style="font-size: 16px; font-weight: bold;">
+                    <x-nav-link href="{{ route('expense-sharing.index') }}" :active="request()->routeIs('expense-sharing.*')" style="font-size: 16px; font-weight: bold;">
                         {{ __('Expense Sharing') }}
                     </x-nav-link>
                 </div>
