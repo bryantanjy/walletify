@@ -7,7 +7,6 @@
     <script src="https://cdn.jsdelivr.net/npm/daterangepicker/daterangepicker.min.js"></script>
     <link rel="stylesheet" type="text/css" href="https://cdn.jsdelivr.net/npm/daterangepicker/daterangepicker.css" />
     <script src="{{ asset('js/daterangepicker.js') }}"></script>
-    {{-- <link rel="stylesheet" type="text/css" href="{{ asset('css/modal.css') }}"> --}}
     <script src="{{ asset('js/record.js') }}"></script>
     <link rel="stylesheet" type="text/css" href="{{ asset('css/record.css') }}">
 </head>
@@ -69,7 +68,22 @@
                         </div>
                     </div>
                 </div>
+            @elseif (session('error'))
+                <div class="position-fixed top-20 end-0 p-3" style="z-index: 100">
+                    <div class="toast align-items-center bg-red-100 border-0" role="alert" aria-live="assertive"
+                        aria-atomic="true">
+                        <div class="d-flex">
+                            <div class="toast-body">
+                                <i class="fa-regular fa-triangle-exclamation" style="color: #dc0404;"></i>
+                                {{ session('error') }}
+                            </div>
+                            <button type="button" class="btn-close me-2 m-auto" data-bs-dismiss="toast"
+                                aria-label="Close"><i class="fa-solid fa-xmark"></i></button>
+                        </div>
+                    </div>
+                </div>
             @endif
+
             <div class="feature-bar flex">
                 <div class="relative search-icon">
                     <i class="fa-solid fa-magnifying-glass icon"></i>
@@ -78,8 +92,7 @@
                 </div>
                 <div class="flex items-center datepicker">
                     <i class="fa fa-caret-left ml-2 cursor-pointer" id="prevMonth"></i>
-                    <div id="reportrange"
-                        class="flex mx-auto rounded-md border-0 items-center">
+                    <div id="reportrange" class="flex mx-auto rounded-md border-0 items-center">
                         <span></span>
                     </div>
                     <i class="fa fa-caret-right mr-2 cursor-pointer" id="nextMonth"></i>
@@ -132,7 +145,8 @@
                             </div>
                         </div>
                     @endforeach
-                    <div class="pagination justify-content-end mt-2">{{ $records->appends(['startDate' => $startDate, 'endDate' => $endDate])->links() }}</div>
+                    <div class="pagination justify-content-end mt-2">
+                        {{ $records->appends(['startDate' => $startDate, 'endDate' => $endDate])->links() }}</div>
 
                 </div>
             @else

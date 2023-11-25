@@ -123,7 +123,7 @@ class AccountController extends Controller
         $account->name = $request->input('account_name');
         $account->save();
 
-        return response()->json(['message' => 'Account updated successfully'], 200);
+        return response()->json(['success' => 'Account updated successfully'], 200);
     }
 
     /**

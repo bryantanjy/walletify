@@ -30,15 +30,46 @@
             </div>
         </aside>
         <div class="flex-1 p-4 sm:ml-64" style="width: 80%; margin-left:20%; margin-top: 65px;">
+            @if (session('success'))
+                <div class="position-fixed top-20 end-0 p-3" style="z-index: 100">
+                    <div class="toast align-items-center bg-green-100 border-0" role="alert" aria-live="assertive"
+                        aria-atomic="true">
+                        <div class="d-flex">
+                            <div class="toast-body">
+                                <i class="fa-regular fa-circle-check" style="color: #48f745;"></i>
+                                {{ session('success') }}
+                            </div>
+                            <button type="button" class="btn-close me-2 m-auto" data-bs-dismiss="toast"
+                                aria-label="Close"><i class="fa-solid fa-xmark"></i></button>
+                        </div>
+                    </div>
+                </div>
+            @elseif (session('error'))
+                <div class="position-fixed top-20 end-0 p-3" style="z-index: 100">
+                    <div class="toast align-items-center bg-red-100 border-0" role="alert" aria-live="assertive"
+                        aria-atomic="true">
+                        <div class="d-flex">
+                            <div class="toast-body">
+                                <i class="fa-regular fa-triangle-exclamation" style="color: #dc0404;"></i>
+                                {{ session('error') }}
+                            </div>
+                            <button type="button" class="btn-close me-2 m-auto" data-bs-dismiss="toast"
+                                aria-label="Close"><i class="fa-solid fa-xmark"></i></button>
+                        </div>
+                    </div>
+                </div>
+            @endif
+
             @if ($accounts && count($accounts) > 0)
-                <div class="p-4" style="width:70%">
+                <div class="p-4" id="account-container" style="width:70%">
                     @foreach ($accounts as $account)
                         <div class="rounded-md bg-white mb-3">
-                            <div class="grid grid-cols-4 items-center rounded-md px-5 hover:bg-gray-100" style="height: 50px">
-                                <div class="col-start-1 col-end-2">
+                            <div  class="grid grid-cols-4 items-center rounded-md px-5 hover:bg-gray-100"
+                                style="height: 50px">
+                                <div class="col-start-1 col-end-2" id="account_name">
                                     {{ $account->name }}
                                 </div>
-                                <div class="col-start-2 col-end-3" style="font-size: 14px; color:gray">
+                                <div class="col-start-2 col-end-3" style="font-size: 14px; color:gray" id="account_type">
                                     {{ $account->type }}
                                 </div>
                                 <div class="col-start-4 col-end-4">

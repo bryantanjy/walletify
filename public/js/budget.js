@@ -169,3 +169,9 @@ function budgetDeleteModal(budgetId) {
     deleteForm.action = '/budget/delete/' + budgetId;
     modal.show();
 }
+
+
+// trigger toast @ notification
+$(document).ready(function () {
+    $('.toast').toast({ delay: 5000 }).toast('show');
+});
