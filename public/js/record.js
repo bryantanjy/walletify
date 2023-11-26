@@ -20,6 +20,8 @@
 
 // filterSearchRecords();
 
+
+
 $(document).on('click', '.editRecordBtn', function () {
     var recordId = $(this).val();
     var editRecord = $('#editRecordModal');
