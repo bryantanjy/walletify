@@ -26,9 +26,8 @@ class RecordController extends Controller
             $startDate = $startDate ? Carbon::parse($startDate)->startOfDay() : now()->startOfMonth();
             $endDate = $endDate ? Carbon::parse($endDate)->endOfDay() : now()->endOfMonth();
 
-            $records = Record::where('user_id', $user->id)
-                ->whereBetween('datetime', [$startDate, $endDate])
-                ->paginate(14);
+            $records = Record::with('category', 'account', 'user')->where('user_id', $user->id)
+                ->whereBetween('datetime', [$startDate, $endDate])->get();
 
             $totalExpesne = 0;
             $totalIncome = 0;
@@ -45,8 +44,20 @@ class RecordController extends Controller
 
             $categories = Category::all();
             $accounts = Account::where('user_id', $user->id)->get();
-            
-            return view('record.index', compact('records', 'categories', 'accounts', 'totalBalance', 'startDate', 'endDate'));
+
+            if ($request->ajax()) {
+                return response()->json([
+                    'records' => $records,
+                    'categories' => $categories,
+                    'accounts' => $accounts,
+                    'startDate' => $startDate,
+                    'endDate' => $endDate,
+                    'totalBalance' => $totalBalance
+                ]);
+            } else {
+                // If it's a regular request, return the full view
+                return view('record.index', compact('records', 'categories', 'accounts', 'totalBalance', 'startDate', 'endDate'));
+            }
         } else {
             return redirect('/login');
         }
