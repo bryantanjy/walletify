@@ -91,11 +91,11 @@
                         placeholder="Search">
                 </div>
                 <div class="flex items-center datepicker">
-                    <i class="fa fa-caret-left ml-2 cursor-pointer" id="prevMonth"></i>
-                    <div id="reportrange" class="flex mx-auto rounded-md border-0 items-center">
-                        <span></span>
+                    <i class="fa fa-caret-left ml-2 cursor-pointer" id="prevPeriod"></i>
+                    <div id="reportrange" class="flex mx-auto rounded-md border-0 justify-between items-center">
+                        <span></span><i class="fa-solid fa-caret-down"></i>
                     </div>
-                    <i class="fa fa-caret-right mr-2 cursor-pointer" id="nextMonth"></i>
+                    <i class="fa fa-caret-right mr-2 cursor-pointer" id="nextPeriod"></i>
                 </div>
                 <div>
                     <form action="{{ route('record.index') }}" method="GET">
@@ -116,24 +116,23 @@
             @if ($records && count($records) > 0)
                 <div class="records" id="records-container">
                     <div class="grid px-5 bg-white rounded-md border border-bottom">
-                        <div class="text-right mr-5">Total: <b>{{ $totalBalance < 0 ? '-' : '' }}RM
+                        <div class="text-right mr-5 totalBalance">Total: <b>{{ $totalBalance < 0 ? '-' : '' }}RM
                                 {{ number_format(abs($totalBalance), 2) }}</b></div>
                     </div>
                     @foreach ($records as $record)
-                        <div
-                            class="grid grid-cols-9 px-5 bg-gray-200 items-center record-list mt-1 rounded-md hover:bg-gray-100">
-                            <div class="col-start-1 col-end-1"><strong>{{ $record->category->name }}</strong></div>
-                            <div class="col-start-2 col-end-4">
+                        <div class="grid grid-cols-9 px-5 bg-gray-200 items-center record-list mt-1 rounded-md hover:bg-gray-100">
+                            <div class="col-start-1 col-end-1 category_name"><strong>{{ $record->category->name }}</strong></div>
+                            <div class="col-start-2 col-end-4 datetime">
                                 {{ Carbon\Carbon::parse($record->datetime)->format('d/m/Y h:i A') }}</div>
-                            <div class="col-start-4 col-end-4">{{ $record->account->name }}</div>
-                            <div class="col-start-5 col-end-8">{{ $record->description }}</div>
-                            <div class="col-start-8 col-end-8">{{ $record->user->name }}</div>
+                            <div class="col-start-4 col-end-4 account_name">{{ $record->account->name }}</div>
+                            <div class="col-start-5 col-end-8 description">{{ $record->description }}</div>
+                            <div class="col-start-8 col-end-8 username">{{ $record->user->name }}</div>
                             <div class="text-right dropdown-container col-start-9 col-end-9" tabindex="-1">
                                 @if ($record->type === 'Expense')
-                                    <span style="color: rgb(250, 56, 56);"><strong>-RM
+                                    <span class="amount" style="color: rgb(250, 56, 56);"><strong>-RM
                                             {{ $record->amount }}</strong></span>
                                 @else
-                                    <span style="color: rgb(90, 216, 90);"><strong>RM
+                                    <span class="amount" style="color: rgb(90, 216, 90);"><strong>RM
                                             {{ $record->amount }}</strong></span>
                                 @endif
                                 <i class="fa-solid fa-ellipsis-vertical ml-3 menu focus-ring"></i>
@@ -145,9 +144,6 @@
                             </div>
                         </div>
                     @endforeach
-                    <div class="pagination justify-content-end mt-2">
-                        {{ $records->appends(['startDate' => $startDate, 'endDate' => $endDate])->links() }}</div>
-
                 </div>
             @else
                 <p class="m-3 flex justify-center">No records found.</p>
