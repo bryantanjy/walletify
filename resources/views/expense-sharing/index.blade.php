@@ -20,7 +20,7 @@
                         <button class="justify-center rounded text-white"
                             style="background: #4D96EB; width: 125px; height: 26px">
                             <i class="far fa-plus-square mr-1" style="color: #ffffff;"></i>
-                            <span>Add</span>
+                            <span>Create Group</span>
                         </button>
                     </div>
                 </ul>
@@ -29,5 +29,39 @@
         <div class="p-4 sm:ml-64 items-center justify-center" style="width: 80%; margin-left:20%; margin-top: 70px;">
             
         </div>
+        @include('expense-sharing.create')
+        @include('expense-sharing.edit')
     </main>
 </x-app-layout>
+
+{{-- Delete Modal --}}
+<div class="modal fade" id="deleteModal" tabindex="-1" role="dialog" aria-labelledby="deleteModalLabel"
+    aria-hidden="true">
+    <div class="modal-dialog" role="document">
+        <div class="modal-content relative p-4 rounded-lg sm:p-5" style="background-color: #E1F1FA">
+            <div class="modal-header flex justify-end">
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close">
+                    <i class="fa-solid fa-xmark"></i>
+                </button>
+            </div>
+            <input type="hidden" id="recordId" value="">
+            <div class="modal-body flex flex-col items-center">
+                Are you sure you want to delete this group?
+            </div>
+            <div class="flex justify-center items-center space-x-4">
+                
+                    <form id="deleteForm" method="POST"
+                        action="{{ route('expense-sharing.delete', ['group' => $group->id]) }}">
+                        @csrf
+                        @method('DELETE')
+                        <button type="submit" style="width: 120px"
+                            class="py-2 px-3 text-sm font-medium text-center text-white bg-red-600 rounded-lg hover:bg-red-700 mt-4">Yes</button>
+                    </form>
+
+                <button type="button" style="width: 120px"
+                    class="py-2 px-3 text-sm font-medium text-gray-500 bg-white rounded-lg border border-gray-200 hover:bg-gray-100 hover:text-gray-900 focus:z-10"
+                    data-bs-dismiss="modal">Cancel</button>
+            </div>
+        </div>
+    </div>
+</div>
