@@ -12,13 +12,13 @@
                 <ul class="space-y-2 font-medium">
                     <li>
                         <div class="flex items-center p-2 text-gray-900 rounded-lg dark:text-black mx-auto">
-                            <span href="{{ route('budget.index') }}" class="mx-auto"
-                                style="font-size:24px;"><b>Expense Sharing</b></span>
+                            <span class="mx-auto" style="font-size:24px;"><b>Expense
+                                    Sharing</b></span>
                         </div>
                     </li>
                     <div class="flex justify-center" style="text-align: center">
-                        <button class="justify-center rounded text-white"
-                            style="background: #4D96EB; width: 125px; height: 26px">
+                        <button class="justify-center rounded text-white" data-bs-toggle="modal"
+                            data-bs-target="#createGroupModal" style="background: #4D96EB; width: 150px; height: 26px">
                             <i class="far fa-plus-square mr-1" style="color: #ffffff;"></i>
                             <span>Create Group</span>
                         </button>
@@ -27,7 +27,61 @@
             </div>
         </aside>
         <div class="p-4 sm:ml-64 items-center justify-center" style="width: 80%; margin-left:20%; margin-top: 70px;">
-            
+            @if (session('success'))
+                <div class="position-fixed top-20 end-0 p-3" style="z-index: 100">
+                    <div class="toast align-items-center bg-green-100 border-0" role="alert" aria-live="assertive"
+                        aria-atomic="true">
+                        <div class="d-flex">
+                            <div class="toast-body">
+                                <i class="fa-regular fa-circle-check" style="color: #48f745;"></i>
+                                {{ session('success') }}
+                            </div>
+                            <button type="button" class="btn-close me-2 m-auto" data-bs-dismiss="toast"
+                                aria-label="Close"><i class="fa-solid fa-xmark"></i></button>
+                        </div>
+                    </div>
+                </div>
+            @elseif (session('error'))
+                <div class="position-fixed top-20 end-0 p-3" style="z-index: 100">
+                    <div class="toast align-items-center bg-red-100 border-0" role="alert" aria-live="assertive"
+                        aria-atomic="true">
+                        <div class="d-flex">
+                            <div class="toast-body">
+                                <i class="fa-regular fa-triangle-exclamation" style="color: #dc0404;"></i>
+                                {{ session('error') }}
+                            </div>
+                            <button type="button" class="btn-close me-2 m-auto" data-bs-dismiss="toast"
+                                aria-label="Close"><i class="fa-solid fa-xmark"></i></button>
+                        </div>
+                    </div>
+                </div>
+            @endif
+
+            @if ($groups && count($groups) > 0)
+                @foreach ($groups as $group)
+                <div class="rounded-md bg-white mb-3">
+                    <div  class="grid grid-cols-4 items-center rounded-md px-5 hover:bg-gray-100"
+                        style="height: 50px">
+                        <div class="col-start-1 col-end-2" id="group_name">
+                            {{ $group->name }}
+                        </div>
+                        <div class="col-start-2 col-end-3" style="font-size: 14px; color:gray" id="group_description">
+                            {{ $group->description }}
+                        </div>
+                        <div class="col-start-5 col-end-5">
+                            <button class="editAccountBtn mr-4" value="{{ $group->id }}">
+                                <i class="fas fa-edit"></i>
+                            </button>
+                            <button class="deleteAccountBtn" onclick="showDeleteModal({{ $group->id }})">
+                                <i class="fas fa-trash"></i>
+                            </button>
+                        </div>
+                    </div>
+                </div>
+                @endforeach
+            @else
+                <p>No groups created at the moment</p>
+            @endif
         </div>
         @include('expense-sharing.create')
         @include('expense-sharing.edit')
@@ -49,14 +103,13 @@
                 Are you sure you want to delete this group?
             </div>
             <div class="flex justify-center items-center space-x-4">
-                
-                    <form id="deleteForm" method="POST"
-                        action="{{ route('expense-sharing.delete', ['group' => $group->id]) }}">
-                        @csrf
-                        @method('DELETE')
-                        <button type="submit" style="width: 120px"
-                            class="py-2 px-3 text-sm font-medium text-center text-white bg-red-600 rounded-lg hover:bg-red-700 mt-4">Yes</button>
-                    </form>
+
+                <form id="deleteForm" method="POST" action="">
+                    @csrf
+                    @method('DELETE')
+                    <button type="submit" style="width: 120px"
+                        class="py-2 px-3 text-sm font-medium text-center text-white bg-red-600 rounded-lg hover:bg-red-700 mt-4">Yes</button>
+                </form>
 
                 <button type="button" style="width: 120px"
                     class="py-2 px-3 text-sm font-medium text-gray-500 bg-white rounded-lg border border-gray-200 hover:bg-gray-100 hover:text-gray-900 focus:z-10"
@@ -65,3 +118,11 @@
         </div>
     </div>
 </div>
+
+@if (count($errors) > 0)
+    <script>
+        $(document).ready(function() {
+            $('#createGroupModal').modal('show');
+        });
+    </script>
+@endif
