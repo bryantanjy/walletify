@@ -16,8 +16,7 @@
                 <ul class="space-y-2 font-medium">
                     <li>
                         <div class="flex items-center p-2 text-gray-900 rounded-lg dark:text-black mx-auto">
-                            <span href="{{ route('budget.index') }}" class="mx-auto"
-                                style="font-size:24px;"><b>Statistics</b></span>
+                            <span class="mx-auto" style="font-size:24px;"><b>Statistics</b></span>
                         </div>
                     </li>
                     <div class="flex justify-center mt-5" style="text-align: center">
