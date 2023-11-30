@@ -9,7 +9,12 @@ class ExpenseSharingGroup extends Model
 {
     use HasFactory;
 
-    protected $fillable = ['name', 'description'];
+    protected $fillable = ['user_id', 'name', 'description'];
+
+    public function organizer()
+    {
+        return $this->belongsTo(User::class, 'user_id');
+    }
 
     public function groupMembers()
     {
