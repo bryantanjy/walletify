@@ -9,25 +9,34 @@
                     <i class="fa-solid fa-xmark"></i>
                 </button>
             </div>
-            
-            <div class="modal-body">
+
+            <div class="modal-body text-left">
                 <!-- Group creation form -->
                 <form action="{{ route('expense-sharing.store') }}" method="POST">
                     @csrf
-                    <div class="mb-3">
-                        <label for="groupName">Group Name</label>
+                    @if ($errors->any())
+                        <div class="alert alert-danger">
+                            <ul>
+                                @foreach ($errors->all() as $error)
+                                    <li>{{ $error }}</li>
+                                @endforeach
+                            </ul>
+                        </div>
+                    @endif
+                    <div class="flex items-center">
+                        <label for="groupName" class="w-40 pr-2 mt-4">Group Name</label>
                         <input type="text" name="name" class="rounded-md border-0"
-                            style="height: 30px; padding:0px 10px; margin:15px 0px 0px 11px; width:50%"
-                            placeholder="Group name" required>
+                            style="height: 30px; padding:0px 10px; margin:15px 0px 0px 20px; width:50%"
+                            value="{{ old('name') }}" placeholder="Group name" required>
                     </div>
-                    <div class="mb-3">
-                        <label for="groupDescription">Group Description</label>
-                        <input type="text" name="description" class="rounded-md border-0"
-                            style="height: 30px; padding:0px 10px; margin:15px 0px 0px 11px; width:50%"
-                            placeholder="Description" required>
+                    <div class="flex items-center">
+                        <label for="groupDescription" class="w-40 pr-2 mt-4">Group Description</label>
+                        <textarea type="text" name="description" class="rounded-md flex-grow border-0" placeholder="Group Description"
+                            value="{{ old('description') }}" maxlength="255" style="height: 60px; padding:0px 10px; margin:15px 0px 0px 20px;"></textarea>
                     </div>
                     <div class="flex mt-6 justify-center text-white">
-                        <button type="submit" style="background: #4D96EB; width:100px; height:26px; border:0px solid; border-radius: 5px">Create</button>
+                        <button type="submit"
+                            style="background: #4D96EB; width:100px; height:26px; border:0px solid; border-radius: 5px">Create</button>
                     </div>
                 </form>
             </div>
