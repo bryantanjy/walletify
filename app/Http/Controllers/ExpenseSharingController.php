@@ -43,6 +43,7 @@ class ExpenseSharingController extends Controller
         }
 
         $expenseSharing = new ExpenseSharingGroup;
+        $expenseSharing->user_id = auth()->id();
         $expenseSharing->name = $request->input('name');
         $expenseSharing->description = $request->input('description');
         $expenseSharing->save();
