@@ -10,17 +10,15 @@ use Illuminate\Support\Facades\Validator;
 class ExpenseSharingController extends Controller
 {
     public function index()
-    {   
-        if(Auth::check()) {
+    {
+        if (Auth::check()) {
             $user = auth()->user();
             $groups = ExpenseSharingGroup::where('user_id', $user->id)->get();
 
             return view('expense-sharing.index', compact('groups'));
         } else {
-            redirect('/login');
+            return redirect('/login');
         }
-         
-        
     }
 
     public function create()
@@ -48,21 +46,46 @@ class ExpenseSharingController extends Controller
         $expenseSharing->description = $request->input('description');
         $expenseSharing->save();
 
-        return view('expense-sharing.index')->with('success', 'Your Expense Sharing Group created successfully');
+        return redirect()->route('expense-sharing.index')->with('success', 'Your Expense Sharing Group created successfully');
     }
 
-    public function edit()
+    public function edit($groupId)
     {
-        return view('expense-sharing.edit');
+        $group = ExpenseSharingGroup::find($groupId);
+
+        return view('expense-sharing.edit', ['group' => $group]);
     }
 
-    public function update()
+    public function update(Request $request, $groupId)
     {
-        return view('expense-sharing.update');
+        $group = ExpenseSharingGroup::find($groupId);
+
+        $validator = Validator::make(
+            $request->all(),
+            [
+                'name' => 'required|string|max:255',
+                'description' => 'nullable|string|max:255',
+            ]
+        );
+
+        if ($validator->fails()) {
+            return redirect()->back()->withErrors($validator);
+        }
+
+        $group->name = $request->input('name');
+        $group->description = $request->input('description');
+        $group->save();
+
+        return redirect()->route('expense-sharing.index')->with('success', 'Group details are successfully updated');
     }
 
-    public function delete()
+    public function delete(ExpenseSharingGroup $group)
     {
-        return view('expense-sharing.delete');
+
+        $userId = Auth::id();
+        if ($group->user_id === $userId) {
+            $group->delete();
+        }
+        return redirect()->route('expense-sharing.index')->with('success', 'Group deleted successfully');
     }
 }
