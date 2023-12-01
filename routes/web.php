@@ -79,9 +79,9 @@ Route::group(['prefix' => 'expense-sharing', 'as' => 'expense-sharing.'], functi
     Route::get('/', [ExpenseSharingController::class, 'index'])->name('index');
     Route::get('/create', [ExpenseSharingController::class, 'create'])->name('create');
     Route::post('/store', [ExpenseSharingController::class, 'store'])->name('store');
-    Route::get('/edit/{id}', [ExpenseSharingController::class, 'edit'])->name('edit');
-    Route::put('/update/{id}', [ExpenseSharingController::class, 'update'])->name('update');
-    Route::delete('/delete/{id}', [ExpenseSharingController::class, 'delete'])->name('delete');
+    Route::get('/edit/{group}', [ExpenseSharingController::class, 'edit'])->name('edit');
+    Route::put('/update/{group}', [ExpenseSharingController::class, 'update'])->name('update');
+    Route::delete('/delete/{group}', [ExpenseSharingController::class, 'delete'])->name('delete');
 
 
     Route::group(['prefix' => 'group', 'as' => 'group.'], function () {
