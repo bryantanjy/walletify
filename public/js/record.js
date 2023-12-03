@@ -1,24 +1,29 @@
+// search function
+$(document).ready(function() {
+    function delay(callback, ms) {
+        var timer = 0;
+        return function() {
+          var context = this, args = arguments;
+          clearTimeout(timer);
+          timer = setTimeout(function () {
+            callback.apply(context, args);
+          }, ms || 0);
+        };
+      }
+      
 
-// function filterSearchRecords() {
-//     var searchInput = $('#search').val().toLowerCase();
-
-//     $('.record-list').each(function () {
-//         var recordDescription = $(this).find('.col-start-5').text().toLowerCase();
-//         var recordElement = $(this);
-
-//         if (recordDescription.includes(searchInput)) {
-//             recordElement.show();
-//         } else {
-//             recordElement.hide();
-//         }
-//     });
-// }
-
-// $('#search').on('input', function () {
-//     filterSearchRecords();
-// });
-
-// filterSearchRecords();
+    $('#search').on('keyup', delay(function() {
+        var query = $(this).val();
+        $.ajax({
+            url: '/record/search',
+            type: 'GET',
+            data: {'searchTerm': query}, 
+            success: function(data) {
+                $('#records-container').html(data);
+            }
+        });
+    }, 1500));
+});
 
 
 
