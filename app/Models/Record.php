@@ -39,4 +39,24 @@ class Record extends Model
     {
         return $this->belongsTo(Category::class, 'category_id', 'id');
     }
+
+    public function scopeSearch($query, $searchTerm)
+    {
+        if ($searchTerm) {
+            $query->where(function ($q) use ($searchTerm) {
+                $q->where('description', 'like', '%' . $searchTerm . '%')
+                    ->orWhereHas('user', function ($subQuery) use ($searchTerm) {
+                        $subQuery->where('name', 'like', '%' . $searchTerm . '%');
+                    })
+                    ->orWhereHas('account', function ($subQuery) use ($searchTerm) {
+                        $subQuery->where('name', 'like', '%' . $searchTerm . '%');
+                    })
+                    ->orWhereHas('category', function ($subQuery) use ($searchTerm) {
+                        $subQuery->where('name', 'like', '%' . $searchTerm . '%');
+                    });
+            });
+        }
+
+        return $query;
+    }
 }
