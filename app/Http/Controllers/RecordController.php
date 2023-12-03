@@ -26,21 +26,12 @@ class RecordController extends Controller
             $startDate = $startDate ? Carbon::parse($startDate)->startOfDay() : now()->startOfMonth();
             $endDate = $endDate ? Carbon::parse($endDate)->endOfDay() : now()->endOfMonth();
 
-            $records = Record::with('category', 'account', 'user')->where('user_id', $user->id)
-                ->whereBetween('datetime', [$startDate, $endDate])->get();
+            $records = Record::with('category', 'account', 'user')
+                ->where('user_id', $user->id)
+                ->whereBetween('datetime', [$startDate, $endDate])
+                ->get();
 
-            $totalExpesne = 0;
-            $totalIncome = 0;
-
-            foreach ($records as $record) {
-                if ($record->type === 'Expense') {
-                    $totalExpesne += $record->amount;
-                } else {
-                    $totalIncome += $record->amount;
-                }
-            }
-
-            $totalBalance = $totalIncome - $totalExpesne;
+            $totalBalance = $this->calculateTotalBalance($records);
 
             $categories = Category::all();
             $accounts = Account::where('user_id', $user->id)->get();
@@ -61,6 +52,39 @@ class RecordController extends Controller
         } else {
             return redirect('/login');
         }
+    }
+
+    public function search(Request $request)
+    {
+        $searchTerm = $request->input('searchTerm');
+        $user = Auth::user();
+
+        $records = Record::search($searchTerm)
+            ->with('category', 'account', 'user')
+            ->where('user_id', $user->id)
+            ->get();
+
+        $categories = Category::all(); // Retrieve all categories
+        $accounts = Account::where('user_id', Auth::user()->id)->get(); // Retrieve all accounts for the current user
+        $totalBalance = $this->calculateTotalBalance($records);
+
+        return view('record.record_list', compact('records', 'categories', 'accounts', 'totalBalance'));
+    }
+
+    private function calculateTotalBalance($records)
+    {
+        $totalExpense = 0;
+        $totalIncome = 0;
+
+        foreach ($records as $record) {
+            if ($record->type === 'Expense') {
+                $totalExpense += $record->amount;
+            } else {
+                $totalIncome += $record->amount;
+            }
+        }
+
+        return $totalIncome - $totalExpense;
     }
 
     /**
