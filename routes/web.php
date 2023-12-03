@@ -46,6 +46,7 @@ Route::group(['prefix' => 'account'], function () {
 // route for record module
 Route::group(['prefix' => 'record'], function () {
     Route::get('/', [RecordController::class, 'index'])->name('record.index');
+    Route::get('/search', [RecordController::class, 'search'])->name('record.search');
     Route::get('/create', [RecordController::class, 'create'])->name('record.create');
     Route::post('/store', [RecordController::class, 'store'])->name('record.store');
     Route::get('/edit/{record}', [RecordController::class, 'edit'])->name('record.edit');
