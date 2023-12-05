@@ -13,7 +13,7 @@ use Illuminate\Support\Facades\Validator;
 class RecordController extends Controller
 {
     /**
-     *  Index record @ record list render
+     *  Index record
      */
     public function index(Request $request)
     {
@@ -24,12 +24,13 @@ class RecordController extends Controller
             $endDate = $request->input('endDate');
 
             $startDate = $startDate ? Carbon::parse($startDate)->startOfDay() : now()->startOfMonth();
-            $endDate = $endDate ? Carbon::parse($endDate)->endOfDay() : now()->endOfMonth();
+            $endDate = $endDate ? Carbon::parse($endDate)->endOfDay() + 1 : now()->endOfMonth();
 
             $records = Record::with('category', 'account', 'user')
                 ->where('user_id', $user->id)
                 ->whereBetween('datetime', [$startDate, $endDate])
-                ->get();
+                ->orderBy('datetime', 'desc')
+                ->paginate(14);
 
             $totalBalance = $this->calculateTotalBalance($records);
 
@@ -54,15 +55,26 @@ class RecordController extends Controller
         }
     }
 
+    /**
+     *  search function
+     */
     public function search(Request $request)
     {
         $searchTerm = $request->input('searchTerm');
+        $sort = $request->input('sort');
         $user = Auth::user();
 
         $records = Record::search($searchTerm)
             ->with('category', 'account', 'user')
-            ->where('user_id', $user->id)
-            ->get();
+            ->where('user_id', $user->id);
+
+            if ($sort == 'oldest') {
+                $records = $records->orderBy('datetime', 'asc');
+            } else {
+                $records = $records->orderBy('datetime', 'desc');
+            }
+
+            $records = $records->paginate(14);
 
         $categories = Category::all(); // Retrieve all categories
         $accounts = Account::where('user_id', Auth::user()->id)->get(); // Retrieve all accounts for the current user
@@ -71,6 +83,38 @@ class RecordController extends Controller
         return view('record.record_list', compact('records', 'categories', 'accounts', 'totalBalance'));
     }
 
+    /**
+     *  fetch the date from datepicker and show the ranged record
+     */
+    public function fetchByDate(Request $request)
+    {
+        $startDate = $request->input('startDate');
+        $endDate = $request->input('endDate');
+        $sort = $request->input('sort');
+        $user = Auth::user();
+
+        $records = Record::with('category', 'account', 'user')
+            ->where('user_id', $user->id)
+            ->whereBetween('datetime', [$startDate, $endDate]);
+
+            if ($sort == 'oldest') {
+                $records = $records->orderBy('datetime', 'asc');
+            } else {
+                $records = $records->orderBy('datetime', 'desc');
+            }
+
+            $records = $records->paginate(14);
+
+        $categories = Category::all(); // Retrieve all categories
+        $accounts = Account::where('user_id', Auth::user()->id)->get(); // Retrieve all accounts for the current user
+        $totalBalance = $this->calculateTotalBalance($records);
+
+        return view('record.record_list', compact('records', 'categories', 'accounts', 'totalBalance'));
+    }
+
+    /**
+     *  calculate total balance function
+     */
     private function calculateTotalBalance($records)
     {
         $totalExpense = 0;
