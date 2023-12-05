@@ -4,65 +4,40 @@ $(function () {
 
     function calender(start, end) {
         $('#reportrange span').html(start.format('D MMM YYYY') + ' - ' + end.format('D MMM YYYY'));
-
-        // fetchRecords(start, end);
     }
 
     //  fetch record list and update when the new date is picked
     function fetchRecord(start, end) {
         $('#reportrange span').html(start.format('D MMM YYYY') + ' - ' + end.format('D MMM YYYY'));
+        fetchRecords(start, end, 1)
+    }
 
+    function fetchRecords(start, end, page) {
         $.ajax({
-            url: '/record',
+            url: '/record/fetchByDate',
             type: 'GET',
             data: {
                 startDate: start.format('YYYY-MM-DD'),
                 endDate: end.format('YYYY-MM-DD'),
+                'page': page
             },
             success: function (response) {
-                // $('#records-container').empty();
-                
-                // response.records.forEach(function (record) {
-                //     var totalBalance = $('<div class="grid px-5 bg-white rounded-md border border-bottom">');
-                //     $('#totalBalance').html('Total: <b>' + (response.totalBalance < 0 ? '-' : '') + 'RM ' + parseFloat(Math.abs(response.totalBalance)).toFixed(2) + '</b>');
-
-                //     var recordElement = $('<div class="grid grid-cols-9 px-5 bg-gray-200 items-center record-list mt-1 rounded-md hover:bg-gray-100">');
-                    
-                //     recordElement.append('<div class="col-start-1 col-end-1" id="category_name"><strong>' + (record.category ? record.category.name : '') + '</strong></div>');
-                //     recordElement.append('<div class="col-start-2 col-end-4" id="datetime">' + (record.datetime ? moment(record.datetime).format('D/M/YYYY h:mm A') : '') + '</div>');
-                //     recordElement.append('<div class="col-start-4 col-end-4" id="account_name">' + (record.account ? record.account.name : '') + '</div>');
-                //     recordElement.append('<div class="col-start-5 col-end-8" id="description">' + (record.description ? record.description : '') + '</div>');
-                //     recordElement.append('<div class="col-start-8 col-end-8" id="username">' + (record.user ? record.user.name : '') + '</div>');
-                    
-                //     var dropdownContainer = $('<div class="text-right dropdown-container col-start-9 col-end-9" tabindex="-1"></div>');
-                    
-                //     if (record.type === 'Expense') {
-                //         dropdownContainer.append('<span class="amount" style="color: rgb(250, 56, 56);"><strong>-RM ' + (record.amount ? parseFloat(record.amount).toFixed(2) : '') + '</strong></span>');
-                //     } else {
-                //         dropdownContainer.append('<span class="amount" style="color: rgb(90, 216, 90);"><strong>RM ' + (record.amount ? parseFloat(record.amount).toFixed(2) : '') + '</strong></span>');
-                //     }
-
-                //     // Append dropdown content to the dropdown container
-                //     dropdownContainer.append('<i class="fa-solid fa-ellipsis-vertical ml-3 menu focus-ring"></i>');
-                //     var dropdown = $('<div class="dropdown shadow"></div>');
-                //     dropdown.append('<button class="editRecordBtn" value="' + record.id + '">Edit</button>');
-                //     dropdown.append('<button class="deleteRecordBtn" onclick="recordDeleteModal(' + record.id + ')">Delete</button>');
-                //     dropdownContainer.append(dropdown);
-
-                //     // Append the dropdown container to the record element
-                //     recordElement.append(dropdownContainer);
-                //     $('#records-container').append(recordElement);
-                // });
-                // $('.totalBalance').html('Total: <b>' + (response.totalBalance < 0 ? '-' : '') + 'RM ' + parseFloat(Math.abs(response.totalBalance)).toFixed(2) + '</b>');
-
-            // Update record list
-            updateRecordList(response);
+                // updateRecordList(response);
+                $('#records-container').html(response);
             },
             error: function (error) {
                 console.error('Error fetching records:', error);
             }
         });
     }
+
+    // make the page goes to second page without losing the page layout
+    $(document).on('click', '.pagination a', function (event) {
+        event.preventDefault();
+        var page = $(this).attr('href').split('page=')[1];
+        fetchRecords(start, end, page);
+    });
+
 
     //  fetch expense data and update the graph when the new date is picked
     function fetchExpensesData(start, end) {
@@ -117,11 +92,7 @@ $(function () {
         "startDate": start,
         "endDate": end,
         "opens": "left"
-    },
-        fetchRecord,
-        fetchExpensesData,
-        fetchIncomesData,
-    );
+    }, fetchRecord, fetchExpensesData, fetchIncomesData,);
 
     fetchRecord(start, end);
     fetchExpensesData(start, end);
@@ -150,43 +121,42 @@ $(function () {
 });
 
 //  update record list
-function updateRecordList(response) {
+// function updateRecordList(response) {
+//     if (response.records && response.records.length > 0) {
+//         var recordsContainer = $('#records-container');
+//         recordsContainer.empty(); // Clear existing records
 
-    if (response.records && response.records.length > 0) {
-        var recordsContainer = $('#records-container');
-        recordsContainer.empty(); // Clear existing records
+//         // Create the total balance container
+//         var totalBalanceContainer = $('<div class="grid px-5 bg-white rounded-md border border-bottom"></div>');
+//         totalBalanceContainer.append('<div class="text-right mr-5 totalBalance">Total: <b>' + (response.totalBalance < 0 ? '-' : '') + 'RM ' + parseFloat(Math.abs(response.totalBalance)).toFixed(2) + '</b></div>');
 
-        // Create the total balance container
-        var totalBalanceContainer = $('<div class="grid px-5 bg-white rounded-md border border-bottom"></div>');
-        totalBalanceContainer.append('<div class="text-right mr-5 totalBalance">Total: <b>' + (response.totalBalance < 0 ? '-' : '') + 'RM ' + parseFloat(Math.abs(response.totalBalance)).toFixed(2) + '</b></div>');
+//         // Append the total balance container to the records container
+//         recordsContainer.append(totalBalanceContainer);
 
-        // Append the total balance container to the records container
-        recordsContainer.append(totalBalanceContainer);
-
-        response.records.forEach(function (record) {
-            // Construct record element
-            var recordElement = $('<div class="grid grid-cols-9 px-5 bg-gray-200 items-center record-list mt-1 rounded-md hover:bg-gray-100"></div>');
-            recordElement.append('<div class="col-start-1 col-end-1 category_name"><strong>' + (record.category ? record.category.name : '') + '</strong></div>');
-            recordElement.append('<div class="col-start-2 col-end-4 datetime">' + (record.datetime ? moment(record.datetime).format('D/M/Y h:m A') : '') + '</div>');
-            recordElement.append('<div class="col-start-4 col-end-4 account_name">' + (record.account ? record.account.name : '') + '</div>');
-            recordElement.append('<div class="col-start-5 col-end-8 description">' + (record.description ? record.description : '') + '</div>');
-            recordElement.append('<div class="col-start-8 col-end-8 username">' + (record.user ? record.user.name : '') + '</div>');
-            var dropdownContainer = $('<div class="text-right dropdown-container col-start-9 col-end-9" tabindex="-1"></div>');
-            if (record.type === 'Expense') {
-                dropdownContainer.append('<span class="amount" style="color: rgb(250, 56, 56);"><strong>-RM ' + (record.amount ? parseFloat(record.amount).toFixed(2) : '') + '</strong></span>');
-            } else {
-                dropdownContainer.append('<span class="amount" style="color: rgb(90, 216, 90);"><strong>RM ' + (record.amount ? parseFloat(record.amount).toFixed(2) : '') + '</strong></span>');
-            }
-            dropdownContainer.append('<i class="fa-solid fa-ellipsis-vertical ml-3 menu focus-ring"></i>');
-            var dropdown = $('<div class="dropdown shadow"></div>');
-            dropdown.append('<button class="editRecordBtn" value="' + record.id + '">Edit</button>');
-            dropdown.append('<button class="deleteRecordBtn" onclick="recordDeleteModal(' + record.id + ')">Delete</button>');
-            dropdownContainer.append(dropdown);
-            recordElement.append(dropdownContainer);
-            recordsContainer.append(recordElement);
-        });
-    } else {
-        // If no records found, display a message
-        recordsContainer.append('<p class="m-3 flex justify-center">No records found.</p>');
-    }
-}
+//         response.records.forEach(function (record) {
+//             // Construct record element
+//             var recordElement = $('<div class="grid grid-cols-9 px-5 bg-gray-200 items-center record-list mt-1 rounded-md hover:bg-gray-100"></div>');
+//             recordElement.append('<div class="col-start-1 col-end-1 category_name"><strong>' + (record.category ? record.category.name : '') + '</strong></div>');
+//             recordElement.append('<div class="col-start-2 col-end-4 datetime">' + (record.datetime ? moment(record.datetime).format('D/M/Y h:m A') : '') + '</div>');
+//             recordElement.append('<div class="col-start-4 col-end-4 account_name">' + (record.account ? record.account.name : '') + '</div>');
+//             recordElement.append('<div class="col-start-5 col-end-8 description">' + (record.description ? record.description : '') + '</div>');
+//             recordElement.append('<div class="col-start-8 col-end-8 username">' + (record.user ? record.user.name : '') + '</div>');
+//             var dropdownContainer = $('<div class="text-right dropdown-container col-start-9 col-end-9" tabindex="-1"></div>');
+//             if (record.type === 'Expense') {
+//                 dropdownContainer.append('<span class="amount" style="color: rgb(250, 56, 56);"><strong>-RM ' + (record.amount ? parseFloat(record.amount).toFixed(2) : '') + '</strong></span>');
+//             } else {
+//                 dropdownContainer.append('<span class="amount" style="color: rgb(90, 216, 90);"><strong>RM ' + (record.amount ? parseFloat(record.amount).toFixed(2) : '') + '</strong></span>');
+//             }
+//             dropdownContainer.append('<i class="fa-solid fa-ellipsis-vertical ml-3 menu focus-ring"></i>');
+//             var dropdown = $('<div class="dropdown shadow"></div>');
+//             dropdown.append('<button class="editRecordBtn" value="' + record.id + '">Edit</button>');
+//             dropdown.append('<button class="deleteRecordBtn" onclick="recordDeleteModal(' + record.id + ')">Delete</button>');
+//             dropdownContainer.append(dropdown);
+//             recordElement.append(dropdownContainer);
+//             recordsContainer.append(recordElement);
+//         });
+//     } else {
+//         // If no records found, display a message
+//         recordsContainer.append('<p class="m-3 flex justify-center">No records found.</p>');
+//     }
+// }
