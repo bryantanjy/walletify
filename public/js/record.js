@@ -10,19 +10,34 @@ $(document).ready(function() {
           }, ms || 0);
         };
       }
-      
-
+    
+    // when user enter the word, it will retrieve the word; make delay to 1 seconds
     $('#search').on('keyup', delay(function() {
         var query = $(this).val();
+        fetchSearchResults(query, 1);
+    }, 1000));
+
+    function fetchSearchResults(query, page) {
         $.ajax({
             url: '/record/search',
             type: 'GET',
-            data: {'searchTerm': query}, 
+            data: {
+                'search': query,
+                'page': page
+            },
             success: function(data) {
                 $('#records-container').html(data);
             }
         });
-    }, 1500));
+    }
+    
+    //  fetch record list and update when the new date is picked
+    $(document).on('click', '.pagination a', function(event) {
+        event.preventDefault(); 
+        var page = $(this).attr('href').split('page=')[1];
+        var query = $('#search').val();
+        fetchSearchResults(query, page);
+    });
 });
 
 
