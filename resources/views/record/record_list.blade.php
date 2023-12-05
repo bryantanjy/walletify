@@ -5,7 +5,7 @@
 @foreach ($records as $record)
     <div class="grid grid-cols-9 px-5 bg-gray-200 items-center record-list mt-1 rounded-md hover:bg-gray-100">
         <div class="col-start-1 col-end-1 category_name"><strong>{{ $record->category->name }}</strong></div>
-        <div class="col-start-2 col-end-4 datetime">
+        <div class="col-start-2 col-end-4 datetime text-center">
             {{ Carbon\Carbon::parse($record->datetime)->format('d/m/Y h:i A') }}</div>
         <div class="col-start-4 col-end-4 account_name">{{ $record->account->name }}</div>
         <div class="col-start-5 col-end-8 description">{{ $record->description }}</div>
@@ -26,3 +26,4 @@
         </div>
     </div>
 @endforeach
+<div class="mt-2 flex items-center">{{$records->links()}}</div>
