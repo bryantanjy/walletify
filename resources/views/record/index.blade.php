@@ -33,22 +33,32 @@
                     <div class="filter">
                         <h3>FILTER</h3>
                         <h3>CATEGORIES</h3>
-                        @foreach ($categories as $category)
-                            <label class="flex items-center">
-                                <input type="checkbox" class="mr-4" name="category" value="{{ $category->name }}">
-                                {{ $category->name }}
-                            </label>
-                        @endforeach
+                        <form id="filter-form" action="{{ route('record.filter') }}" method="GET">
+                            @csrf
+                            @foreach ($categories as $category)
+                                <label class="flex items-center">
+                                    <input type="checkbox" class="mr-4" name="categories[]"
+                                        value="{{ $category->id }}" >
+                                    {{ $category->name }}
+                                </label>
+                            @endforeach
 
-                        <h3 class="mt-4">RECORD TYPES</h3>
-                        <label class="flex items-center">
-                            <input type="checkbox" class="mr-4" name="type" value="Expense">
-                            Expense
-                        </label>
-                        <label class="flex items-center">
-                            <input type="checkbox" class="mr-4" name="type" value="Income">
-                            Income
-                        </label>
+                            <h3 class="mt-4">RECORD TYPES</h3>
+                            <label class="flex items-center">
+                                <input type="checkbox" class="mr-4" name="type[]" value="Expense" 
+                                    >
+                                Expense
+                            </label>
+                            <label class="flex items-center">
+                                <input type="checkbox" class="mr-4" name="type[]" value="Income"
+                                    >
+                                Income
+                            </label>
+                            <div class="flex justify-center mt-3">
+                                <button id="reset" class="bg-white w-20 rounded-md">Clear</button>
+                            </div> 
+                            <input type="hidden" name="_token" value="{{ csrf_token() }}">
+                        </form>
                     </div>
                 </div>
             </div>
@@ -102,9 +112,12 @@
                         @csrf
                         <label for="sorting">
                             Sort:
-                            <select name="sort" id="sort" class="rounded-md border-0 sort" onchange="this.form.submit()">
-                                <option value="latest" {{ request('sort') == 'latest' ? 'selected' : '' }} selected>Latest</option>
-                                <option value="oldest" {{ request('sort') == 'oldest' ? 'selected' : '' }}>Oldest </option>
+                            <select name="sort" id="sort" class="rounded-md border-0 sort"
+                                onchange="this.form.submit()">
+                                <option value="latest" {{ request('sort') == 'latest' ? 'selected' : '' }} selected>
+                                    Latest</option>
+                                <option value="oldest" {{ request('sort') == 'oldest' ? 'selected' : '' }}>Oldest
+                                </option>
                             </select>
                         </label>
                     </form>
@@ -117,8 +130,11 @@
                                 {{ number_format(abs($totalBalance), 2) }}</b></div>
                     </div>
                     @foreach ($records as $record)
-                        <div class="grid grid-cols-9 px-5 bg-gray-200 items-center record-list mt-1 rounded-md hover:bg-gray-100">
-                            <div class="col-start-1 col-end-1 category_name"><strong>{{ $record->category->name }}</strong></div>
+                        <div
+                            class="grid grid-cols-9 px-5 bg-gray-200 items-center record-list mt-1 rounded-md hover:bg-gray-100">
+                            <div class="col-start-1 col-end-1 category_name">
+                                <strong>{{ $record->category->name }}</strong>
+                            </div>
                             <div class="col-start-2 col-end-4 datetime text-center">
                                 {{ Carbon\Carbon::parse($record->datetime)->format('d/m/Y h:i A') }}</div>
                             <div class="col-start-4 col-end-4 account_name">{{ $record->account->name }}</div>
@@ -139,9 +155,9 @@
                                         onclick="recordDeleteModal({{ $record->id }})">Delete</button>
                                 </div>
                             </div>
-                        </div> 
+                        </div>
                     @endforeach
-                    <div class="mt-2 flex items-center">{{$records->links()}}</div>
+                    <div class="mt-2 flex justify-center">{{ $records->links() }}</div>
                 </div>
             @else
                 <p class="m-3 flex justify-center">No records found.</p>
