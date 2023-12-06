@@ -26,4 +26,4 @@
         </div>
     </div>
 @endforeach
-<div class="mt-2 flex items-center">{{$records->links()}}</div>
+<div class="mt-2 flex justify-center">{{$records->appends(request()->query())->links()}}</div>
