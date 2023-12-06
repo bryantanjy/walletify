@@ -10,6 +10,8 @@ use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Validator;
 
+use function Termwind\render;
+
 class RecordController extends Controller
 {
     /**
@@ -19,7 +21,6 @@ class RecordController extends Controller
     {
         if (auth()->check()) {
             $user = Auth::user();
-
             $startDate = $request->input('startDate');
             $endDate = $request->input('endDate');
 
@@ -68,19 +69,19 @@ class RecordController extends Controller
             ->with('category', 'account', 'user')
             ->where('user_id', $user->id);
 
-            if ($sort == 'oldest') {
-                $records = $records->orderBy('datetime', 'asc');
-            } else {
-                $records = $records->orderBy('datetime', 'desc');
-            }
+        if ($sort == 'oldest') {
+            $records = $records->orderBy('datetime', 'asc');
+        } else {
+            $records = $records->orderBy('datetime', 'desc');
+        }
 
-            $records = $records->paginate(14);
+        $records = $records->paginate(14);
 
         $categories = Category::all(); // Retrieve all categories
         $accounts = Account::where('user_id', Auth::user()->id)->get(); // Retrieve all accounts for the current user
         $totalBalance = $this->calculateTotalBalance($records);
 
-        return view('record.record_list', compact('records', 'categories', 'accounts', 'totalBalance'));
+        return view('record.record_list', compact('records', 'categories', 'accounts', 'totalBalance'))->render();
     }
 
     /**
@@ -97,19 +98,19 @@ class RecordController extends Controller
             ->where('user_id', $user->id)
             ->whereBetween('datetime', [$startDate, $endDate]);
 
-            if ($sort == 'oldest') {
-                $records = $records->orderBy('datetime', 'asc');
-            } else {
-                $records = $records->orderBy('datetime', 'desc');
-            }
+        if ($sort == 'oldest') {
+            $records = $records->orderBy('datetime', 'asc');
+        } else {
+            $records = $records->orderBy('datetime', 'desc');
+        }
 
-            $records = $records->paginate(14);
+        $records = $records->paginate(14);
 
         $categories = Category::all(); // Retrieve all categories
         $accounts = Account::where('user_id', Auth::user()->id)->get(); // Retrieve all accounts for the current user
         $totalBalance = $this->calculateTotalBalance($records);
 
-        return view('record.record_list', compact('records', 'categories', 'accounts', 'totalBalance'));
+        return view('record.record_list', compact('records', 'categories', 'accounts', 'totalBalance'))->render();
     }
 
     /**
@@ -129,6 +130,34 @@ class RecordController extends Controller
         }
 
         return $totalIncome - $totalExpense;
+    }
+
+    public function filter(Request $request)
+    {
+        $sort = $request->input('sort');
+        $user = Auth::user();
+
+        $records = Record::with('category', 'account', 'user')
+            ->where('user_id', $user->id);
+
+            if ($request->has('categories')) {
+                $records->whereIn('category_id', $request->categories);
+            }
+            if ($request->has('types')) {
+                $records->whereIn('type', $request->types);
+            }
+        
+            $records->orderBy('datetime', $sort == 'oldest' ? 'asc' : 'desc');
+        
+            $records = $records->paginate(14);
+
+            $records->appends(['categories' => $request->categories, 'types' => $request->types]);
+
+        $categories = Category::all(); // Retrieve all categories
+        $accounts = Account::where('user_id', Auth::user()->id)->get(); // Retrieve all accounts for the current user
+        $totalBalance = $this->calculateTotalBalance($records);
+
+        return view('record.record_list', compact('records', 'categories', 'accounts', 'totalBalance'));
     }
 
     /**
