@@ -1,6 +1,6 @@
 // search function
 $(document).ready(function () {
-    window.lastOperation = 'search';
+    window.lastOperation = 'datepicker';
     window.filterParams = {};
 
     function delay(callback, ms) {
@@ -22,7 +22,7 @@ $(document).ready(function () {
         window.lastOperation = 'search';
     }, 1000));
 
-    function fetchSearchResults(query, page) {
+    window.fetchSearchResults = function (query, page) {
         $.ajax({
             url: '/record/search',
             type: 'GET',
@@ -74,7 +74,7 @@ $(document).ready(function () {
         window.lastOperation = 'filter'; // Set lastOperation to 'filter' here
     });
 
-    function fetchFilterResults(filterParams) {
+    window.fetchFilterResults = function (filterParams) {
         $.ajax({
             url: '/record/filter',
             type: 'GET',

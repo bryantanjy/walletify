@@ -42,23 +42,18 @@ $(function () {
         var page = $(this).attr('href').split('page=')[1];
         if (window.lastOperation === 'search') { // Check if the last operation was a search
             var query = $('#search').val();
-            fetchSearchResults(query, page);
+            window.fetchSearchResults(query, page);
         } else if (window.lastOperation === 'filter') { // Check if the last operation was a filter
             window.filterParams.page = page; // Update the page number in the filter parameters
-            fetchFilterResults(window.filterParams); // Pass the filter parameters to the function
+            window.fetchFilterResults(window.filterParams); // Pass the filter parameters to the function
         } else if (window.lastOperation === 'datepicker') { // Check if the last operation was a datepicker
             var start = moment($('#reportrange span').html().split(' - ')[0], 'D MMM YYYY');
             var end = moment($('#reportrange span').html().split(' - ')[1], 'D MMM YYYY');
             fetchRecords(start, end, page); // Fetch records for the selected date range and the clicked page
+        } else if (window.lastOperation === 'default') {
+            fetchDefaultRecords(page);
         }
     });
-
-    // make the page goes to second page without losing the page layout
-    // $(document).on('click', '.pagination a', function (event) {
-    //     event.preventDefault();
-    //     var page = $(this).attr('href').split('page=')[1];
-    //     fetchRecords(start, end, page);
-    // });
 
 
     //  fetch expense data and update the graph when the new date is picked
