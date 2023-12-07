@@ -90,7 +90,7 @@ class RecordController extends Controller
     public function fetchByDate(Request $request)
     {
         $startDate = $request->input('startDate');
-        $endDate = $request->input('endDate');
+        $endDate = Carbon::parse($request->input('endDate'))->endOfDay();
         $sort = $request->input('sort');
         $user = Auth::user();
 
