@@ -29,19 +29,19 @@
                         @endif
                         <div class="flex items-center">
                             <label for="groupName" class="w-40 pr-2 mt-4">Group Name</label>
-                            <input type="text" name="name" class="rounded-md border-0"
+                            <input type="text" name="name" id="name" class="rounded-md border-0"
                                 style="height: 30px; padding:0px 10px; margin:15px 0px 0px 20px; width:50%"
-                                value="{{ $group->name }}" placeholder="Group name" required>
+                                placeholder="Group name" required>
                         </div>
                         <div class="flex items-center">
                             <label for="groupDescription" class="w-40 pr-2 mt-4">Group Description</label>
-                            <textarea type="text" name="description" class="rounded-md flex-grow border-0" placeholder="Group Description" 
-                                maxlength="255" style="height: 60px; padding:0px 10px; margin:15px 0px 0px 20px;">{{ $group->description }}</textarea>
+                            <textarea type="text" name="description" id="description" class="rounded-md flex-grow border-0" placeholder="Group Description" 
+                                maxlength="255" style="height: 60px; padding:0px 10px; margin:15px 0px 0px 20px;"></textarea>
                         </div>
-                        <input type="hidden" id="id" name="id">
+                        <input type="hidden" id="group_id" name="group_id">
 
-                        <div class="flex mt-6 justify-evenly">
-                            <button type="submit"
+                        <div class="flex mt-6 justify-center">
+                            <button type="submit" class="mr-5"
                                 style="background: #4D96EB; width:100px; height:26px; border:0px solid; border-radius: 5px">Save</button>
                             <button type="button" data-bs-dismiss="modal"
                                 style="background: #fff; width:100px; height:26px; border:0px solid; border-radius: 5px">Cancel</button>
