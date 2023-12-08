@@ -53,7 +53,11 @@ class ExpenseSharingController extends Controller
     {
         $group = ExpenseSharingGroup::find($groupId);
 
-        return view('expense-sharing.edit', ['group' => $group]);
+        if (!$group) {
+            return response()->json(['error' => 'Group not found'], 404);
+        }
+
+        return response()->json($group);
     }
 
     public function update(Request $request, $groupId)
