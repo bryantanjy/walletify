@@ -72,7 +72,7 @@
                                     {{ $group->description }}
                                 </div>
                                 <div class="col-start-5 col-end-5">
-                                    <button class="editAccountBtn mr-4" value="{{ $group->id }}"
+                                    <button class="editGroupBtn mr-4" value="{{ $group->id }}"
                                         data-bs-toggle="modal" data-bs-target="#editGroupModal">
                                         <i class="fas fa-edit"></i>
                                     </button>
