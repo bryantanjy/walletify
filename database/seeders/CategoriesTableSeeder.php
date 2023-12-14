@@ -14,7 +14,7 @@ class CategoriesTableSeeder extends Seeder
     public function run()
     {
         $categories = [
-            ['name' => 'Food & Drink'],
+            ['name' => 'Food and Drink'],
             ['name' => 'Housing'],
             ['name' => 'Shopping'],
             ['name' => 'Travel'],
@@ -23,9 +23,9 @@ class CategoriesTableSeeder extends Seeder
             ['name' => 'Entertainment'],
             ['name' => 'Education'],
             ['name' => 'Personal Care'],
-            ['name' => 'Gift & Donations'],
+            ['name' => 'Gift and Donations'],
             ['name' => 'Investments'],
-            ['name' => 'Health & Fitness'],
+            ['name' => 'Health and Fitness'],
             ['name' => 'Miscellaneous'],
             ['name' => 'Income'],
         ];

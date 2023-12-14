@@ -13,6 +13,6 @@ class AccountsTableSeeder extends Seeder
      */
     public function run(): void
     {
-        Account::factory()->count(3)->create();
+        Account::factory()->count(20)->create();
     }
 }

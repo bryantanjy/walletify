@@ -2,7 +2,9 @@
 
 namespace Database\Factories;
 
+use App\Models\Account;
 use App\Models\Category;
+use App\Models\User;
 use Illuminate\Database\Eloquent\Factories\Factory;
 
 /**
@@ -18,14 +20,14 @@ class RecordFactory extends Factory
     public function definition(): array
     {
         return [
-            'user_id' => $this->faker->numberBetween(1,2),
-            'account_id' => $this->faker->numberBetween(1, 9),
-            'category_id' => $this->faker->numberBetween(1, 14),
-            'group_id' => null,
+            'user_id' => Account::inRandomOrder()->pluck('user_id')->first(),
+            'account_id' => Account::inRandomOrder()->pluck('id')->first(),
+            'category_id' => Category::inRandomOrder()->pluck('id')->first(),
+            'expense_sharing_group_id' => null,
             'type' => $this->faker->randomElement(['Expense', 'Income']),
             'amount' => $this->faker->randomFloat(2, 1, 100),
-            'datetime' => $this->faker->dateTime(),
-            'description' => $this->faker->sentence(2),
+            'datetime' => $this->faker->dateTimeThisYear(),
+            'description' => $this->faker->sentence(),
         ];
     }
 }

@@ -2,17 +2,17 @@
 
 namespace Database\Seeders;
 
-use App\Models\Record;
+use App\Models\ExpenseSharingGroup;
 use Illuminate\Database\Console\Seeds\WithoutModelEvents;
 use Illuminate\Database\Seeder;
 
-class RecordsTableSeeder extends Seeder
+class ExpenseSharingSeeder extends Seeder
 {
     /**
      * Run the database seeds.
      */
     public function run(): void
     {
-        Record::factory()->count(50)->create();
+        ExpenseSharingGroup::factory()->count(5)->create();
     }
 }

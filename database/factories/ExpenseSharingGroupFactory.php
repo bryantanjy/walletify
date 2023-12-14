@@ -6,9 +6,9 @@ use App\Models\User;
 use Illuminate\Database\Eloquent\Factories\Factory;
 
 /**
- * @extends \Illuminate\Database\Eloquent\Factories\Factory<\App\Models\Account>
+ * @extends \Illuminate\Database\Eloquent\Factories\Factory<\App\Models\Model>
  */
-class AccountFactory extends Factory
+class ExpenseSharingGroupFactory extends Factory
 {
     /**
      * Define the model's default state.
@@ -18,9 +18,9 @@ class AccountFactory extends Factory
     public function definition(): array
     {
         return [
-            'user_id' => User::inRandomOrder()->pluck('id')->first(),
-            'type' => $this->faker->randomElement(['General', 'Saving Account', 'Cards', 'Cash', 'Insurance', 'Loan', 'Investment']),
+            'user_id' => User::distinct()->limit(1)->pluck('id')->first(),
             'name' => $this->faker->word(),
+            'description' => $this->faker->sentence(),
         ];
     }
 }
