@@ -18,7 +18,7 @@ class Record extends Model
         'user_id',
         'account_id',
         'category_id',
-        'group_id',
+        'expense_sharing_group_id',
         'type',
         'amount',
         'datetime',

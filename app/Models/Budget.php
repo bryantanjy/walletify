@@ -16,7 +16,7 @@ class Budget extends Model
     protected $fillable = [
         'type',
         'user_id',
-        'group_id',
+        'expense_sharing_group_id',
     ];
 
     protected static function boot()
