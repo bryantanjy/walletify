@@ -19,11 +19,11 @@ return new class extends Migration
             $table->foreign('account_id')->references('id')->on('accounts')->onUpdate('cascade')->onDelete('cascade');
             $table->unsignedBigInteger('category_id');
             $table->foreign('category_id')->references('id')->on('categories')->onUpdate('cascade')->onDelete('cascade');
-            // $table->unsignedBigInteger('group_id');
-            // $table->foreign('group_id')->references('group_id')->on('expense_sharing_groups')->onDelete('cascade');
+            $table->unsignedBigInteger('expense_sharing_group_id')->nullable();
+            $table->foreign('expense_sharing_group_id')->references('id')->on('expense_sharing_groups')->onUpdate('cascade')->onDelete('cascade');
             $table->string('type');
             $table->decimal('amount', 10, 2);
-            $table->timestamps('datetime');
+            $table->dateTime('datetime');
             $table->string('description')->nullable();
             $table->timestamps();
             $table->softDeletes();
