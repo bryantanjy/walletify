@@ -75,8 +75,8 @@ class User extends Authenticatable
     }
 
     
-    // public function belongsToGroup(Group $group)
-    // {
-    //     return $this->groups()->where('group_id', $group->id)->exists();
-    // }
+    public function expenseSharingGroups()
+    {
+        return $this->belongsToMany(ExpenseSharingGroup::class);
+    }
 }
