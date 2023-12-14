@@ -109,7 +109,7 @@ class BudgetController extends Controller
         $budget = Budget::create([
             'user_id' => auth()->id(),
             'type' => $request->type,
-            'group_id' => null,
+            'expense_sharing_group_id' => null,
         ]);
 
         foreach ($request->input('part_name') as $key => $partName) {
@@ -151,7 +151,7 @@ class BudgetController extends Controller
         $budget = Budget::create([
             'type' => $request->input('type'),
             'user_id' => auth()->id(),
-            'group_id' => null,
+            'expense_sharing_group_id' => null,
         ]);
 
         // Create a new budget template part record and part allocation record for each part

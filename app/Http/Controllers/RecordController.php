@@ -202,7 +202,7 @@ class RecordController extends Controller
             $record->amount = $request->input('amount');
             $record->datetime = $request->input('datetime');
             $record->description = $request->input('description');
-            $record->group_id = $request->input('group_id');
+            $record->expense_sharing_group_id = $request->input('group_id');
             $record->save();
         }
 
@@ -254,7 +254,7 @@ class RecordController extends Controller
             'amount' => $request->input('amount'),
             'datetime' => $request->input('datetime'),
             'description' => $request->input('description'),
-            'group_id' => $request->input('group_id'),
+            'expense_sharing_group_id' => $request->input('group_id'),
         ]);
 
         return redirect()->route('record.index')->with('success', 'Record updated successfully');
