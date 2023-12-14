@@ -16,7 +16,7 @@ return new class extends Migration
             $table->unsignedBigInteger('user_id');
             $table->foreign('user_id')->references('id')->on('users')->onUpdate('cascade')->onDelete('cascade');
             $table->string('type');
-            $table->unsignedBigInteger('expense_sharing_group_id');
+            $table->unsignedBigInteger('expense_sharing_group_id')->nullable();
             $table->foreign('expense_sharing_group_id')->references('id')->on('expense_sharing_groups')->onUpdate('cascade')->onDelete('cascade');
             $table->timestamps();
             $table->softDeletes();
