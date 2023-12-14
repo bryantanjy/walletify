@@ -20,7 +20,7 @@ class RecordFactory extends Factory
     public function definition(): array
     {
         return [
-            'user_id' => Account::inRandomOrder()->pluck('user_id')->first(),
+            'user_id' => User::inRandomOrder()->pluck('id')->first(),
             'account_id' => Account::inRandomOrder()->pluck('id')->first(),
             'category_id' => Category::inRandomOrder()->pluck('id')->first(),
             'expense_sharing_group_id' => null,

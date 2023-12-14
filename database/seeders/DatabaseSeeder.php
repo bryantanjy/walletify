@@ -17,5 +17,6 @@ class DatabaseSeeder extends Seeder
         $this->call(AccountsTableSeeder::class);
         $this->call(RecordsTableSeeder::class);
         $this->call(ExpenseSharingSeeder::class);
+        $this->call(PermissionSeeder::class);
     }
 }
