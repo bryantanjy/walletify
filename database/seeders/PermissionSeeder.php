@@ -2,10 +2,11 @@
 
 namespace Database\Seeders;
 
-use Illuminate\Database\Console\Seeds\WithoutModelEvents;
 use Illuminate\Database\Seeder;
-use Spatie\Permission\Models\Permission;
 use Spatie\Permission\Models\Role;
+use Spatie\Permission\Models\Permission;
+use Spatie\Permission\PermissionRegistrar;
+use Illuminate\Database\Console\Seeds\WithoutModelEvents;
 
 class PermissionSeeder extends Seeder
 {
@@ -14,36 +15,58 @@ class PermissionSeeder extends Seeder
      */
     public function run(): void
     {
-        // Group has these roles: orgainzer and collaborator
-        $role = Role::create(['name' => 'Group Organizer']);
-        $role = Role::create(['name' => 'Group Collaborator']);
+        // Reset cached roles and permissions
+        app()[PermissionRegistrar::class]->forgetCachedPermissions();
 
-        // permission for record module
-        $permission = Permission::create(['name' => 'list records']);
-        $permission = Permission::create(['name' => 'create records']);
-        $permission = Permission::create(['name' => 'view records']);
-        $permission = Permission::create(['name' => 'edit records']);
-        $permission = Permission::create(['name' => 'delete records']);
+        // Create permissions for record module
+        $recordPermissions = [
+            'list records', 'create records', 'view records', 'edit records', 'delete records',
+        ];
 
-        // permission for budget module
-        $permission = Permission::create(['name' => 'list budget']);
-        $permission = Permission::create(['name' => 'create budget']);
-        $permission = Permission::create(['name' => 'view budget']);
-        $permission = Permission::create(['name' => 'edit budget']);
-        $permission = Permission::create(['name' => 'delete budget']);
+        // Create permissions for budget module
+        $budgetPermissions = [
+            'list budget', 'create budget', 'view budget', 'edit budget', 'delete budget',
+        ];
 
-        // permission for expense sharing module
-        $permission = Permission::create(['name' => 'list group']);
-        $permission = Permission::create(['name' => 'create group']);
-        $permission = Permission::create(['name' => 'view group']);
-        $permission = Permission::create(['name' => 'edit group']);
-        $permission = Permission::create(['name' => 'delete group']);
+        // Create permissions for expense sharing module
+        $groupPermissions = [
+            'list group', 'create group', 'view group', 'edit group', 'delete group',
+        ];
 
-        // permission for in-group module
-        $permission = Permission::create(['name' => 'list participant']);
-        $permission = Permission::create(['name' => 'add participant']);
-        $permission = Permission::create(['name' => 'view participant']);
-        $permission = Permission::create(['name' => 'edit participant']);
-        $permission = Permission::create(['name' => 'remove participant']);
+        // Create permissions for in-group module
+        $participantPermissions = [
+            'list participant', 'add participant', 'view participant', 'edit participant', 'remove participant',
+        ];
+
+        // Group has these roles: organizer and collaborator
+        $organizer = Role::create(['name' => 'Group Organizer']);
+        $collaborator = Role::create(['name' => 'Group Collaborator']);
+
+        // Assign all permissions to the organizer role
+        foreach ($recordPermissions as $permission) {
+            Permission::create(['name' => $permission]);
+            $organizer->givePermissionTo($permission);
+        }
+
+        foreach ($budgetPermissions as $permission) {
+            Permission::create(['name' => $permission]);
+            $organizer->givePermissionTo($permission);
+        }
+
+        foreach ($groupPermissions as $permission) {
+            Permission::create(['name' => $permission]);
+            $organizer->givePermissionTo($permission);
+        }
+
+        foreach ($participantPermissions as $permission) {
+            Permission::create(['name' => $permission]);
+            $organizer->givePermissionTo($permission);
+        }
+
+        // Assign specific permissions to the collaborator role
+        $collaborator->givePermissionTo([
+            'list records', 'view records', 'list budget', 'view budget',
+            'list group', 'view group', 'list participant', 'view participant',
+        ]);
     }
 }
