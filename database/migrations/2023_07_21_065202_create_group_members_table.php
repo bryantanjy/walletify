@@ -17,9 +17,10 @@ return new class extends Migration
             $table->foreign('user_id')->references('id')->on('users')->onUpdate('cascade')->onDelete('cascade');
             $table->unsignedBigInteger('expense_sharing_group_id');
             $table->foreign('expense_sharing_group_id')->references('id')->on('expense_sharing_groups')->onUpdate('cascade')->onDelete('cascade');
-            $table->string('role', 20);
+            $table->foreignId('role_id')->constrained('roles');
             $table->timestamps();
-            $table->softDeletes();
+
+            $table->unique(['user_id', 'expense_sharing_group_id']); // Ensure uniqueness of user-group pairs
         });
     }
 
