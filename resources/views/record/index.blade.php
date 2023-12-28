@@ -6,6 +6,7 @@
     <script src="https://cdn.jsdelivr.net/momentjs/latest/moment.min.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/daterangepicker/daterangepicker.min.js"></script>
     <link rel="stylesheet" type="text/css" href="https://cdn.jsdelivr.net/npm/daterangepicker/daterangepicker.css" />
+    
     <script src="{{ asset('js/daterangepicker.js') }}"></script>
     <script src="{{ asset('js/record.js') }}"></script>
     <link rel="stylesheet" type="text/css" href="{{ asset('css/record.css') }}">
@@ -38,25 +39,23 @@
                             @foreach ($categories as $category)
                                 <label class="flex items-center">
                                     <input type="checkbox" class="mr-4" name="categories[]"
-                                        value="{{ $category->id }}" >
+                                        value="{{ $category->id }}">
                                     {{ $category->name }}
                                 </label>
                             @endforeach
 
                             <h3 class="mt-4">RECORD TYPES</h3>
                             <label class="flex items-center">
-                                <input type="checkbox" class="mr-4" name="type[]" value="Expense" 
-                                    >
+                                <input type="checkbox" class="mr-4" name="type[]" value="Expense">
                                 Expense
                             </label>
                             <label class="flex items-center">
-                                <input type="checkbox" class="mr-4" name="type[]" value="Income"
-                                    >
+                                <input type="checkbox" class="mr-4" name="type[]" value="Income">
                                 Income
                             </label>
                             <div class="flex justify-center mt-3">
                                 <button id="reset" class="bg-white w-20 rounded-md">Clear</button>
-                            </div> 
+                            </div>
                             <input type="hidden" name="_token" value="{{ csrf_token() }}">
                         </form>
                     </div>
@@ -137,8 +136,16 @@
                             </div>
                             <div class="col-start-2 col-end-4 datetime text-center">
                                 {{ Carbon\Carbon::parse($record->datetime)->format('d/m/Y h:i A') }}</div>
-                            <div class="col-start-4 col-end-4 account_name">{{ $record->account->name }}</div>
-                            <div class="col-start-5 col-end-8 description">{{ $record->description }}</div>
+
+                            @php
+                                $userSessionType = session('user_session_type', 'personal');
+                            @endphp
+                            @if ($userSessionType == 'personal')
+                                <div class="col-start-4 col-end-4 account_name">{{ $record->account->name }}</div>
+                                <div class="col-start-5 col-end-8 description">{{ $record->description }}</div>
+                            @else
+                                <div class="col-start-4 col-end-8 description">{{ $record->description }}</div>
+                            @endif
                             <div class="col-start-8 col-end-8 username">{{ $record->user->name }}</div>
                             <div class="text-right dropdown-container col-start-9 col-end-9" tabindex="-1">
                                 @if ($record->type === 'Expense')
@@ -157,7 +164,7 @@
                             </div>
                         </div>
                     @endforeach
-                    <div class="mt-2 flex justify-center">{{ $records->links() }}</div>
+                    {{-- <div class="mt-2 flex justify-center">{{ $records->links() }}</div> --}}
                 </div>
             @else
                 <p class="m-3 flex justify-center">No records found.</p>
@@ -167,6 +174,11 @@
         @include('record.edit')
     </main>
 </x-app-layout>
+
+<!-- Set user session type in Blade template -->
+<script>
+    window.userSessionType = '{{ session('user_session_type', 'personal') }}';
+</script>
 
 {{-- Delete Modal --}}
 <div class="modal fade" id="deleteModal" tabindex="-1" role="dialog" aria-labelledby="deleteModalLabel"

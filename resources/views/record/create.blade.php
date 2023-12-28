@@ -23,16 +23,26 @@
                                 </ul>
                             </div>
                         @endif
-                        <div class="flex items-center form-group">
-                            <label for="account_id" class="w-32 pr-2 mt-4">Account Type</label>
-                            <select name="account_id" class="rounded-md border-0" value="{{ old('account_id') }}"
-                                style="height: 30px; width:225px; padding:0px 10px; margin:15px 0px 0px 20px;" required>
-                                <option value="" selected disabled>Select an account</option>
-                                @foreach ($accounts as $account)
-                                    <option value="{{ $account->id }}">{{ $account->name }}</option>
-                                @endforeach
-                            </select>
-                        </div>
+
+                        @php
+                            $userSessionType = session('user_session_type', 'personal');
+                        @endphp
+                        <input type="hidden" name="group_id" value="{{ session('active_group_id') }}">
+                        {{-- hide this item if the session is group --}}
+                        @if ($userSessionType == 'personal')
+                            <div class="flex items-center form-group">
+                                <label for="account_id" class="w-32 pr-2 mt-4">Account Type</label>
+                                <select name="account_id" class="rounded-md border-0" value="{{ old('account_id') }}"
+                                    style="height: 30px; width:225px; padding:0px 10px; margin:15px 0px 0px 20px;"
+                                    required>
+                                    <option value="" selected disabled>Select an account</option>
+                                    @foreach ($accounts as $account)
+                                        <option value="{{ $account->id }}">{{ $account->name }}</option>
+                                    @endforeach
+                                </select>
+                            </div>
+                        @endif
+
                         <div class="flex items-center form-group">
                             <label for="type" class="w-32 pr-2 mt-4">Type of record</label>
                             <select name="type" class="rounded-md border-0" value="{{ old('type') }}"
@@ -55,7 +65,8 @@
                             <label for="amount" class="w-32 pr-2 mt-4">Amount</label>
                             <input type="number" step="0.01" class="rounded-md border-0" name="amount"
                                 placeholder="0.00" value="{{ old('amount') }}"
-                                style="height: 30px; width:225px; padding:0px 10px; margin:15px 0px 0px 20px; text-align:right;" required>
+                                style="height: 30px; width:225px; padding:0px 10px; margin:15px 0px 0px 20px; text-align:right;"
+                                required>
                         </div>
                         <div class="flex items-center form-group">
                             <label for="datetime" class="w-32 pr-2 mt-4">Date</label>

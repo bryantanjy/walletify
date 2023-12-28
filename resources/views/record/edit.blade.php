@@ -18,17 +18,27 @@
                         @method('PUT')
                         <div>
                             <input type="hidden" id="record_id" name="record_id">
-                            <div class="flex items-center">
-                                <label for="accountName" class="w-32 text-left pr-2 mt-4">Account</label>
-                                <select name="account_id" id="account_id" class="rounded-md border-0"
-                                    style="height: 30px; width:225px; padding:0px 10px; margin:15px 0px 0px 20px;"
-                                    required>
-                                    <option value="" selected disabled>Select an account</option>
-                                    @foreach ($accounts as $account)
-                                        <option value="{{ $account->id }}">{{ $account->name }}</option>
-                                    @endforeach
-                                </select>
-                            </div>
+
+                            @php
+                                $userSessionType = session('user_session_type', 'personal');
+                            @endphp
+                            <input type="hidden" name="group_id" value="{{ session('active_group_id') }}">
+                            {{-- hide this item if the session is group --}}
+                            @if ($userSessionType == 'personal')
+                                <div class="flex items-center form-group">
+                                    <label for="account_id" class="w-32 pr-2 mt-4">Account Type</label>
+                                    <select name="account_id" class="rounded-md border-0"
+                                        value="{{ old('account_id') }}"
+                                        style="height: 30px; width:225px; padding:0px 10px; margin:15px 0px 0px 20px;"
+                                        required>
+                                        <option value="" selected disabled>Select an account</option>
+                                        @foreach ($accounts as $account)
+                                            <option value="{{ $account->id }}">{{ $account->name }}</option>
+                                        @endforeach
+                                    </select>
+                                </div>
+                            @endif
+
                             <div class="flex items-center">
                                 <label for="recordType" class="w-32 text-left pr-2 mt-4">Type of Record</label>
                                 <select name="type" id="type" class="rounded-md border-0"

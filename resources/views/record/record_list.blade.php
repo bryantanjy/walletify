@@ -7,8 +7,15 @@
         <div class="col-start-1 col-end-1 category_name"><strong>{{ $record->category->name }}</strong></div>
         <div class="col-start-2 col-end-4 datetime text-center">
             {{ Carbon\Carbon::parse($record->datetime)->format('d/m/Y h:i A') }}</div>
-        <div class="col-start-4 col-end-4 account_name">{{ $record->account->name }}</div>
-        <div class="col-start-5 col-end-8 description">{{ $record->description }}</div>
+        @php
+            $userSessionType = session('user_session_type', 'personal');
+        @endphp
+        @if ($userSessionType == 'personal')
+            <div class="col-start-4 col-end-4 account_name">{{ $record->account->name }}</div>
+            <div class="col-start-5 col-end-8 description">{{ $record->description }}</div>
+        @else
+            <div class="col-start-4 col-end-8 description">{{ $record->description }}</div>
+        @endif
         <div class="col-start-8 col-end-8 username">{{ $record->user->name }}</div>
         <div class="text-right dropdown-container col-start-9 col-end-9" tabindex="-1">
             @if ($record->type === 'Expense')
@@ -26,4 +33,4 @@
         </div>
     </div>
 @endforeach
-<div class="mt-2 flex justify-center">{{$records->appends(request()->query())->links()}}</div>
+<div class="mt-2 flex justify-center">{{ $records->appends(request()->query())->links() }}</div>
