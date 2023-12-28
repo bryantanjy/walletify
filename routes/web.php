@@ -1,10 +1,15 @@
 <?php
 
+use Illuminate\Http\Request;
+use App\Http\Middleware\CheckSession;
 use Illuminate\Support\Facades\Route;
+use App\Http\Controllers\GroupController;
 use App\Http\Controllers\BudgetController;
 use App\Http\Controllers\RecordController;
 use App\Http\Controllers\AccountController;
+use App\Http\Controllers\DashboardController;
 use App\Http\Controllers\StatisticController;
+use App\Http\Controllers\SwitchSessionController;
 use App\Http\Controllers\ExpenseSharingController;
 
 /*
@@ -25,13 +30,13 @@ Route::get('/', function () {
 Route::middleware([
     'auth:sanctum',
     config('jetstream.auth_session'),
-    'verified'
+    'verified', 
+    CheckSession::class,
 ])->group(function () {
-    Route::get('/dashboard', function () {
-        return view('dashboard');
-    })->name('dashboard');
+    Route::get('/dashboard', [DashboardController::class, 'index'])->name('dashboard');
 });
 
+Route::post('/switch-session', [SwitchSessionController::class, 'switchSession'])->name('switch-session');
 
 // route for account module
 Route::group(['prefix' => 'account'], function () {
