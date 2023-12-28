@@ -7,7 +7,6 @@ use App\Models\Record;
 use App\Models\Account;
 use App\Models\Category;
 use Illuminate\Http\Request;
-use App\Models\ExpenseSharingGroup;
 
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Validator;
