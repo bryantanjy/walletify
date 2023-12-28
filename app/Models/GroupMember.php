@@ -11,7 +11,7 @@ class GroupMember extends Model
     use HasFactory;
     use HasRoles;
 
-    protected $fillable = ['user_id', 'expense_sharing_group_id'];
+    protected $fillable = ['user_id', 'expense_sharing_group_id', 'role_id'];
 
     public function user()
     {
