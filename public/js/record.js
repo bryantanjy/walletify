@@ -2,6 +2,7 @@
 $(document).ready(function () {
     window.lastOperation = 'datepicker';
     window.filterParams = {};
+    window.userSessionType = 'personal';
 
     function delay(callback, ms) {
         var timer = 0;
@@ -28,10 +29,14 @@ $(document).ready(function () {
             type: 'GET',
             data: {
                 'search': query,
-                'page': page
+                'page': page,
+                'userSessionType': window.userSessionType,
             },
             success: function (data) {
                 $('#records-container').html(data);
+            },
+            error: function (error) {
+                console.log(error);
             }
         });
     }
@@ -49,9 +54,7 @@ $(document).ready(function () {
             var start = moment($('#reportrange span').html().split(' - ')[0], 'D MMM YYYY');
             var end = moment($('#reportrange span').html().split(' - ')[1], 'D MMM YYYY');
             fetchRecords(start, end, page); // Fetch records for the selected date range and the clicked page
-        } else if (window.lastOperation === 'default') {
-            fetchDefaultRecords(page);
-        }
+        } 
     });
 
     $('input[type=checkbox]').on('change', function () {
@@ -75,6 +78,7 @@ $(document).ready(function () {
     });
 
     window.fetchFilterResults = function (filterParams) {
+        filterParams['userSessionType'] = window.userSessionType;
         $.ajax({
             url: '/record/filter',
             type: 'GET',
@@ -83,26 +87,6 @@ $(document).ready(function () {
                 'types': filterParams.types,
                 'sort': filterParams.sort,
                 'page': filterParams.page
-            },
-            success: function (data) {
-                $('#records-container').html(data);
-            },
-            error: function (error) {
-                console.log(error);
-            }
-        });
-    }
-
-    function fetchDefaultRecords(page) {
-        var end = moment();
-        var start = moment().subtract(29, 'days');
-        $.ajax({
-            url: '/record/fetchByDate',
-            type: 'GET',
-            data: {
-                'startDate': start.format('YYYY-MM-DD'),
-                'endDate': end.format('YYYY-MM-DD'),
-                'page': page
             },
             success: function (data) {
                 $('#records-container').html(data);
