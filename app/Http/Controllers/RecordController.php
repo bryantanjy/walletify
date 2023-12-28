@@ -187,7 +187,7 @@ class RecordController extends Controller
                 'amount' => 'required|numeric',
                 'datetime' => 'required',
                 'description' => 'nullable|string',
-                'group_id' => 'nullable',
+                'expense_sharing_group_id' => 'nullable',
             ]
         );
 
@@ -238,7 +238,7 @@ class RecordController extends Controller
                 'amount' => 'required|numeric',
                 'datetime' => 'required',
                 'description' => 'nullable|string',
-                'group_id' => 'nullable',
+                'expense_sharing_group_id' => 'nullable',
             ]
         );
 
