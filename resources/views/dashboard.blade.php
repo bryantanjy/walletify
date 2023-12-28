@@ -1,34 +1,160 @@
 <head>
     <script type="text/javascript" src="https://cdn.jsdelivr.net/jquery/latest/jquery.min.js"></script>
-    <script type="text/javascript" src="https://cdn.jsdelivr.net/momentjs/latest/moment.min.js"></script>
-    <script type="text/javascript" src="https://cdn.jsdelivr.net/npm/daterangepicker/daterangepicker.min.js"></script>
-    <link rel="stylesheet" type="text/css" href="https://cdn.jsdelivr.net/npm/daterangepicker/daterangepicker.css" />
-    <link rel="stylesheet" type="text/css"
-        href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
-    <script src="{{ asset('js/daterangepicker.js') }}"></script>
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"></script>
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css">
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
 </head>
 
 
 <x-app-layout>
     <x-slot name="header" class="max-w-screen-xl px-4 py-3 mx-auto">
-        <button class="rounded-md text-xl text-gray-800 leading-tight block"
-            style="background-color: #5FA7FB;width: 130px; height:40px; font-size:16px; font-weight: bold">
-            {{ __('Main Account') }}
-        </button>
+
+        <form method="POST" action="{{ route('switch-session') }}">
+            @csrf
+            <div class="flex">
+                <button type="submit" class="rounded-md text-xl text-gray-800 leading-tight block mr-5"
+                    style="background-color: #5FA7FB;width: 130px; height:40px; font-size:16px; font-weight: bold">
+                    {{ __('Main Account') }}
+                </button>
+
+                {{-- group button will show here --}}
+                @if (!empty($groups))
+                    @foreach ($groups as $group)
+                        <button type="submit" name="group_id"
+                            class="rounded-md text-xl text-gray-800 leading-tight block mr-5 group-button"
+                            style="background-color: #5FA7FB;width: 130px; height:40px; font-size:16px; font-weight: bold"
+                            value="{{ $group->id }}">{{ __($group->name) }}
+                        </button>
+                    @endforeach
+                @endif
+            </div>
+        </form>
+
     </x-slot>
 
     <main>
-        <div class="flex items-center mx-auto" style="width:300px">
-            <i class="fa fa-caret-left ml-2 mt-2 cursor-pointer" id="prevMonth"></i>
-            <div id="reportrange"
-                class="flex mx-auto mt-2 rounded-md border border-white shadow items-center pull-right relative"
-                style="width: 215px; height: 30px; font-size: 14px; background: #fff; cursor: pointer; padding: 5px 10px;">
-                <span></span><i class="fa fa-chevron-down absolute top-0 right-0 mt-2 mr-2"
-                    style="font-size: 12px;"></i>
+        <div class="flex justify-evenly mx-5 mt-24">
+            {{-- Expense structure part --}}
+            <div class="bg-white rounded-lg py-4 px-5" style="width: 550px; height: 450px">
+                <h4 style="font-size: 20px"><strong>Expense Structure</strong></h4>
+                <div style="width: 90%; margin:-50 auto -25 auto;">
+                    <canvas id="expenseStructure"></canvas>
+                </div>
+                <div class="flex justify-between">
+                    <div>
+                        <span class="text-gray-400">Current Month</span><br>
+                        <span id="total-expenses-placeholder"><strong></strong></span>
+                    </div>
+                </div>
             </div>
-            <i class="fa fa-caret-right mr-2 mt-2 cursor-pointer" id="nextMonth"></i>
-        </div>
 
+            {{-- Recent record part --}}
+            <div class="bg-white rounded-lg py-4 px-5" style="width: 550px; height: 450px">
+                <h4 style="font-size: 20px"><strong>Recent Records</strong></h4>
+                <div id="recentRecord">
+                    <ul class="list-group list-group-flush pt-2" style="max-height: 100%;overflow-y:auto">
+                        @foreach ($recentRecords as $item)
+                            <li class="list-group-item flex justify-between">
+                                <span class="flex items-center"><b>{{ $item->category->name }}</b></span>
+                                <div class="text-right">
+                                    @if ($item->type === 'Expense')
+                                        <span style="color: rgb(250, 56, 56);"><b>-RM {{ $item->amount }}</b></span>
+                                    @else
+                                        <span style="color: rgb(90, 216, 90);"><b>RM {{ $item->amount }}</b></span>
+                                    @endif
+                                    <br>
+                                    <span
+                                        style="font-size: 12px">{{ Carbon\Carbon::parse($item->datetime)->format('d/m/Y, h:i A') }}</span>
+                                </div>
+                            </li>
+                        @endforeach
+                    </ul>
+                </div>
+            </div>
+
+            {{-- money flow part --}}
+            <div class="bg-white rounded-lg py-4 px-5" style="width: 550px; height: 450px">
+                <h4 style="font-size: 20px; margin-bottom: 30px"><strong>Money Flow</strong></h4>
+                <div id="moneyFlow">
+
+                    @php
+                        $totalIncome = 0;
+                        $totalExpense = 0;
+                        foreach ($records as $record) {
+                            if ($record->type === 'Income') {
+                                $totalIncome += $record->amount;
+                            } elseif ($record->type === 'Expense') {
+                                $totalExpense += $record->amount;
+                            }
+                        }
+                        $totalBalance = $totalIncome - $totalExpense;
+                    @endphp
+
+                    <div class="mb-3">
+                        <span class="text-gray-400" style="font-size: 20px">Current Month</span><br>
+                        <span style="font-size: 20px"><b>RM{{ $totalBalance }}</b></span>
+                    </div>
+
+                    <label for="totalIncome" class="flex justify-between">
+                        <div class="mb-1 text-base font-medium">Income</div>
+                        <div><b>RM {{ number_format($totalIncome, 2) }}</b></div>
+                    </label>
+                    <div class="w-full rounded-full h-4 mb-4 bg-gray-200">
+                        <div class="bg-green-500 h-4 rounded-full"
+                            style="width: {{ $totalIncome > 0 ? ($totalIncome / ($totalIncome + $totalExpense)) * 100 : 0 }}%">
+                        </div>
+                    </div>
+
+                    <label for="totalExpense" class="flex justify-between">
+                        <div class="mb-1 text-base font-medium">Expense</div>
+                        <div><b>-RM {{ number_format($totalExpense, 2) }}</b></div>
+                    </label>
+                    <div class="w-full rounded-full h-4 mb-4 bg-gray-200">
+                        <div class="bg-red-500 h-4 rounded-full"
+                            style="width: {{ $totalExpense > 0 ? ($totalExpense / ($totalIncome + $totalExpense)) * 100 : 0 }}%">
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
     </main>
 
 </x-app-layout>
+
+<script>
+   
+    // doughnut chart component
+    var labels = [];
+    var data = [];
+
+    @foreach ($monthExpenses as $expense)
+        labels.push('{{ $expense->category->name }}');
+        data.push({{ $expense->total_amount }});
+    @endforeach
+
+    var ctx = document.getElementById('expenseStructure').getContext('2d');
+    var myChart = new Chart(ctx, {
+        type: 'doughnut',
+        data: {
+            labels: labels,
+            datasets: [{
+                data: data,
+                hoverOffset: 8,
+                borderWidth: 1,
+            }],
+        },
+        options: {
+            plugins: {
+                legend: {
+                    display: true,
+                    position: 'right',
+                },
+
+            },
+        }
+    });
+
+    var totalExpenses = data.reduce((sum, amount) => sum + parseFloat(amount), 0);
+    document.getElementById('total-expenses-placeholder').innerHTML = '<b>-RM ' + totalExpenses.toFixed(2) +
+        '</b>';
+</script>
