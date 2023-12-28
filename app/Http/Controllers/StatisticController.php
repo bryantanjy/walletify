@@ -6,6 +6,7 @@ use Carbon\Carbon;
 use App\Models\Record;
 use App\Models\Category;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Auth;
 
 class StatisticController extends Controller
 {
@@ -51,7 +52,8 @@ class StatisticController extends Controller
      */
     private function getTotal($type, $category, $month)
     {
-        return Record::where('type', $type)
+        $user = Auth::user();
+        return Record::where('user_id', $user->id)->where('type', $type)
             ->where('category_id', $category)
             ->whereYear('datetime', Carbon::createFromFormat('Y-m', $month)->year)
             ->whereMonth('datetime', Carbon::createFromFormat('Y-m', $month)->month)
