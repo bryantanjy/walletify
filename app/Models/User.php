@@ -74,9 +74,8 @@ class User extends Authenticatable
         return $this->hasMany(Record::class, 'user_id', 'id');
     }
 
-    
-    public function expenseSharingGroups()
+    public function groups()
     {
-        return $this->belongsToMany(ExpenseSharingGroup::class);
+        return $this->belongsToMany(ExpenseSharingGroup::class, 'group_members', 'expense_sharing_group_id', 'user_id');
     }
 }
