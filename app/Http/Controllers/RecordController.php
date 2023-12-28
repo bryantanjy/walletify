@@ -7,10 +7,10 @@ use App\Models\Record;
 use App\Models\Account;
 use App\Models\Category;
 use Illuminate\Http\Request;
+use App\Models\ExpenseSharingGroup;
+
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Validator;
-
-use function Termwind\render;
 
 class RecordController extends Controller
 {
@@ -19,41 +19,34 @@ class RecordController extends Controller
      */
     public function index(Request $request)
     {
-        if (auth()->check()) {
-            $user = Auth::user();
-            $startDate = $request->input('startDate');
-            $endDate = $request->input('endDate');
+        $user = Auth::user();
+        $startDate = $request->input('startDate') ? Carbon::parse($request->input('startDate'))->startOfDay() : now()->startOfMonth();
+        $endDate = $request->input('endDate') ? Carbon::parse($request->input('endDate'))->endOfDay() + 1 : now()->endOfMonth();
+        $currentSession = session('app.user_session_type', 'personal');
 
-            $startDate = $startDate ? Carbon::parse($startDate)->startOfDay() : now()->startOfMonth();
-            $endDate = $endDate ? Carbon::parse($endDate)->endOfDay() + 1 : now()->endOfMonth();
+        $records = Record::with('category', 'user')
+            ->userScope($user->id, $currentSession)
+            ->dateRange($startDate, $endDate)
+            ->orderByDesc('datetime')
+            ->get();
 
-            $records = Record::with('category', 'account', 'user')
-                ->where('user_id', $user->id)
-                ->whereBetween('datetime', [$startDate, $endDate])
-                ->orderBy('datetime', 'desc')
-                ->paginate(14);
+        $categories = Category::all();
+        $accounts = ($currentSession === 'personal') ? Account::where('user_id', $user->id)->get() : collect();
+        $totalBalance = $this->calculateTotalBalance($records);
 
-            $totalBalance = $this->calculateTotalBalance($records);
-
-            $categories = Category::all();
-            $accounts = Account::where('user_id', $user->id)->get();
-
-            if ($request->ajax()) {
-                return response()->json([
-                    'records' => $records,
-                    'categories' => $categories,
-                    'accounts' => $accounts,
-                    'startDate' => $startDate,
-                    'endDate' => $endDate,
-                    'totalBalance' => $totalBalance
-                ]);
-            } else {
-                // If it's a regular request, return the full view
-                return view('record.index', compact('records', 'categories', 'accounts', 'totalBalance', 'startDate', 'endDate'));
-            }
-        } else {
-            return redirect('/login');
+        if ($request->ajax()) {
+            return response()->json([
+                'records' => $records,
+                'categories' => $categories,
+                'accounts' => $accounts,
+                'startDate' => $startDate,
+                'endDate' => $endDate,
+                'totalBalance' => $totalBalance
+            ]);
         }
+
+        // If it's a regular request, return the full view
+        return view('record.index', compact('records', 'categories', 'accounts', 'totalBalance', 'startDate', 'endDate'));
     }
 
     /**
@@ -64,18 +57,13 @@ class RecordController extends Controller
         $searchTerm = $request->input('searchTerm');
         $sort = $request->input('sort');
         $user = Auth::user();
+        $currentSession = session('app.user_session_type', 'personal');
 
         $records = Record::search($searchTerm)
             ->with('category', 'account', 'user')
-            ->where('user_id', $user->id);
-
-        if ($sort == 'oldest') {
-            $records = $records->orderBy('datetime', 'asc');
-        } else {
-            $records = $records->orderBy('datetime', 'desc');
-        }
-
-        $records = $records->paginate(14);
+            ->userScope($user->id)
+            ->sortedBy($sort)
+            ->paginate(14);
 
         $categories = Category::all(); // Retrieve all categories
         $accounts = Account::where('user_id', Auth::user()->id)->get(); // Retrieve all accounts for the current user
@@ -93,18 +81,13 @@ class RecordController extends Controller
         $endDate = Carbon::parse($request->input('endDate'))->endOfDay();
         $sort = $request->input('sort');
         $user = Auth::user();
+        $currentSession = $request->input('userSessionType', 'personal');
 
         $records = Record::with('category', 'account', 'user')
-            ->where('user_id', $user->id)
-            ->whereBetween('datetime', [$startDate, $endDate]);
-
-        if ($sort == 'oldest') {
-            $records = $records->orderBy('datetime', 'asc');
-        } else {
-            $records = $records->orderBy('datetime', 'desc');
-        }
-
-        $records = $records->paginate(14);
+            ->userScope($user->id, $currentSession)
+            ->dateRange($startDate, $endDate)
+            ->sortedBy($sort)
+            ->paginate(14);
 
         $categories = Category::all(); // Retrieve all categories
         $accounts = Account::where('user_id', Auth::user()->id)->get(); // Retrieve all accounts for the current user
@@ -118,16 +101,8 @@ class RecordController extends Controller
      */
     private function calculateTotalBalance($records)
     {
-        $totalExpense = 0;
-        $totalIncome = 0;
-
-        foreach ($records as $record) {
-            if ($record->type === 'Expense') {
-                $totalExpense += $record->amount;
-            } else {
-                $totalIncome += $record->amount;
-            }
-        }
+        $totalExpense = $records->where('type', 'Expense')->sum('amount');
+        $totalIncome = $records->where('type', 'Income')->sum('amount');
 
         return $totalIncome - $totalExpense;
     }
@@ -136,22 +111,23 @@ class RecordController extends Controller
     {
         $sort = $request->input('sort');
         $user = Auth::user();
+        $currentSession = session('app.user_session_type', 'personal');
 
         $records = Record::with('category', 'account', 'user')
             ->where('user_id', $user->id);
 
-            if ($request->has('categories')) {
-                $records->whereIn('category_id', $request->categories);
-            }
-            if ($request->has('types')) {
-                $records->whereIn('type', $request->types);
-            }
-        
-            $records->orderBy('datetime', $sort == 'oldest' ? 'asc' : 'desc');
-        
-            $records = $records->paginate(14);
+        if ($request->has('categories')) {
+            $records->whereIn('category_id', $request->categories);
+        }
+        if ($request->has('types')) {
+            $records->whereIn('type', $request->types);
+        }
 
-            $records->appends(['categories' => $request->categories, 'types' => $request->types]);
+        $records->orderBy('datetime', $sort == 'oldest' ? 'asc' : 'desc');
+
+        $records = $records->paginate(14);
+
+        $records->appends(['categories' => $request->categories, 'types' => $request->types]);
 
         $categories = Category::all(); // Retrieve all categories
         $accounts = Account::where('user_id', Auth::user()->id)->get(); // Retrieve all accounts for the current user
@@ -181,7 +157,7 @@ class RecordController extends Controller
         $validator = Validator::make(
             $request->all(),
             [
-                'account_id' => 'required',
+                'account_id' => 'nullable',
                 'category_id' => 'required',
                 'type' => 'required|string',
                 'amount' => 'required|numeric',
@@ -216,10 +192,7 @@ class RecordController extends Controller
     public function edit($recordId)
     {
         $record = Record::find($recordId);
-        $categories = Category::all();
-        $accounts = Account::all();
 
-        // return view('record.edit', compact('record', 'categories', 'accounts'));
         return response()->json($record);
     }
 
@@ -232,7 +205,7 @@ class RecordController extends Controller
         $validator = Validator::make(
             $request->all(),
             [
-                'account_id' => 'required',
+                'account_id' => 'nullable',
                 'category_id' => 'required',
                 'type' => 'required|string',
                 'amount' => 'required|numeric',

@@ -6,6 +6,7 @@ use App\Models\User;
 use App\Models\Account;
 use App\Models\Category;
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\SoftDeletes;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 
@@ -58,5 +59,22 @@ class Record extends Model
         }
 
         return $query;
+    }
+
+    public function scopeUserScope(Builder $query, $userId, $sessionType = 'personal')
+    {
+        return ($sessionType === 'personal') ?
+            $query->where('user_id', $userId)->whereNull('expense_sharing_group_id') :
+            $query->where('user_id', $userId)->where('expense_sharing_group_id', session('active_group_id'));
+    }
+
+    public function scopeDateRange(Builder $query, $startDate, $endDate)
+    {
+        return $query->whereBetween('datetime', [$startDate, $endDate]);
+    }
+
+    public function scopeSortedBy(Builder $query, $sort)
+    {
+        return ($sort === 'oldest') ? $query->orderBy('datetime', 'asc') : $query->orderBy('datetime', 'desc');
     }
 }
