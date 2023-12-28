@@ -22,7 +22,7 @@
     <body class="font-sans antialiased">
         <x-banner />
 
-        <div class="min-h-screen" style="background-color: #92C3E3; display: flex; flex-direction: column;">
+        <div class="min-h-screen" style="background-color: #92C3E3; display: flex; flex-direction: column; height:100%; overflow-y:auto">
             @livewire('navigation-menu')
 
             <!-- Page Heading -->
