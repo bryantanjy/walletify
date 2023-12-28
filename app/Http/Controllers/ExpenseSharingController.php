@@ -2,8 +2,10 @@
 
 namespace App\Http\Controllers;
 
-use App\Models\ExpenseSharingGroup;
+use App\Models\GroupMember;
 use Illuminate\Http\Request;
+use Spatie\Permission\Models\Role;
+use App\Models\ExpenseSharingGroup;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Validator;
 
@@ -45,6 +47,16 @@ class ExpenseSharingController extends Controller
         $expenseSharing->name = $request->input('name');
         $expenseSharing->description = $request->input('description');
         $expenseSharing->save();
+
+        // Assign the current user as the group organizer
+        $organizerRole = Role::where('name', 'Group Organizer')->first();
+
+        // Create a new group member with the 'Group Organizer' role
+        $groupMember = new GroupMember;
+        $groupMember->user_id = auth()->id();
+        $groupMember->expense_sharing_group_id = $expenseSharing->id;
+        $groupMember->role_id = $organizerRole->id;
+        $groupMember->save();
 
         return redirect()->route('expense-sharing.index')->with('success', 'Your Expense Sharing Group created successfully');
     }
