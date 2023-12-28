@@ -19,7 +19,7 @@ class ExpenseSharingGroup extends Model
         return $this->belongsTo(User::class, 'user_id');
     }
 
-    public function members(): HasMany
+    public function members()
     {
         return $this->hasMany(GroupMember::class);
     }
