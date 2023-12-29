@@ -2,10 +2,6 @@ $(function () {
     var start = moment().subtract(29, 'days');
     var end = moment();
 
-    function calender(start, end) {
-        $('#reportrange span').html(start.format('D MMM YYYY') + ' - ' + end.format('D MMM YYYY'));
-    }
-
     // Fetch records for the current month by default
     function fetchRecordsOnChange(start, end, page) {
         var userSessionType = 'personal'; // Default to 'personal' if not set
@@ -52,50 +48,10 @@ $(function () {
 
             // Update the last operation before fetching records
             window.lastOperation = 'datepicker';
-            fetchRecords(start, end, page); // Fetch records for the selected date range and the clicked page
-        } 
+            fetchRecordsOnChange(picker.startDate, picker.endDate, page); // Fetch records for the selected date range and the clicked page
+        }
     });
 
-
-    //  fetch expense data and update the graph when the new date is picked
-    function fetchExpensesData(start, end) {
-        $('#reportrange span').html(start.format('D MMM YYYY') + ' - ' + end.format('D MMM YYYY'));
-
-        $.ajax({
-            url: '/statistic/expense',
-            type: 'GET',
-            data: {
-                startDate: start.format('YYYY-MM-DD'),
-                endDate: end.format('YYYY-MM-DD'),
-            },
-            success: function (response) {
-                updateExpenseChart(response);
-            },
-            error: function (error) {
-                console.error('Error fetching records:', error);
-            }
-        });
-    }
-
-    //  fetch income data and update the graph when the new date is picked
-    function fetchIncomesData(start, end) {
-        $('#reportrange span').html(start.format('D MMM YYYY') + ' - ' + end.format('D MMM YYYY'));
-
-        $.ajax({
-            url: '/statistic/income',
-            type: 'GET',
-            data: {
-                startDate: start.format('YYYY-MM-DD'),
-                endDate: end.format('YYYY-MM-DD'),
-            },
-            success: function (response) {
-                updateIncomeChart(response);
-            },
-            error: function (error) {
-                console.error('Error fetching records:', error);
-            }
-        });
-    }
 
     $('#reportrange').daterangepicker({
         "autoApply": true,
@@ -110,7 +66,7 @@ $(function () {
         "startDate": start,
         "endDate": end,
         "opens": "left"
-    }, fetchExpensesData, fetchIncomesData);
+    }, fetchRecordsOnChange(start, end));
 
     // Event listener for the date range picker change
     $('#reportrange').on('apply.daterangepicker', function (ev, picker) {
@@ -119,18 +75,12 @@ $(function () {
         calender(picker.startDate, picker.endDate);
     });
 
-    fetchExpensesData(start, end);
-    fetchIncomesData(start, end);
-    calender(start, end);
-
     $('#prevPeriod').on('click', function () {
         start.subtract(1, 'month');
         end.subtract(1, 'month');
         $('#reportrange').data('daterangepicker').setStartDate(start);
         $('#reportrange').data('daterangepicker').setEndDate(end);
         fetchRecordsOnChange(start, end);
-        fetchIncomesData(start, end);
-        fetchExpensesData(start, end);
     });
 
     $('#nextPeriod').on('click', function () {
@@ -139,7 +89,5 @@ $(function () {
         $('#reportrange').data('daterangepicker').setStartDate(start);
         $('#reportrange').data('daterangepicker').setEndDate(end);
         fetchRecordsOnChange(start, end);
-        fetchIncomesData(start, end);
-        fetchExpensesData(start, end);
     });
 });
