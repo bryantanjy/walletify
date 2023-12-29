@@ -34,6 +34,36 @@
 
     <main>
         <div class="flex justify-evenly mx-5 mt-24">
+            @if (session('success'))
+                <div class="position-fixed top-20 end-0 p-3" style="z-index: 100">
+                    <div class="toast align-items-center bg-green-100 border-0" role="alert" aria-live="assertive"
+                        aria-atomic="true">
+                        <div class="d-flex">
+                            <div class="toast-body">
+                                <i class="fa-regular fa-circle-check" style="color: #48f745;"></i>
+                                {{ session('success') }}
+                            </div>
+                            <button type="button" class="btn-close me-2 m-auto" data-bs-dismiss="toast"
+                                aria-label="Close"><i class="fa-solid fa-xmark"></i></button>
+                        </div>
+                    </div>
+                </div>
+            @elseif (session('error'))
+                <div class="position-fixed top-20 end-0 p-3" style="z-index: 100">
+                    <div class="toast align-items-center bg-red-100 border-0" role="alert" aria-live="assertive"
+                        aria-atomic="true">
+                        <div class="d-flex">
+                            <div class="toast-body">
+                                <i class="fa-solid fa-triangle-exclamation" style="color: #dc0404;"></i>
+                                {{ session('error') }}
+                            </div>
+                            <button type="button" class="btn-close me-2 m-auto" data-bs-dismiss="toast"
+                                aria-label="Close"><i class="fa-solid fa-xmark"></i></button>
+                        </div>
+                    </div>
+                </div>
+            @endif
+
             {{-- Expense structure part --}}
             <div class="bg-white rounded-lg py-4 px-5" style="width: 550px; height: 450px">
                 <h4 style="font-size: 20px"><strong>Expense Structure</strong></h4>
@@ -122,7 +152,6 @@
 </x-app-layout>
 
 <script>
-   
     // doughnut chart component
     var labels = [];
     var data = [];
@@ -157,4 +186,11 @@
     var totalExpenses = data.reduce((sum, amount) => sum + parseFloat(amount), 0);
     document.getElementById('total-expenses-placeholder').innerHTML = '<b>-RM ' + totalExpenses.toFixed(2) +
         '</b>';
+
+    // trigger toast @ notification
+    $(document).ready(function() {
+        $('.toast').toast({
+            delay: 5000
+        }).toast('show');
+    });
 </script>
