@@ -17,7 +17,7 @@ class DashboardController extends Controller
         $groups = ExpenseSharingGroup::where('user_id', $userId)->get();
 
         // Determine the current session type
-        $currentSession = config('app.user_session_type', 'personal');
+        $currentSession = session('app.user_session_type', 'personal');
 
         if ($activeGroupId) {
             $group = ExpenseSharingGroup::findOrFail($activeGroupId);
