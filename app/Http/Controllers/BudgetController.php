@@ -18,53 +18,51 @@ class BudgetController extends Controller
      */
     public function index()
     {
-        if (Auth::check()) {
-            $user = auth()->user();
-            $categories = Category::all();
-            $budgets = Budget::where('user_id', $user->id)->get();
 
-            foreach ($budgets as $budget) {
-                $totalAllocationAmount = 0;
+        $user = auth()->user();
+        $categories = Category::all();
+        $currentSession = session('app.user_session_type', 'personal');
+        $budgets = Budget::userScope($user->id, $currentSession)->get();
 
-                foreach ($budget->partAllocations as $partAllocation) {
-                    $totalExpense = 0;
-                    $totalIncome = 0;
+        foreach ($budgets as $budget) {
+            $totalAllocationAmount = 0;
 
-                    foreach ($partAllocation->partCategories as $category) {
-                        $now = Carbon::now();
-                        $records = Record::where('user_id', $user->id)
-                            ->where('category_id', $category->id)
-                            ->whereYear('datetime', $now->year)
-                            ->whereMonth('datetime', $now->month)
-                            ->get();
+            foreach ($budget->partAllocations as $partAllocation) {
+                $totalExpense = 0;
+                $totalIncome = 0;
 
-                        foreach ($records as $record) {
-                            if ($record->type == 'Expense') {
-                                $totalExpense += $record->amount;
-                            } else {
-                                $totalIncome += $record->amount;
-                            }
+                foreach ($partAllocation->partCategories as $category) {
+                    $now = Carbon::now();
+                    $records = Record::userScope($user->id, $currentSession)
+                        ->where('category_id', $category->id)
+                        ->whereYear('datetime', $now->year)
+                        ->whereMonth('datetime', $now->month)
+                        ->get();
+
+                    foreach ($records as $record) {
+                        if ($record->type == 'Expense') {
+                            $totalExpense += $record->amount;
+                        } else {
+                            $totalIncome += $record->amount;
                         }
                     }
-
-                    $currentBudget = $totalExpense - $totalIncome;
-                    $percentage = ($currentBudget / $partAllocation->amount) * 100;
-                    $percentageWidth = min(max($percentage, 0), 100);
-
-                    $partAllocation->currentBudget = $currentBudget;
-                    $partAllocation->percentage = $percentage;
-                    $partAllocation->percentageWidth = $percentageWidth;
-                    $totalAllocationAmount += $partAllocation->amount;
                 }
-            }
 
-            if ($budgets->count() > 0) {
-                return view('budget.index', compact('categories', 'budgets', 'totalAllocationAmount'));
-            } else {
-                return view('budget.index', compact('categories', 'budgets'));
+                $currentBudget = $totalExpense - $totalIncome;
+                $percentage = ($currentBudget / $partAllocation->amount) * 100;
+                $percentageWidth = min(max($percentage, 0), 100);
+
+                $partAllocation->currentBudget = $currentBudget;
+                $partAllocation->percentage = $percentage;
+                $partAllocation->percentageWidth = $percentageWidth;
+                $totalAllocationAmount += $partAllocation->amount;
             }
+        }
+
+        if ($budgets->count() > 0) {
+            return view('budget.index', compact('categories', 'budgets', 'totalAllocationAmount'));
         } else {
-            return redirect()->route('login');
+            return view('budget.index', compact('categories', 'budgets'));
         }
     }
 
@@ -75,13 +73,6 @@ class BudgetController extends Controller
     {
         $categories = Category::all();
 
-        $existingBudget = Budget::where('user_id', auth()->id())->first();
-
-        if ($existingBudget) {
-            // Notify the user that they already have an active budget
-            return redirect()->back()->with('error', 'You already have an active budget.');
-        }
-
         return view('budget.createUserTemplate', compact('categories'));
     }
 
@@ -91,13 +82,8 @@ class BudgetController extends Controller
     public function createDefaultTemplate()
     {
         $categories = Category::all();
-        $existingBudget = Budget::where('user_id', auth()->id())->first();
 
-        if ($existingBudget->count() < 1) {
-            return view('budget.createDefaultTemplate', compact('categories'));
-        } else {
-            return redirect()->route('budget.index')->with('error', 'You already have an active budget.');
-        }
+        return view('budget.createDefaultTemplate', compact('categories'));
     }
 
     /**
@@ -109,7 +95,7 @@ class BudgetController extends Controller
         $budget = Budget::create([
             'user_id' => auth()->id(),
             'type' => $request->type,
-            'expense_sharing_group_id' => null,
+            'expense_sharing_group_id' => $request->input('group_id'),
         ]);
 
         foreach ($request->input('part_name') as $key => $partName) {
@@ -144,6 +130,7 @@ class BudgetController extends Controller
                 'part_name.*' => 'required|string|max:255',
                 'amount.*' => 'required|numeric|min:0.01',
                 'categoryId.*.*' => 'exists:categories,id',
+                'group_id' => 'nullable',
             ]
         );
 
@@ -151,7 +138,7 @@ class BudgetController extends Controller
         $budget = Budget::create([
             'type' => $request->input('type'),
             'user_id' => auth()->id(),
-            'expense_sharing_group_id' => null,
+            'expense_sharing_group_id' => $request->input('group_id'),
         ]);
 
         // Create a new budget template part record and part allocation record for each part
@@ -183,7 +170,7 @@ class BudgetController extends Controller
         if (!$budget) {
             return redirect()->back()->with('error', 'Budget not found');
         }
-        
+
         return view('budget.editDefaultTemplate', compact('budget', 'categories'));
         // return response()->json(['budget' => $budget]);
     }
