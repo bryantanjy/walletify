@@ -5,6 +5,7 @@ namespace App\Models;
 use App\Models\User;
 use App\Models\PartAllocation;
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\SoftDeletes;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 
@@ -42,5 +43,12 @@ class Budget extends Model
     public function partAllocations()
     {
         return $this->hasMany(PartAllocation::class, 'budget_id');
+    }
+
+    public function scopeUserScope(Builder $query, $userId, $sessionType = 'personal')
+    {
+        return ($sessionType === 'personal') ?
+            $query->where('user_id', $userId)->whereNull('expense_sharing_group_id') :
+            $query->where('user_id', $userId)->where('expense_sharing_group_id', session('active_group_id'));
     }
 }
