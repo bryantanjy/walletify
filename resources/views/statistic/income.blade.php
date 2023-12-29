@@ -6,8 +6,8 @@
     <script src="https://cdn.jsdelivr.net/momentjs/latest/moment.min.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/daterangepicker/daterangepicker.min.js"></script>
     <link rel="stylesheet" type="text/css" href="https://cdn.jsdelivr.net/npm/daterangepicker/daterangepicker.css" />
-    <script src="{{ asset('js/daterangepicker.js') }}"></script>
     <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <script src="{{ asset('js/income.js') }}"></script>
 </head>
 <x-app-layout>
     <main class="flex">
@@ -82,6 +82,16 @@
             }]
         },
         options: {
+            tooltips: {
+                callbacks: {
+                    title: function(tooltipItems, data) {
+                        var tooltipItem = tooltipItems[0];
+                        var dataset = data.datasets[tooltipItem.datasetIndex];
+                        var dataIndex = tooltipItem.index;
+                        return dataset.labels[dataIndex]; // Return the actual label for the data point
+                    }
+                }
+            },
             tension: 0.3,
             scales: {
                 xAxes: [{
