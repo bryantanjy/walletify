@@ -15,6 +15,11 @@ class AccountController extends Controller
      */
     public function index(Request $request)
     {
+        if (session('active_group_id')) {
+            return redirect('/dashboard')
+                ->with('error', 'You are not authorized to access this resource in a group session.');
+        }
+
         $user = auth()->user();
         $accounts = Account::where('user_id', $user->id)->oldest()->get();
         $balance = [];
