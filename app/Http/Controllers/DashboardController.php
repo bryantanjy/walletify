@@ -22,7 +22,7 @@ class DashboardController extends Controller
         if ($activeGroupId) {
             $group = ExpenseSharingGroup::findOrFail($activeGroupId);
 
-            $monthExpenses = Record::where('expense_sharing_group_id', $group)
+            $monthExpenses = Record::where('expense_sharing_group_id', $group->id)
                 ->where('type', 'Expense')
                 ->whereMonth('datetime', now()->month)
                 ->whereYear('datetime', now()->year)
@@ -31,12 +31,12 @@ class DashboardController extends Controller
                 ->with('category')
                 ->get();
 
-            $recentRecords = Record::where('expense_sharing_group_id', $group)
+            $recentRecords = Record::where('expense_sharing_group_id', $group->id)
                 ->orderBy('datetime', 'desc')
                 ->take(10)
                 ->get();
 
-            $records = Record::where('expense_sharing_group_id', $group)
+            $records = Record::where('expense_sharing_group_id', $group->id)
                 ->whereMonth('datetime', now()->month)
                 ->whereYear('datetime', now()->year)
                 ->get();
