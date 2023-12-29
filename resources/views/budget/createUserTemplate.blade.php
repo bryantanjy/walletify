@@ -12,6 +12,12 @@
             <div class="modal-body ">
                 <form method="POST" action="{{ route('budget.storeUserTemplate') }}">
                     @csrf
+
+                    @php
+                        $userSessionType = session('user_session_type', 'personal');
+                    @endphp
+                    <input type="hidden" name="group_id" value="{{ session('active_group_id') }}">
+
                     <div id="dynamicPartFields"></div>
                     <button type="button" class="bg-white border rounded mt-3" id="plusButton"
                         style="width: 35px; height: 35px; font-size: 22px; display:none">+</button>

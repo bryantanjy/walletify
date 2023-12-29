@@ -35,6 +35,11 @@
                             </div>
                         @endif
 
+                        @php
+                            $userSessionType = session('user_session_type', 'personal');
+                        @endphp
+                        <input type="hidden" name="group_id" value="{{ session('active_group_id') }}">
+
                         @foreach ($budget->partAllocations as $part)
                             <input type="hidden" name="part_allocation_id[]" value="{{ $part->id }}">
 

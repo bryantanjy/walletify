@@ -13,8 +13,9 @@
                 <div>
                     <p style="font-size:16px;"><b>Set your monthly budget here:</b></p><br>
                     <label for="part_input">Total Budget Allocation</label>
-                    <input class="rounded-md text-right mx-3 border-0" type="number" name="totalBudget" id="totalBudget"
-                        step="0.01" style="height: 30px; width:150px" placeholder="e.g. 1000" required>
+                    <input class="rounded-md text-right mx-3 border-0" type="number" name="totalBudget"
+                        id="totalBudget" step="0.01" style="height: 30px; width:150px" placeholder="e.g. 1000"
+                        required>
                     <button type="submit" id="setBtn" class="bg-green-400 rounded hover:bg-green-600"
                         style="width: 80px;height: 30px;">Set</button>
                     <div id="totalBudgetError" class="text-red-500"></div>
@@ -31,12 +32,18 @@
                         </div>
                     @endif
 
+                    @php
+                        $userSessionType = session('user_session_type', 'personal');
+                    @endphp
+                    <input type="hidden" name="group_id" value="{{ session('active_group_id') }}">
+
                     {{-- Part 1 --}}
                     <h4 style="font-size:20px; margin-top:25px"><b>Part 1 (50%)</b></h4>
                     <div class="flex items-center">
                         <label for="partName1" class="w-32 pr-2 mt-4">Name</label>
-                        <input class="rounded-md border-0" type="text" name="part_name[]" id="part1_name" placeholder="Name"
-                            style="height: 30px; margin:15px 0px 0px 20px;width:175px;" value="Needs" readonly>
+                        <input class="rounded-md border-0" type="text" name="part_name[]" id="part1_name"
+                            placeholder="Name" style="height: 30px; margin:15px 0px 0px 20px;width:175px;"
+                            value="Needs" readonly>
                     </div>
                     <div class="flex items-center">
                         <label for="partAmount1" class="w-32 pr-2 mt-4">Amount</label>
@@ -49,15 +56,14 @@
                         <label for="partCategory1" class="w-32 pr-2 mt-4">Category</label>
                         <select lass="rounded-md border-0" name="category_id[0][]" id="category_id1" multiple disabled>
                             @foreach ($categories as $category)
-                                <option value="{{ $category->id }}"
-                                    @if (in_array($category->name, [
-                                            'Housing',
-                                            'Transportation',
-                                            'Utilities',
-                                            'Food and Drink',
-                                            'Health and Fitness',
-                                            'Education',
-                                        ])) selected @endif>
+                                <option value="{{ $category->id }}" @if (in_array($category->name, [
+                                        'Housing',
+                                        'Transportation',
+                                        'Utilities',
+                                        'Food and Drink',
+                                        'Health and Fitness',
+                                        'Education',
+                                    ])) selected @endif>
                                     {{ $category->name }}
                                 </option>
                             @endforeach
@@ -69,8 +75,9 @@
                     <h4 style="font-size:20px; margin-top:25px"><b>Part 2 (30%)</b></h4>
                     <div class="flex items-center">
                         <label for="partName2" class="w-32 pr-2 mt-4">Name</label>
-                        <input class="rounded-md border-0" type="text" name="part_name[]" id="part2_name" placeholder="Name"
-                            style="height: 30px; margin:15px 0px 0px 20px;width:175px;" value="Wants" readonly>
+                        <input class="rounded-md border-0" type="text" name="part_name[]" id="part2_name"
+                            placeholder="Name" style="height: 30px; margin:15px 0px 0px 20px;width:175px;"
+                            value="Wants" readonly>
                     </div>
                     <div class="flex items-center">
                         <label for="partAmount2" class="w-32 pr-2 mt-4">Amount</label>
@@ -83,8 +90,7 @@
                         <label for="partCategory2" class="w-32 pr-2 mt-4">Category</label>
                         <select class="rounded-md border-0" name="category_id[1][]" id="category_id2" multiple disabled>
                             @foreach ($categories as $category)
-                                <option value="{{ $category->id }}"
-                                    @if (in_array($category->name, ['Shopping', 'Entertainment', 'Travel', 'Personal Care', 'Miscellaneous'])) selected @endif>
+                                <option value="{{ $category->id }}" @if (in_array($category->name, ['Shopping', 'Entertainment', 'Travel', 'Personal Care', 'Miscellaneous'])) selected @endif>
                                     {{ $category->name }}
                                 </option>
                             @endforeach
@@ -109,10 +115,10 @@
                     </div>
                     <div class="flex">
                         <label for="partCategory3" class="w-32 pr-2 mt-4">Category</label>
-                        <select class="rounded-md border-0" name="category_id[2][]" id="category_id3" multiple disabled>
+                        <select class="rounded-md border-0" name="category_id[2][]" id="category_id3" multiple
+                            disabled>
                             @foreach ($categories as $category)
-                                <option value="{{ $category->id }}"
-                                    @if (in_array($category->name, ['Investments', 'Gift and Donations', 'Income'])) selected @endif>
+                                <option value="{{ $category->id }}" @if (in_array($category->name, ['Investments', 'Gift and Donations', 'Income'])) selected @endif>
                                     {{ $category->name }}
                                 </option>
                             @endforeach
@@ -124,7 +130,8 @@
                     <div class="float-right mt-4">
                         <button type="submit" class="bg-blue-400 rounded hover:bg-blue-300"
                             style="width: 100px">Create</button>
-                        <button type="button" data-bs-dismiss="modal" class="border bg-white rounded hover:bg-gray-100"
+                        <button type="button" data-bs-dismiss="modal"
+                            class="border bg-white rounded hover:bg-gray-100"
                             style="width: 100px; margin-left:10px">Cancel</button>
                     </div>
                 </form>
