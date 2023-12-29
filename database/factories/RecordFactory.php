@@ -4,6 +4,7 @@ namespace Database\Factories;
 
 use App\Models\Account;
 use App\Models\Category;
+use App\Models\ExpenseSharingGroup;
 use App\Models\User;
 use Illuminate\Database\Eloquent\Factories\Factory;
 
@@ -23,9 +24,9 @@ class RecordFactory extends Factory
             'user_id' => User::inRandomOrder()->pluck('id')->first(),
             'account_id' => Account::inRandomOrder()->pluck('id')->first(),
             'category_id' => Category::inRandomOrder()->pluck('id')->first(),
-            'expense_sharing_group_id' => null,
+            'expense_sharing_group_id' => rand(0, 1) ? ExpenseSharingGroup::inRandomOrder()->pluck('id')->first() : null,
             'type' => $this->faker->randomElement(['Expense', 'Income']),
-            'amount' => $this->faker->randomFloat(2, 1, 100),
+            'amount' => $this->faker->randomFloat(2, 1, 1000),
             'datetime' => $this->faker->dateTimeThisYear(),
             'description' => $this->faker->sentence(),
         ];

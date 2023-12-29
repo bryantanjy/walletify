@@ -18,9 +18,14 @@ class PermissionSeeder extends Seeder
         // Reset cached roles and permissions
         app()[PermissionRegistrar::class]->forgetCachedPermissions();
 
+        // Create permissions for account module
+        $accountPermissions = [
+            'list account', 'create account', 'view account', 'edit account', 'delete account',
+        ];
+
         // Create permissions for record module
         $recordPermissions = [
-            'list records', 'create records', 'view records', 'edit records', 'delete records',
+            'list record', 'create record', 'view record', 'edit record', 'delete record',
         ];
 
         // Create permissions for budget module
@@ -35,7 +40,12 @@ class PermissionSeeder extends Seeder
 
         // Create permissions for in-group module
         $participantPermissions = [
-            'list participant', 'add participant', 'view participant', 'edit participant', 'remove participant',
+            'list participant', 'send group invitation', 'accept group invitation', 'view participant', 'edit participant', 'remove participant',
+        ];
+
+        // Create permissions for statistics module
+        $statisticsPermissions = [
+            'view statistics', 'view expense', 'view income',
         ];
 
         // Group has these roles: organizer and collaborator
@@ -53,20 +63,19 @@ class PermissionSeeder extends Seeder
             $organizer->givePermissionTo($permission);
         }
 
-        foreach ($groupPermissions as $permission) {
+        foreach ($participantPermissions as $permission) {
             Permission::create(['name' => $permission]);
             $organizer->givePermissionTo($permission);
         }
 
-        foreach ($participantPermissions as $permission) {
+        foreach ($statisticsPermissions as $permission) {
             Permission::create(['name' => $permission]);
             $organizer->givePermissionTo($permission);
         }
 
         // Assign specific permissions to the collaborator role
         $collaborator->givePermissionTo([
-            'list records', 'view records', 'list budget', 'view budget',
-            'list group', 'view group', 'list participant', 'view participant',
+            'list record', 'create record', 'view record', 'edit record', 'delete record', 'list budget', 'view budget', 'accept group invitation', 'list participant', 'view participant', 'view statistics', 'view expense', 'view income',
         ]);
     }
 }

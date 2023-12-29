@@ -18,7 +18,7 @@ class ExpenseSharingGroupFactory extends Factory
     public function definition(): array
     {
         return [
-            'user_id' => User::distinct()->limit(1)->pluck('id')->first(),
+            'user_id' => User::inRandomOrder()->distinct()->pluck('id')->first(),
             'name' => $this->faker->word(),
             'description' => $this->faker->sentence(),
         ];
