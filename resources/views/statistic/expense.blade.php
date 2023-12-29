@@ -6,8 +6,8 @@
     <script src="https://cdn.jsdelivr.net/momentjs/latest/moment.min.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/daterangepicker/daterangepicker.min.js"></script>
     <link rel="stylesheet" type="text/css" href="https://cdn.jsdelivr.net/npm/daterangepicker/daterangepicker.css" />
-    <script src="{{ asset('js/daterangepicker.js') }}"></script>
     <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <script src="{{ asset('js/expense.js') }}"></script>
 </head>
 <x-app-layout>
     <main class="flex">
@@ -113,9 +113,7 @@
     function updateExpenseChart(data) {
         chart.data.labels = Object.keys(data.currentPeriod);
         chart.data.datasets[0].data = Object.values(data.currentPeriod);
-        chart.data.datasets[0].labels = Object.keys(data.currentPeriod);
         chart.data.datasets[1].data = Object.values(data.previousPeriod);
-        chart.data.datasets[1].labels = Object.keys(data.previousPeriod);
         chart.update();
     }
 </script>
