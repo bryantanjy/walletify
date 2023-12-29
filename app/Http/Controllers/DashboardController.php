@@ -14,7 +14,11 @@ class DashboardController extends Controller
     {
         $userId = auth()->id();
         $activeGroupId = session('active_group_id');
-        $groups = ExpenseSharingGroup::where('user_id', $userId)->get();
+        $groups = ExpenseSharingGroup::where('user_id', $userId)
+            ->orWhereHas('members', function ($query) use ($userId) {
+                $query->where('user_id', $userId);
+            })
+            ->get();
 
         // Determine the current session type
         $currentSession = session('app.user_session_type', 'personal');
