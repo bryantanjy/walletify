@@ -15,34 +15,30 @@ class AccountController extends Controller
      */
     public function index(Request $request)
     {
-        if (Auth::check()) {
-            $user = auth()->user();
-            $accounts = Account::where('user_id', $user->id)->oldest()->get();
-            $balance = [];
+        $user = auth()->user();
+        $accounts = Account::where('user_id', $user->id)->oldest()->get();
+        $balance = [];
 
-            foreach ($accounts as $account) {
-                $records = Record::where('user_id', $user->id)->where('account_id', $account->id)->get();
+        foreach ($accounts as $account) {
+            $records = Record::where('user_id', $user->id)->where('account_id', $account->id)->get();
 
-                $totalExpense = 0;
-                $totalIncome = 0;
+            $totalExpense = 0;
+            $totalIncome = 0;
 
-                if (isset($records)) {
-                    foreach ($records as $record) {
-                        if ($record->type == 'Expense') {
-                            $totalExpense += $record->amount;
-                        } else {
-                            $totalIncome += $record->amount;
-                        }
+            if (isset($records)) {
+                foreach ($records as $record) {
+                    if ($record->type == 'Expense') {
+                        $totalExpense += $record->amount;
+                    } else {
+                        $totalIncome += $record->amount;
                     }
                 }
-                $balance = $totalIncome - $totalExpense;
-                $balances[$account->id] = $balance;
             }
-
-            return view('account.index', compact('accounts', 'balances'));
-        } else {
-            return redirect()->route('login');
+            $balance = $totalIncome - $totalExpense;
+            $balances[$account->id] = $balance;
         }
+
+        return view('account.index', compact('accounts', 'balances'));
     }
 
     /**
