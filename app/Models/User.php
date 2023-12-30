@@ -85,7 +85,7 @@ class User extends Authenticatable
         // Check if the user already has the role within this group
         if (!$this->hasRole($role->name, $groupId)) {
             // Assign the role within the context of this group
-            $this->roles()->attach($role, ['model_id' => $groupId, 'model_type' => get_class($role)]);
+            $this->roles()->attach($role, ['model_id' => $groupId, 'model_type' => ExpenseSharingGroup::class]);
         }
     }
 }
