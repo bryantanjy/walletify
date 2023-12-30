@@ -16,19 +16,26 @@ class GroupInvitation extends Mailable
 
     public $group;
     public $token;
+    public $acceptUrl;
 
     /**
      * Create a new message instance.
      */
-    public function __construct(ExpenseSharingGroup $group, $token)
+    public function __construct(ExpenseSharingGroup $group, $token, $acceptUrl)
     {
         $this->group = $group;
         $this->token = $token;
+        $this->acceptUrl = $acceptUrl;
     }
 
     public function build()
     {
-        return $this->subject('You are invited to join a group')->view('emails.group_invitation');
+        return $this->markdown('emails.group-invitation')
+            ->with([
+                'group' => $this->group,
+                'token' => $this->token,
+                'acceptUrl' => $this->acceptUrl,
+            ]);
     }
 
     /**
@@ -47,7 +54,7 @@ class GroupInvitation extends Mailable
     public function content(): Content
     {
         return new Content(
-            view: 'view.name',
+            view: 'emails.group-invitation',
         );
     }
 

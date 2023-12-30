@@ -23,4 +23,9 @@ class ExpenseSharingGroup extends Model
     {
         return $this->hasMany(GroupMember::class);
     }
+
+    public function invitations() 
+    {
+        return $this->hasMany(GroupInvitation::class, 'expense_sharing_group_id');
+    }
 }
