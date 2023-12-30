@@ -16,11 +16,11 @@ return new class extends Migration
             $table->foreign('user_id')->references('id')->on('users')->onUpdate('cascade')->onDelete('cascade');
             $table->unsignedBigInteger('expense_sharing_group_id');
             $table->foreign('expense_sharing_group_id')->references('id')->on('expense_sharing_groups')->onUpdate('cascade')->onDelete('cascade');
-            $table->string('role')->default('Group Collaborator');
+            $table->foreignId('role_id')->constrained('roles')->default('Group Collaborator');
             $table->timestamps();
 
             // Add a unique constraint if you want to ensure uniqueness of user-group-role combinations
-            $table->unique(['user_id', 'expense_sharing_group_id', 'role']);
+            $table->unique(['user_id', 'expense_sharing_group_id', 'role_id']);
         });
     }
 
