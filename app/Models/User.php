@@ -5,6 +5,7 @@ namespace App\Models;
 use App\Models\Record;
 use App\Models\Account;
 use Laravel\Sanctum\HasApiTokens;
+use Spatie\Permission\Models\Role;
 use App\Models\ExpenseSharingGroup;
 use Laravel\Jetstream\HasProfilePhoto;
 use Spatie\Permission\Traits\HasRoles;
@@ -77,5 +78,14 @@ class User extends Authenticatable
     public function groups()
     {
         return $this->belongsToMany(ExpenseSharingGroup::class, 'group_members', 'expense_sharing_group_id', 'user_id');
+    }
+
+    public function assignRole(Role $role, $groupId)
+    {
+        // Check if the user already has the role within this group
+        if (!$this->hasRole($role->name, $groupId)) {
+            // Assign the role within the context of this group
+            $this->roles()->attach($role, ['model_id' => $groupId, 'model_type' => get_class($role)]);
+        }
     }
 }

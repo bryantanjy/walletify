@@ -48,10 +48,14 @@ class ExpenseSharingController extends Controller
         $expenseSharing->description = $request->input('description');
         $expenseSharing->save();
 
-        // Assign the current user as the group organizer
-        $organizerRole = Role::where('name', 'Group Organizer')->first();
+        // Retrieve the user who is creating the group
+        $user = auth()->user();
 
-        // Create a new group member with the 'Group Organizer' role
+        // Assign the "Group Organizer" role within the context of this group
+        $organizerRole = Role::where('name', 'Group Organizer')->first();
+        $user->assignRole($organizerRole, $expenseSharing->id);
+
+        // Create a new group member with the 'Group Organizer' role for the created group
         $groupMember = new GroupMember;
         $groupMember->user_id = auth()->id();
         $groupMember->expense_sharing_group_id = $expenseSharing->id;
