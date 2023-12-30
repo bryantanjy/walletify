@@ -42,6 +42,13 @@ class ExpenseSharingController extends Controller
             return redirect()->back()->withErrors($validator);
         }
 
+        // Check if the user has already created a group
+        $existingGroup = ExpenseSharingGroup::where('user_id', auth()->id())->first();
+
+        if ($existingGroup) {
+            return redirect()->back()->withErrors('You have already created a group.');
+        }
+
         $expenseSharing = new ExpenseSharingGroup;
         $expenseSharing->user_id = auth()->id();
         $expenseSharing->name = $request->input('name');
