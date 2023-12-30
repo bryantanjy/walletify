@@ -48,19 +48,12 @@ class ExpenseSharingController extends Controller
         $expenseSharing->description = $request->input('description');
         $expenseSharing->save();
 
-        // Retrieve the user who is creating the group
-        $user = auth()->user();
 
-        // Assign the "Group Organizer" role within the context of this group
-        $organizerRole = Role::where('name', 'Group Organizer')->first();
-        $user->assignRole($organizerRole, $expenseSharing->id);
+        // Get the 'organizer' role id
+        $organizerRoleId = Role::where('name', 'Group Organizer')->first()->id;
 
-        // Create a new group member with the 'Group Organizer' role for the created group
-        $groupMember = new GroupMember;
-        $groupMember->user_id = auth()->id();
-        $groupMember->expense_sharing_group_id = $expenseSharing->id;
-        $groupMember->role_id = $organizerRole->id;
-        $groupMember->save();
+        // Attach the user to the group_members pivot table with the 'organizer' role
+        $expenseSharing->members()->attach(auth()->user()->id, ['role_id' => $organizerRoleId]);
 
         return redirect()->route('expense-sharing.index')->with('success', 'Your Expense Sharing Group created successfully');
     }
