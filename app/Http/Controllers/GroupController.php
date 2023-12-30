@@ -7,6 +7,7 @@ use App\Models\GroupMember;
 use Illuminate\Support\Str;
 use Illuminate\Http\Request;
 use App\Mail\GroupInvitation;
+use Spatie\Permission\Models\Role;
 use App\Models\ExpenseSharingGroup;
 use Illuminate\Support\Facades\Mail;
 
@@ -23,10 +24,10 @@ class GroupController extends Controller
         }
 
         $group = ExpenseSharingGroup::find($activeGroupId);
+        $members = $group->members()->with('roles')->get();
 
-        $members = GroupMember::with('user', 'roles')->where('expense_sharing_group_id', $group->id)->get();
-        
-        return view('groups.index', compact('members', 'group'));
+
+        return view('groups.index', compact( 'group', 'members'));
     }
 
     public function sendInvitation(Request $request, $groupId)
@@ -89,12 +90,14 @@ class GroupController extends Controller
             return redirect()->route('/register')->with('info', 'Please register before accepting the invitation.');
         }
 
-        // Add the user to the group & assign role
-        $user->assignRole('Group Collaborator');
+        $collaboratorRoleId = Role::where('name', 'Group Collaborator')->first()->id;
+
+        // Attach the user to the group_members pivot table with the 'organizer' role
+        $group->members()->attach(auth()->user()->id, ['role_id' => $collaboratorRoleId]);
 
         // Delete the invitation
         $invitation->delete();
 
-        return redirect()->route('groups.index')->with('success', 'Invitation accepted. You are now a member of the group.');
+        return redirect()->route('dashboard')->with('success', 'Invitation accepted. You are now a member of the group.');
     }
 }
