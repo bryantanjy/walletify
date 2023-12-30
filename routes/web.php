@@ -76,7 +76,7 @@ Route::middleware(['auth:sanctum', config('jetstream.auth_session'), 'verified',
         Route::get('/income', [StatisticController::class, 'income'])->name('statistic.income');
     });
 
-    // route for expense sharing & group module
+    // route for expense sharing module
     Route::group(['prefix' => 'expense-sharing', 'as' => 'expense-sharing.'], function () {
         Route::get('/', [ExpenseSharingController::class, 'index'])->name('index');
         Route::get('/create', [ExpenseSharingController::class, 'create'])->name('create');
@@ -84,12 +84,12 @@ Route::middleware(['auth:sanctum', config('jetstream.auth_session'), 'verified',
         Route::get('/edit/{group}', [ExpenseSharingController::class, 'edit'])->name('edit');
         Route::put('/update/{group}', [ExpenseSharingController::class, 'update'])->name('update');
         Route::delete('/delete/{group}', [ExpenseSharingController::class, 'delete'])->name('delete');
+    });
 
-
-        Route::group(['prefix' => 'groups', 'as' => 'groups.'], function () {
-            Route::get('/', [GroupController::class, 'index'])->name('index');
-            Route::post('/send-invitation/{groupId}', [GroupController::class, 'sendInvitation'])->name('send-invitation');
-            Route::get('/accept-invitation/{groupId}/{token}', [GroupController::class, 'acceptInvitation'])->name('accept-invitation');
-        });
+    // route for expense sharing in-group module
+    Route::group(['prefix' => 'groups', 'as' => 'groups.'], function () {
+        Route::get('/', [GroupController::class, 'index'])->name('index');
+        Route::post('/send-invitation/{groupId}', [GroupController::class, 'sendInvitation'])->name('send-invitation');
+        Route::get('/accept-invitation/{groupId}/{token}', [GroupController::class, 'acceptInvitation'])->name('accept-invitation');
     });
 });
