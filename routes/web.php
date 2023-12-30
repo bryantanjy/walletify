@@ -86,10 +86,10 @@ Route::middleware(['auth:sanctum', config('jetstream.auth_session'), 'verified',
         Route::delete('/delete/{group}', [ExpenseSharingController::class, 'delete'])->name('delete');
 
 
-        Route::group(['prefix' => 'group', 'as' => 'group.'], function () {
+        Route::group(['prefix' => 'groups', 'as' => 'groups.'], function () {
             Route::get('/', [GroupController::class, 'index'])->name('index');
-            Route::get('/add-participant', [GroupController::class, 'addParticipant'])->name('addParticipant');
-            Route::get('/edit-participant/{id}', [GroupController::class, 'editParticipant'])->name('editParticipant');
+            Route::post('/send-invitation/{groupId}', [GroupController::class, 'sendInvitation'])->name('send-invitation');
+            Route::get('/accept-invitation/{groupId}/{token}', [GroupController::class, 'acceptInvitation'])->name('accept-invitation');
         });
     });
 });
