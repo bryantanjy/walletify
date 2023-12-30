@@ -26,7 +26,7 @@ class GroupController extends Controller
 
         $members = GroupMember::with('user', 'roles')->where('expense_sharing_group_id', $group->id)->get();
         
-        return view('expense-sharing.groups.index', compact('members', 'group'));
+        return view('groups.index', compact('members', 'group'));
     }
 
     public function sendInvitation(Request $request, $groupId)
@@ -58,7 +58,7 @@ class GroupController extends Controller
         // Ensure that the email address is valid before attempting to send the email
         if (filter_var($request->input('email'), FILTER_VALIDATE_EMAIL)) {
             // Build the URL for accepting the invitation
-            $acceptUrl = route('expense-sharing.groups.accept-invitation', ['groupId' => $group->id, 'token' => $invitation->token]);
+            $acceptUrl = route('groups.accept-invitation', ['groupId' => $group->id, 'token' => $invitation->token]);
 
             // Send an invitation email
             Mail::to($request->input('email'))->send(new GroupInvitation($group, $invitationToken, $acceptUrl));
@@ -95,6 +95,6 @@ class GroupController extends Controller
         // Delete the invitation
         $invitation->delete();
 
-        return redirect()->route('expense-sharing.groups.index')->with('success', 'Invitation accepted. You are now a member of the group.');
+        return redirect()->route('groups.index')->with('success', 'Invitation accepted. You are now a member of the group.');
     }
 }

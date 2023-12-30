@@ -55,7 +55,7 @@
                             {{ __('Expense Sharing') }}
                         </x-nav-link>
                     @else
-                        <x-nav-link href="{{ route('expense-sharing.groups.index') }}" :active="request()->routeIs('expense-sharing.groups.*')"
+                        <x-nav-link href="{{ route('groups.index') }}" :active="request()->routeIs('expense-sharing.groups.*')"
                             style="font-size: 16px; font-weight: bold;">
                             {{ __('Expense Sharing') }}
                         </x-nav-link>
