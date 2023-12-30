@@ -14,17 +14,13 @@ class ExpenseSharingGroup extends Model
 
     protected $fillable = ['user_id', 'name', 'description'];
 
-    public function organizer()
-    {
-        return $this->belongsTo(User::class, 'user_id');
-    }
-
     public function members()
     {
-        return $this->hasMany(GroupMember::class);
+        return $this->belongsToMany(User::class, 'group_members')->withPivot('role_id')->withTimestamps();
     }
 
-    public function invitations() 
+
+    public function invitations()
     {
         return $this->hasMany(GroupInvitation::class, 'expense_sharing_group_id');
     }

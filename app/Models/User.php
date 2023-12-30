@@ -77,15 +77,13 @@ class User extends Authenticatable
 
     public function groups()
     {
-        return $this->belongsToMany(ExpenseSharingGroup::class, 'group_members', 'expense_sharing_group_id', 'user_id');
+        return $this->belongsToMany(ExpenseSharingGroup::class, 'group_members')->withPivot('role_id')->withTimestamps();
     }
 
     public function assignRole(Role $role, $groupId)
     {
-        // Check if the user already has the role within this group
-        if (!$this->hasRole($role->name, $groupId)) {
-            // Assign the role within the context of this group
-            $this->roles()->attach($role, ['model_id' => $groupId, 'model_type' => ExpenseSharingGroup::class]);
-        }
+        // Assign the role within the context of this group
+        $this->roles()->attach(Role::where('name', $role)->where('group_id', $groupId)->first()->id);
     }
+
 }
