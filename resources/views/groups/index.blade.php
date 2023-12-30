@@ -12,7 +12,7 @@
                 <ul class="space-y-2 font-medium">
                     <li>
                         <div class="flex items-center p-2 text-gray-900 rounded-lg dark:text-black mx-auto">
-                            <span href="{{ route('expense-sharing.groups.index') }}" class="mx-auto"
+                            <span href="{{ route('groups.index') }}" class="mx-auto"
                                 style="font-size:24px;"><b>Expense Sharing</b></span>
                         </div>
                     </li>
@@ -29,30 +29,48 @@
         </aside>
         <div class="p-4 sm:ml-64 items-center justify-center" style="width: 80%; margin-left:20%; margin-top: 70px;">
             @if (session('success'))
-                <div class="alert alert-success">
-                    {{ session('success') }}
+                <div class="position-fixed top-20 end-0 p-3" style="z-index: 100">
+                    <div class="toast align-items-center bg-green-100 border-0" role="alert" aria-live="assertive"
+                        aria-atomic="true">
+                        <div class="d-flex">
+                            <div class="toast-body">
+                                <i class="fa-regular fa-circle-check" style="color: #48f745;"></i>
+                                {{ session('success') }}
+                            </div>
+                            <button type="button" class="btn-close me-2 m-auto" data-bs-dismiss="toast"
+                                aria-label="Close"><i class="fa-solid fa-xmark"></i></button>
+                        </div>
+                    </div>
                 </div>
-            @endif
-
-            @if (session('error'))
-                <div class="alert alert-danger">
-                    {{ session('error') }}
+            @elseif (session('error'))
+                <div class="position-fixed top-20 end-0 p-3" style="z-index: 100">
+                    <div class="toast align-items-center bg-red-100 border-0" role="alert" aria-live="assertive"
+                        aria-atomic="true">
+                        <div class="d-flex">
+                            <div class="toast-body">
+                                <i class="fa-solid fa-triangle-exclamation" style="color: #dc0404;"></i>
+                                {{ session('error') }}
+                            </div>
+                            <button type="button" class="btn-close me-2 m-auto" data-bs-dismiss="toast"
+                                aria-label="Close"><i class="fa-solid fa-xmark"></i></button>
+                        </div>
+                    </div>
                 </div>
             @endif
 
             <div class="p-4 pt-2" style="width:70%">
                 <h2 style="font-weight: bold; font-size:20px; margin-bottom: 10px">{{ $group->name }}'s Group</h2>
-                <h4 style="font-weight: bold; margin-bottom: 10px">Group Participants: {{ $members->count() }}/10</h4>
+                <h4 style="font-weight: bold; margin-bottom: 10px">{{$group->members->count()}}/10 Participants</h4>
                 @foreach ($members as $member)
                     <div class="rounded-md bg-white mb-3">
                         <div class="grid grid-cols-4 items-center rounded-md px-5 hover:bg-gray-100"
                             style="height: 50px">
                             <div class="col-start-1 col-end-2" id="username">
-                                {{ $member->user->name }}
+                                {{$member->name}}
                             </div>
                             <div class="col-start-2 col-end-3" style="font-size: 14px; color:gray"
                                 id="role">
-                                {{ $member->roles->getRoleNames() }}
+                                {{-- {{ $member->roles->pluck('name')->implode(', ') }} --}}
                             </div>
                             <div class="col-start-5 col-end-5">
                                 <button class="editGroupBtn mr-4" value="{{ $member->id }}" data-bs-toggle="modal"
@@ -71,6 +89,15 @@
     </main>
 </x-app-layout>
 
+<script>
+    // trigger toast @ notification
+    $(document).ready(function() {
+        $('.toast').toast({
+            delay: 5000
+        }).toast('show');
+    });
+</script>
+
 {{-- invite participant modal --}}
 <div id="inviteUserModal" class="modal fade" tabindex="-1" role="dialog" aria-labelledby="inviteUserModalLabel"
     aria-hidden="true">
@@ -86,7 +113,7 @@
 
             <div class="modal-body">
                 <!-- Group invite form -->
-                <form action="{{ route('expense-sharing.groups.send-invitation', ['groupId' => $group->id]) }}" method="POST">
+                <form action="{{ route('groups.send-invitation', ['groupId' => $group->id]) }}" method="POST">
                     @csrf
                     <div class="mb-3 text-left">
                         <label for="email" class="mb-2">Enter Participant's Email</label><br>
