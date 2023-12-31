@@ -23,9 +23,10 @@ class AccountController extends Controller
         $user = auth()->user();
         $accounts = Account::where('user_id', $user->id)->oldest()->get();
         $balance = [];
+        $balances = [];
 
         foreach ($accounts as $account) {
-            $records = Record::where('user_id', $user->id)->where('account_id', $account->id)->get();
+            $records = Record::where('user_id', $user->id)->where('account_id', $account->id)->whereNull('expense_sharing_group_id')->get();
 
             $totalExpense = 0;
             $totalIncome = 0;
