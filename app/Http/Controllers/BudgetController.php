@@ -91,6 +91,24 @@ class BudgetController extends Controller
      */
     public function storeDefaultTemplate(Request $request)
     {
+        // Get the active group id
+        $activeGroupId = session('active_group_id');
+
+        // Check if one group already created a budget 
+        $existingGroupBudget = Budget::where('expense_sharing_group_id', $activeGroupId)->first();
+
+        if ($existingGroupBudget) {
+            return redirect()->route('budget.index')->with('error', 'Your group have created a budget and you are restricted to have one budget per group');
+        }
+
+        // Check if user already created a budget 
+        $existingPersonalBudget = Budget::where('user_id', auth()->id())
+            ->whereNull('expense_sharing_group_id')->first();
+
+        if ($existingPersonalBudget) {
+            return redirect()->route('budget.index')->with('error', 'You have created a budget and you are restricted to have one budget per user account');
+        }
+
         // Create a new budget record
         $budget = Budget::create([
             'user_id' => auth()->id(),
@@ -133,6 +151,25 @@ class BudgetController extends Controller
                 'group_id' => 'nullable',
             ]
         );
+
+        // Get the active group id
+        $activeGroupId = session('active_group_id');
+
+        // Check if one group already created a budget 
+        $existingGroupBudget = Budget::where('expense_sharing_group_id', $activeGroupId)->first();
+
+        if ($existingGroupBudget) {
+            return redirect()->route('budget.index')->with('error', 'Your group have created a budget and you are restricted to have one budget per group');
+        }
+
+        // Check if user already created a budget 
+        $existingPersonalBudget = Budget::where('user_id', auth()->id())
+            ->whereNull('expense_sharing_group_id')->first();
+
+        if ($existingPersonalBudget) {
+            return redirect()->route('budget.index')->with('error', 'You have created a budget and you are restricted to have one budget per user account');
+        }
+
 
         // Create a new budget record
         $budget = Budget::create([
