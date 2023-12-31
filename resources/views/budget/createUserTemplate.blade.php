@@ -12,7 +12,15 @@
             <div class="modal-body ">
                 <form method="POST" action="{{ route('budget.storeUserTemplate') }}">
                     @csrf
-
+                    @if ($errors->any())
+                        <div class="alert alert-danger">
+                            <ul>
+                                @foreach ($errors->all() as $error)
+                                    <li>{{ $error }}</li>
+                                @endforeach
+                            </ul>
+                        </div>
+                    @endif
                     @php
                         $userSessionType = session('user_session_type', 'personal');
                     @endphp
