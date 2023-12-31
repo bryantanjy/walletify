@@ -18,19 +18,19 @@ class RecordController extends Controller
      */
     public function index(Request $request)
     {
-        $user = Auth::user();
+        $userId = Auth::user()->id;
         $startDate = $request->input('startDate') ? Carbon::parse($request->input('startDate'))->startOfDay() : now()->startOfMonth();
         $endDate = $request->input('endDate') ? Carbon::parse($request->input('endDate'))->endOfDay() + 1 : now()->endOfMonth();
         $currentSession = session('app.user_session_type', 'personal');
 
         $records = Record::with('category', 'user')
-            ->userScope($user->id, $currentSession)
+            ->userScope($userId, $currentSession)
             ->dateRange($startDate, $endDate)
             ->orderByDesc('datetime')
             ->get();
 
         $categories = Category::all();
-        $accounts = ($currentSession === 'personal') ? Account::where('user_id', $user->id)->get() : collect();
+        $accounts = ($currentSession === 'personal') ? Account::where('user_id', $userId)->get() : collect();
         $totalBalance = $this->calculateTotalBalance($records);
 
         if ($request->ajax()) {

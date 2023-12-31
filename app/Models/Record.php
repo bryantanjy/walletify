@@ -63,9 +63,18 @@ class Record extends Model
 
     public function scopeUserScope(Builder $query, $userId, $sessionType = 'personal')
     {
-        return ($sessionType === 'personal') ?
-            $query->where('user_id', $userId)->whereNull('expense_sharing_group_id') :
-            $query->where('user_id', $userId)->where('expense_sharing_group_id', session('active_group_id'));
+        if ($sessionType === 'personal') {
+            return $query->where('user_id', $userId)->whereNull('expense_sharing_group_id');
+        } else {
+            // Get the active group id
+            $activeGroupId = session('active_group_id');
+    
+            // Get the ids of all users in the active group
+            $groupUserIds = ExpenseSharingGroup::find($activeGroupId)->members->pluck('id');
+    
+            // Include records where the user_id is in the groupUserIds array and the expense_sharing_group_id matches the active group id
+            return $query->whereIn('user_id', $groupUserIds)->where('expense_sharing_group_id', $activeGroupId);
+        }
     }
 
     public function scopeDateRange(Builder $query, $startDate, $endDate)
