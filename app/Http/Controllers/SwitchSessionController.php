@@ -8,11 +8,11 @@ class SwitchSessionController extends Controller
 {
     public function switchSession(Request $request)
     {
-        $userSessionType = session('user_session_type', 'personal');
+        // Get the group id from the form data
+        $groupId = $request->input('group_id');
 
-        if ($userSessionType === 'personal') {
-            // Toggle to group session
-            $groupId = $request->input('group_id'); // Replace with the logic to determine the group ID
+        if ($groupId) {
+            // If a group id is provided, switch to group session
             session(['active_group_id' => $groupId]);
             session(['user_session_type' => 'group']);
         } else {
