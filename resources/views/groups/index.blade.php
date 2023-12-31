@@ -73,11 +73,11 @@
                                 {{-- {{ $member->roles->pluck('name')->implode(', ') }} --}}
                             </div>
                             <div class="col-start-5 col-end-5">
-                                <button class="editGroupBtn mr-4" value="{{ $member->id }}" data-bs-toggle="modal"
-                                    data-bs-target="#editGroupModal">
+                                <button class="editMemberBtn mr-4" value="{{ $member->id }}" data-bs-toggle="modal"
+                                    data-bs-target="#editParticipantModal">
                                     <i class="fas fa-edit"></i>
                                 </button>
-                                <button class="deleteAccountBtn" onclick="showDeleteModal({{ $member->id }})">
+                                <button class="deleteMemberBtn" onclick="showDeleteModal({{ $member->id }})">
                                     <i class="fas fa-trash"></i>
                                 </button>
                             </div>
@@ -131,6 +131,7 @@
     </div>
 </div>
 
+{{-- edit participant modal --}}
 <div id="editParticipantModal" class="modal fade" tabindex="-1" role="dialog" aria-labelledby="editParticipantModalLabel"
     aria-hidden="true">
     <div class="modal-dialog" role="document">
@@ -148,11 +149,49 @@
                 <form action="" method="POST">
                     @csrf
                     @method('PUT')
-                    <div class="mb-3">
-                        <label for="accountName">Enter Participant's Email</label>
-                        <input type="email" name="email" class="rounded-md border-0"
-                            style="height: 30px; padding:0px 10px; margin:15px 0px 0px 11px; width:50%"
-                            placeholder="user@email.com" required>
+                    <div class="mb-3 row">
+                        <label class="col-5 text-left" for="role">Role</label>
+                        <select name="role" class="col-5 rounded-md border-0"
+                            style="height: 30px; padding:0px 10px; width:50%" required>
+                            @foreach ($member->roles as $role)
+                                <option value="{{$member->role_id}}">{{-- role name --}}</option>
+                            @endforeach
+                        </select>
+                    </div>
+                    <div class="row mb-3">
+                        <h4 class="col-3 text-left">Permission</h4>
+                        <p class="col-6"></p>
+                    </div>
+                    <div class="row">
+                        <label class="col-5 text-left" for="record">Record</label>
+                        <select name="recordPermission" id="recordPermission" class="col-5 mb-2 rounded-md border-0"
+                        style="height: 30px; padding:0px 10px; width:50%">
+                            <option value="">View details only</option>
+                            <option value="">Create only</option>
+                            <option value="">Create, View details</option>
+                            <option value="">Create, View details & Edit</option>
+                            <option value="">Create, View details, Edit & Delete</option>
+                        </select>
+                    </div>
+                    <div class="row">
+                        <label class="col-5 text-left" for="budget">Budget</label>
+                        <select name="budgetPermission" id="BudgetPermission" class="col-5 mb-2 rounded-md border-0"
+                        style="height: 30px; padding:0px 10px; width:50%">
+                            <option value="">View details only</option>
+                            <option value="">Create only</option>
+                            <option value="">Create, View details</option>
+                            <option value="">Create, View details & Edit</option>
+                            <option value="">Create, View details, Edit & Delete</option>
+                        </select>
+                    </div>
+                    <div class="row">
+                        <label class="col-5 text-left" for="member">Participant Details</label>
+                        <select name="memberPermission" id="memberPermission" class="col-5 mb-2 rounded-md border-0"
+                        style="height: 30px; padding:0px 10px; width:50%">
+                            <option value="">Send invite only</option>
+                            <option value="">Send invite & Edit participant only</option>
+                            <option value="">Send invite, Edit participant & Remove participant</option>
+                        </select>
                     </div>
                     <div class="flex mt-6 justify-center">
                         <button type="submit" style="background: #4D96EB; width:100px; height:26px; border:0px solid; border-radius: 5px">Save</button>
