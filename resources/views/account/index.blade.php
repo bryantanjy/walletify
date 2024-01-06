@@ -76,10 +76,13 @@
                                     RM {{ $balances[$account->id] }}
                                 </div>
                                 <div class="col-start-5 col-end-5">
+                                    <button class="viewAccountBtn mr-4" onclick="window.location.href='{{route('account.show', ['account'=>$account->id])}}'">
+                                        <i class="fas fa-eye"></i>
+                                    </button>
                                     <button class="editAccountBtn mr-4" value="{{ $account->id }}">
                                         <i class="fas fa-edit"></i>
                                     </button>
-                                    <button class="deleteAccountBtn" onclick="showDeleteModal({{ $account->id }})">
+                                    <button class="deleteAccountBtn" data-bs-toggle="modal" data-bs-target="#deleteModal">
                                         <i class="fas fa-trash"></i>
                                     </button>
                                 </div>
@@ -87,12 +90,14 @@
                         </div>
                     @endforeach
                 </div>
+
+                @include('account.create')
+                @include('account.edit')
             @else
                 <p class="m-3 flex justify-center" style="font-size: 20px">No accounts found.</p>
             @endif
         </div>
-        @include('account.create')
-        @include('account.edit')
+        
     </main>
 </x-app-layout>
 

@@ -4,6 +4,7 @@ namespace App\Http\Controllers;
 
 use App\Models\Record;
 use App\Models\Account;
+use Carbon\Carbon;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Validator;
@@ -73,9 +74,9 @@ class AccountController extends Controller
             return back()->withErrors($validator)->withInput();
         } else {
             Account::create([
-                "name" => $request->name,
-                "type" => $request->type,
-                "user_id" => Auth::user()->id,
+                'name' => $request->name,
+                'type' => $request->type,
+                'user_id' => Auth::user()->id,
             ]);
         }
 
@@ -85,9 +86,30 @@ class AccountController extends Controller
     /**
      *  Show account
      */
-    public function show(Account $accounts)
+    public function show($accountId)
     {
-        //
+        $account = Account::find($accountId);
+        $records = Record::where('account_id', $account->id)->get();
+        $totalExpense = 0;
+        $totalIncome = 0;
+        $totalBalance = [];
+        $dates = [];
+
+        if (isset($records)) {
+            foreach ($records as $record) {
+                if ($record->type == 'Expense') {
+                    $totalExpense += $record->amount;
+                } else {
+                    $totalIncome += $record->amount;
+                }
+                $totalBalance[] = $totalIncome - $totalExpense;
+                $dates[] = Carbon::parse($record->datetime)->format('d M Y');
+            }
+        }
+        $balance = $totalIncome - $totalExpense;
+        
+
+        return view('account.view', compact('account', 'balance', 'totalBalance', 'dates'));
     }
 
     /**
