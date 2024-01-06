@@ -21,6 +21,6 @@ class SwitchSessionController extends Controller
             session(['user_session_type' => 'personal']);
         }
 
-        return back(); // Redirect back to the previous page
+        return back()->with('success', 'Session switched successfully');
     }
 }
