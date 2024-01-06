@@ -26,6 +26,10 @@ class Record extends Model
         'description',
     ];
 
+    protected $casts = [
+        'datetime' => 'datetime',
+    ];
+
     public function user()
     {
         return $this->belongsTo(User::class, 'user_id', 'id');
