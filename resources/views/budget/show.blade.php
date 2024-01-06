@@ -17,15 +17,17 @@
             <x-section-border />
 
             <div class="px-4">
-                <div class="row mb-2">
+                <div class="mb-2">
                     <div class="col">
                         <label for="name">Type:</label>
                         <span><b>{{ $budget->type }}</b></span>
                     </div>
+                </div>
+                <div class="row mb-2">
                     @foreach ($budget->partAllocations as $part)
                         <div class="col">
                             <label for="partName">{{ $part->name }}:</label>
-                            <span><b>RM {{ $part->currentBudget }}</b> / <b>RM {{ $part->amount }}</b></span>
+                            <span><b>RM {{ $part->totalUsed }}</b> / <b>RM {{ $part->amount }}</b></span>
                         </div>
                     @endforeach
                 </div>
@@ -41,7 +43,7 @@
 <script>
     var ctx = document.getElementById('budget').getContext('2d');
     var chartData = @json($chartData);
-   
+
     var chart = new Chart(ctx, {
         type: 'line',
         data: {

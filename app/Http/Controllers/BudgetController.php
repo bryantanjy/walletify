@@ -238,6 +238,16 @@ class BudgetController extends Controller
                 ->whereBetween('datetime', [$startDate, $endDate])
                 ->get();
 
+
+            // Calculate the total amount used for this part allocation
+            $totalUsed = $records->reduce(function ($carry, $record) {
+                $amount = ($record->type === 'Expense') ? $record->amount : -$record->amount;
+                return $carry + $amount;
+            }, 0);
+
+            // Add the total used to the part allocation
+            $partAllocation->totalUsed = $totalUsed;
+
             // Process records and organize data for Chart.js
             $data = $this->processChartData($records, $dates);
 
@@ -249,7 +259,7 @@ class BudgetController extends Controller
         }
 
 
-        return view('budget.show', compact('budget', 'chartData', 'dates'));
+        return view('budget.show', compact('budget', 'chartData', 'dates', 'totalUsed'));
     }
 
     private function processChartData($records, $dates)
