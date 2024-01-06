@@ -2,7 +2,6 @@
 
 namespace App\Models;
 
-use App\Models\CategoryPartAllocation;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\SoftDeletes;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
@@ -16,7 +15,7 @@ class Category extends Model
         'name',
     ];
     
-    public function partAlocations()
+    public function partAllocations()
     {
         return $this->belongsToMany(PartAllocation::class, 'category_part_allocation', 'category_id', 'part_allocation_id');
     }
