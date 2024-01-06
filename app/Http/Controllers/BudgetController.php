@@ -91,22 +91,25 @@ class BudgetController extends Controller
      */
     public function storeDefaultTemplate(Request $request)
     {
-        // Get the active group id
+        $userId = auth()->id();
+        $currentSession = session('app.user_session_type', 'personal');
         $activeGroupId = session('active_group_id');
 
-        // Check if one group already created a budget 
-        $existingGroupBudget = Budget::where('expense_sharing_group_id', $activeGroupId)->first();
+        // Check if a budget already exists for the user in the current group or personal session
+        $existingBudgets = Budget::userScope($userId, $currentSession)->get();
 
-        if ($existingGroupBudget) {
-            return redirect()->route('budget.index')->with('error', 'Your group have created a budget and you are restricted to have one budget per group');
+        // If it's a personal session, check for any budget
+        if ($currentSession === 'personal' && $existingBudgets->count() > 0) {
+            return redirect()->route('budget.index')->with('error', 'You already have a budget. Only one budget is allowed per user account.');
         }
 
-        // Check if user already created a budget 
-        $existingPersonalBudget = Budget::where('user_id', auth()->id())
-            ->whereNull('expense_sharing_group_id')->first();
+        // If it's a group session, check for any budget in the current group
+        if ($currentSession === 'group' && $existingBudgets->count() > 0) {
+            $groupBudget = $existingBudgets->where('expense_sharing_group_id', $activeGroupId)->first();
 
-        if ($existingPersonalBudget) {
-            return redirect()->route('budget.index')->with('error', 'You have created a budget and you are restricted to have one budget per user account');
+            if ($groupBudget) {
+                return redirect()->route('budget.index')->with('error', 'Your group already has a budget. Only one budget is allowed per group.');
+            }
         }
 
         // Create a new budget record
@@ -152,24 +155,26 @@ class BudgetController extends Controller
             ]
         );
 
-        // Get the active group id
+        $userId = auth()->id();
+        $currentSession = session('app.user_session_type', 'personal');
         $activeGroupId = session('active_group_id');
 
-        // Check if one group already created a budget 
-        $existingGroupBudget = Budget::where('expense_sharing_group_id', $activeGroupId)->first();
+        // Check if a budget already exists for the user in the current group or personal session
+        $existingBudgets = Budget::userScope($userId, $currentSession)->get();
 
-        if ($existingGroupBudget) {
-            return redirect()->route('budget.index')->with('error', 'Your group have created a budget and you are restricted to have one budget per group');
+        // If it's a personal session, check for any budget
+        if ($currentSession === 'personal' && $existingBudgets->count() > 0) {
+            return redirect()->route('budget.index')->with('error', 'You already have a budget. Only one budget is allowed per user account.');
         }
 
-        // Check if user already created a budget 
-        $existingPersonalBudget = Budget::where('user_id', auth()->id())
-            ->whereNull('expense_sharing_group_id')->first();
+        // If it's a group session, check for any budget in the current group
+        if ($currentSession === 'group' && $existingBudgets->count() > 0) {
+            $groupBudget = $existingBudgets->where('expense_sharing_group_id', $activeGroupId)->first();
 
-        if ($existingPersonalBudget) {
-            return redirect()->route('budget.index')->with('error', 'You have created a budget and you are restricted to have one budget per user account');
+            if ($groupBudget) {
+                return redirect()->route('budget.index')->with('error', 'Your group already has a budget. Only one budget is allowed per group.');
+            }
         }
-
 
         // Create a new budget record
         $budget = Budget::create([
@@ -194,6 +199,89 @@ class BudgetController extends Controller
         }
 
         return redirect()->route('budget.index')->with('success', 'User template created successfully');
+    }
+
+    /**
+     *  show budget details
+     */
+    public function show($budgetId)
+    {
+        $budget = Budget::find($budgetId);
+        $currentSession = session('app.user_session_type', 'personal');
+        $partAllocations = $budget->partAllocations;
+        $user = auth()->user();
+
+        if (!$budget) {
+            return redirect()->back()->with('error', 'Budget not found');
+        }
+
+        // Generate date range for the current month
+        $startDate = Carbon::now()->startOfMonth();
+        $endDate = Carbon::now()->endOfMonth();
+        $dates = [];
+
+        // Populate dates array with dates for the current month
+        while ($startDate->lte($endDate)) {
+            $dates[] = $startDate->toDateString();
+            $startDate->addDay();
+        }
+
+        $chartData = [];
+
+        // Process data for each part allocation
+        foreach ($partAllocations as $partAllocation) {
+            $categories = $partAllocation->partCategories;
+
+            $startDate = Carbon::now()->startOfMonth();
+            $records = Record::userScope($budget->user_id, $currentSession)
+                ->whereIn('category_id', $categories->pluck('id'))
+                ->whereBetween('datetime', [$startDate, $endDate])
+                ->get();
+
+            // Process records and organize data for Chart.js
+            $data = $this->processChartData($records, $dates);
+
+            // Add the processed data to the chartData array
+            $chartData[] = [
+                'label' => $partAllocation->name,
+                'data' => $data,
+            ];
+        }
+
+
+        return view('budget.show', compact('budget', 'chartData', 'dates'));
+    }
+
+    private function processChartData($records, $dates)
+    {
+        $data = array_fill_keys($dates, 0);
+        $cumulativeAmount = 0;
+
+        foreach ($dates as $date) {
+            $recordsOnDate = $records->filter(function ($record) use ($date) {
+                return $record->datetime->toDateString() === $date;
+            });
+
+            foreach ($recordsOnDate as $record) {
+                $amount = ($record->type === 'Expense') ? $record->amount : -$record->amount;
+                $cumulativeAmount += $amount;
+
+                // Set the cumulative amount for the current date
+                $data[$date] = $cumulativeAmount;
+            }
+        }
+
+        // Fill remaining dates with the last cumulative amount
+        $prevDate = null;
+        foreach ($dates as $date) {
+            if ($data[$date] === 0 && isset($prevDate) && $data[$prevDate] !== 0) {
+                $data[$date] = $data[$prevDate];
+            }
+            $prevDate = $date;
+        }
+
+        // dd($records, $dates, $data);
+        return array_values($data);
     }
 
     /**

@@ -105,6 +105,8 @@
                         @endforeach
 
                         <div class="float-right mt-3">
+                            <button type="button" class="bg-green-500 w-20 mr-2 rounded"
+                                    onclick="window.location.href='{{route('budget.show', ['budget'=>$budget->id])}}'">View</button>
                             @if ($budget->type == 'Default Template')
                                 <button type="button" class="bg-blue-500 w-20 rounded editDefaultBudgetBtn"
                                     data-bs-toggle="modal" data-bs-target="#editDefaultBudgetModal"
