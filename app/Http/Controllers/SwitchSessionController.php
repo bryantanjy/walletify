@@ -15,12 +15,14 @@ class SwitchSessionController extends Controller
             // If a group id is provided, switch to group session
             session(['active_group_id' => $groupId]);
             session(['user_session_type' => 'group']);
+
+            return back()->with('success', 'Session switched to group');
         } else {
             // Toggle to personal session
             session()->forget('active_group_id');
             session(['user_session_type' => 'personal']);
-        }
 
-        return back()->with('success', 'Session switched successfully');
+            return back()->with('success', 'Session switched back to personal');
+        }
     }
 }
