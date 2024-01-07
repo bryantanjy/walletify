@@ -37,6 +37,7 @@ Route::middleware(['auth:sanctum', config('jetstream.auth_session'), 'verified',
         Route::get('/', [AccountController::class, 'index'])->name('account.index');
         Route::get('/create', [AccountController::class, 'create'])->name('account.create');
         Route::post('/store', [AccountController::class, 'store'])->name('account.store');
+        Route::get('/show/{account}', [AccountController::class, 'show'])->name('account.show');
         Route::get('/edit/{account}', [AccountController::class, 'edit'])->name('account.edit');
         Route::put('/update/{account}', [AccountController::class, 'update'])->name('account.update');
         Route::delete('/delete/{account}', [AccountController::class, 'delete'])->name('account.delete');
@@ -50,6 +51,7 @@ Route::middleware(['auth:sanctum', config('jetstream.auth_session'), 'verified',
         Route::get('/filter', [RecordController::class, 'filter'])->name('record.filter');
         Route::get('/create', [RecordController::class, 'create'])->name('record.create');
         Route::post('/store', [RecordController::class, 'store'])->name('record.store');
+        Route::get('/show/{record}', [RecordController::class, 'show'])->name('record.show');
         Route::get('/edit/{record}', [RecordController::class, 'edit'])->name('record.edit');
         Route::put('/update/{record}', [RecordController::class, 'update'])->name('record.update');
         Route::delete('/delete/{record}', [RecordController::class, 'delete'])->name('record.delete');
@@ -59,12 +61,13 @@ Route::middleware(['auth:sanctum', config('jetstream.auth_session'), 'verified',
     Route::group(['prefix' => 'budget'], function () {
         Route::get('/', [BudgetController::class, 'index'])->name('budget.index');
         Route::get('/createUserTemplate', [BudgetController::class, 'createUserTemplate'])->name('budget.createUserTemplate');
-        Route::post('/storeUserTemplate', [BudgetController::class, 'storeUserTemplate'])->name('budget.storeUserTemplate');
-        Route::get('/editUserTemplate/{budget}', [BudgetController::class, 'editUserTemplate'])->name('budget.editUserTemplate');
-        Route::put('/updateUserTemplate/{budget}', [BudgetController::class, 'updateUserTemplate'])->name('budget.updateUserTemplate');
         Route::get('/createDefaultTemplate', [BudgetController::class, 'createDefaultTemplate'])->name('budget.createDefaultTemplate');
+        Route::post('/storeUserTemplate', [BudgetController::class, 'storeUserTemplate'])->name('budget.storeUserTemplate');
         Route::post('/storeDefaultTemplate', [BudgetController::class, 'storeDefaultTemplate'])->name('budget.storeDefaultTemplate');
+        Route::get('/show/{budget}', [BudgetController::class, 'show'])->name('budget.show');
+        Route::get('/editUserTemplate/{budget}', [BudgetController::class, 'editUserTemplate'])->name('budget.editUserTemplate');
         Route::get('/editDefaultTemplate/{budget}', [BudgetController::class, 'editDefaultTemplate'])->name('budget.editDefaultTemplate');
+        Route::put('/updateUserTemplate/{budget}', [BudgetController::class, 'updateUserTemplate'])->name('budget.updateUserTemplate');
         Route::put('/updateDefaultTemplate/{budget}', [BudgetController::class, 'updateDefaultTemplate'])->name('budget.updateDefaultTemplate');
         Route::delete('/delete/{budget}', [BudgetController::class, 'delete'])->name('budget.delete');
     });
@@ -91,5 +94,9 @@ Route::middleware(['auth:sanctum', config('jetstream.auth_session'), 'verified',
         Route::get('/', [GroupController::class, 'index'])->name('index');
         Route::post('/send-invitation/{groupId}', [GroupController::class, 'sendInvitation'])->name('send-invitation');
         Route::get('/accept-invitation/{groupId}/{token}', [GroupController::class, 'acceptInvitation'])->name('accept-invitation');
+        Route::get('/edit/{group}/{user}', [GroupController::class, 'edit'])->name('edit');
+        Route::put('/update/{group}/{user}', [GroupController::class, 'update'])->name('update');
+        Route::delete('/delete/{group}/{user}', [GroupController::class, 'delete'])->name('delete');
+        Route::delete('/leaveGroup/{group}/{user}', [GroupController::class, 'leaveGroup'])->name('leaveGroup');
     });
 });
