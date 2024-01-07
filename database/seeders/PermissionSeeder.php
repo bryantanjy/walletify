@@ -40,7 +40,7 @@ class PermissionSeeder extends Seeder
 
         // Create permissions for in-group module
         $participantPermissions = [
-            'list participant', 'send group invitation', 'accept group invitation', 'view participant', 'edit participant', 'remove participant',
+            'list participant', 'send group invitation', 'view participant', 'edit participant', 'remove participant',
         ];
 
         // Create permissions for statistics module
@@ -75,7 +75,7 @@ class PermissionSeeder extends Seeder
 
         // Assign specific permissions to the collaborator role
         $collaborator->givePermissionTo([
-            'list record', 'create record', 'view record', 'edit record', 'delete record', 'list budget', 'view budget', 'accept group invitation', 'list participant', 'view participant', 'view statistics', 'view expense', 'view income',
+            'list record', 'create record', 'view record', 'edit record', 'delete record', 'list budget', 'view budget', 'list participant', 'view participant', 'view statistics', 'view expense', 'view income',
         ]);
     }
 }
