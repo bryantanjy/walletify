@@ -17,6 +17,7 @@ return new class extends Migration
             $table->unsignedBigInteger('expense_sharing_group_id');
             $table->foreign('expense_sharing_group_id')->references('id')->on('expense_sharing_groups')->onUpdate('cascade')->onDelete('cascade');
             $table->foreignId('role_id')->constrained('roles')->default('Group Collaborator');
+            $table->json('permissions')->nullable();
             $table->timestamps();
 
             // Add a unique constraint if you want to ensure uniqueness of user-group-role combinations
