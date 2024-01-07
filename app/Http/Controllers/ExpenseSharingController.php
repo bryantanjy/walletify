@@ -13,7 +13,7 @@ class ExpenseSharingController extends Controller
 {
     public function index()
     {
-        if (!session('active_group_id')) {
+        if (session('active_group_id')) {
             return redirect('/dashboard')
                 ->with('error', 'You are not authorized to access this resource in a group session.');
         }
