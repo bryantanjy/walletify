@@ -53,7 +53,7 @@ class RecordController extends Controller
      */
     public function search(Request $request)
     {
-        $searchTerm = $request->input('searchTerm');
+        $searchTerm = $request->input('search');
         $sort = $request->input('sort');
         $user = Auth::user();
         $currentSession = session('app.user_session_type', 'personal');
@@ -184,13 +184,21 @@ class RecordController extends Controller
         return redirect()->route('record.index')->with('success', 'Record added successfully');
     }
 
+    /**
+     *  View record
+     */
+    public function show($recordId)
+    {
+        $record = Record::with('account', 'category')->find($recordId);
+        return response()->json($record);
+    }
 
     /**
      *  Edit record
      */
     public function edit($recordId)
     {
-        $record = Record::find($recordId);
+        $record = Record::with('account')->find($recordId);
 
         return response()->json($record);
     }
