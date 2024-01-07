@@ -27,6 +27,7 @@
             @endif
             <i class="fa-solid fa-ellipsis-vertical ml-3 menu focus-ring"></i>
             <div class="dropdown shadow">
+                <button class="viewRecordBtn" value="{{ $record->id }}">View</button>
                 <button class="editRecordBtn" value="{{ $record->id }}">Edit</button>
                 <button class="deleteRecordBtn" onclick="recordDeleteModal({{ $record->id }})">Delete</button>
             </div>

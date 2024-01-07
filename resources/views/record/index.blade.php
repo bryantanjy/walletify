@@ -6,7 +6,7 @@
     <script src="https://cdn.jsdelivr.net/momentjs/latest/moment.min.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/daterangepicker/daterangepicker.min.js"></script>
     <link rel="stylesheet" type="text/css" href="https://cdn.jsdelivr.net/npm/daterangepicker/daterangepicker.css" />
-    
+
     <script src="{{ asset('js/daterangepicker.js') }}"></script>
     <script src="{{ asset('js/record.js') }}"></script>
     <link rel="stylesheet" type="text/css" href="{{ asset('css/record.css') }}">
@@ -23,8 +23,7 @@
                         </div>
                     </li>
                     <div class="flex justify-center">
-                        <button class="justify-center rounded text-white createRecordBtn" data-bs-toggle="modal"
-                            data-bs-target="#createRecordModal">
+                        <button class="justify-center rounded text-white createRecordBtn">
                             <i class="far fa-plus-square mr-1"></i>
                             <span>Add</span>
                         </button>
@@ -136,7 +135,6 @@
                             </div>
                             <div class="col-start-2 col-end-4 datetime text-center">
                                 {{ Carbon\Carbon::parse($record->datetime)->format('d/m/Y h:i A') }}</div>
-
                             @php
                                 $userSessionType = session('user_session_type', 'personal');
                             @endphp
@@ -157,6 +155,7 @@
                                 @endif
                                 <i class="fa-solid fa-ellipsis-vertical ml-3 menu focus-ring"></i>
                                 <div class="dropdown shadow">
+                                    <button class="viewRecordBtn" value="{{ $record->id }}">View</button>
                                     <button class="editRecordBtn" value="{{ $record->id }}">Edit</button>
                                     <button class="deleteRecordBtn"
                                         onclick="recordDeleteModal({{ $record->id }})">Delete</button>
@@ -172,6 +171,7 @@
         </div>
         @include('record.create')
         @include('record.edit')
+        @include('record.view')
     </main>
 </x-app-layout>
 

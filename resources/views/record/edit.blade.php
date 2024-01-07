@@ -27,8 +27,7 @@
                             @if ($userSessionType == 'personal')
                                 <div class="flex items-center form-group">
                                     <label for="account_id" class="w-32 pr-2 mt-4">Account Type</label>
-                                    <select name="account_id" class="rounded-md border-0"
-                                        value="{{ old('account_id') }}"
+                                    <select name="account_id" class="rounded-md border-0" id="account_id"
                                         style="height: 30px; width:225px; padding:0px 10px; margin:15px 0px 0px 20px;"
                                         required>
                                         <option value="" selected disabled>Select an account</option>
