@@ -13,14 +13,15 @@ class ExpenseSharingController extends Controller
 {
     public function index()
     {
-        if (Auth::check()) {
-            $user = auth()->user();
-            $groups = ExpenseSharingGroup::where('user_id', $user->id)->get();
-
-            return view('expense-sharing.index', compact('groups'));
-        } else {
-            return redirect('/login');
+        if (!session('active_group_id')) {
+            return redirect('/dashboard')
+                ->with('error', 'You are not authorized to access this resource in a group session.');
         }
+
+        $user = auth()->user();
+        $groups = ExpenseSharingGroup::where('user_id', $user->id)->get();
+
+        return view('expense-sharing.index', compact('groups'));
     }
 
     public function create()
@@ -101,7 +102,6 @@ class ExpenseSharingController extends Controller
 
     public function delete(ExpenseSharingGroup $group)
     {
-
         $userId = Auth::id();
         if ($group->user_id === $userId) {
             $group->delete();
