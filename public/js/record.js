@@ -54,7 +54,7 @@ $(document).ready(function () {
             var start = moment($('#reportrange span').html().split(' - ')[0], 'D MMM YYYY');
             var end = moment($('#reportrange span').html().split(' - ')[1], 'D MMM YYYY');
             fetchRecords(start, end, page); // Fetch records for the selected date range and the clicked page
-        } 
+        }
     });
 
     $('input[type=checkbox]').on('change', function () {
@@ -101,11 +101,11 @@ $(document).ready(function () {
         event.preventDefault();
         // Uncheck all checkboxes
         $('input[type=checkbox]').prop('checked', false);
-    
+
         // Fetch the default records
         var currentPage = getCurrentPageNumber();
         fetchDefaultRecords(currentPage);
-    
+
         // Set lastOperation to 'default'
         window.lastOperation = 'default';
     });
@@ -116,7 +116,41 @@ $(document).ready(function () {
 
 });
 
+$(document).on('click', '.createRecordBtn', function () {
+    var modalElement = $('#createRecordModal');
+    if (modalElement.length) { // Check if the modal element exists
+        modalElement.modal('show');
+    } else {
+        console.error('Modal element not found');
+    }
+});
 
+$(document).on('click', '.viewRecordBtn', function () {
+    var recordId = $(this).val();
+    var showRecord = $('#showModal');
+
+    $.ajax({
+        headers: {
+            'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')
+        },
+        type: 'GET',
+        url: '/record/show/' + recordId,
+        success: function (data) {
+            showRecord.find('#account_name').text(data.account.name);
+            showRecord.find('#category_name').text(data.category.name);
+            showRecord.find('#record_type').text(data.type);
+            showRecord.find('#amount').text(data.amount);
+            var formattedDate = moment(data.datetime).format('DD/MM/YYYY, h:m A');
+            showRecord.find('#datetime').text(formattedDate);
+            showRecord.find('#description').text(data.description);
+
+            showRecord.modal('show');
+        },
+        error: function (error) {
+            console.log('Error fetching record data for showing:', error);
+        }
+    });
+});
 
 $(document).on('click', '.editRecordBtn', function () {
     var recordId = $(this).val();
@@ -134,7 +168,8 @@ $(document).on('click', '.editRecordBtn', function () {
             editRecord.find('#category_id').val(data.category_id);
             editRecord.find('#type').val(data.type);
             editRecord.find('#amount').val(data.amount);
-            editRecord.find('#datetime').val(data.datetime);
+            var formattedDate = new Date(data.datetime).toISOString().slice(0, 16);
+            editRecord.find('#datetime').val(formattedDate);
             editRecord.find('#description').val(data.description);
 
             editRecord.modal('show');
@@ -158,7 +193,7 @@ $(document).on('submit', '#editRecord', function (event) {
         success: function (response) {
             console.log('Record updated successfully:', response);
             editRecord.modal('hide');
-            window.location.reload();
+            window.location.replace('/record');
         },
         error: function (error) {
             console.error('Error updating record:', error);
