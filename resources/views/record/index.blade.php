@@ -62,36 +62,6 @@
             </div>
         </aside>
         <div class="flex-1 p-4 sm:ml-64" style="width: 80%; margin-left:20%; margin-top: 65px;">
-            @if (session('success'))
-                <div class="position-fixed top-20 end-0 p-3" style="z-index: 100">
-                    <div class="toast align-items-center bg-green-100 border-0" role="alert" aria-live="assertive"
-                        aria-atomic="true">
-                        <div class="d-flex">
-                            <div class="toast-body">
-                                <i class="fa-regular fa-circle-check" style="color: #48f745;"></i>
-                                {{ session('success') }}
-                            </div>
-                            <button type="button" class="btn-close me-2 m-auto" data-bs-dismiss="toast"
-                                aria-label="Close"><i class="fa-solid fa-xmark"></i></button>
-                        </div>
-                    </div>
-                </div>
-            @elseif (session('error'))
-                <div class="position-fixed top-20 end-0 p-3" style="z-index: 100">
-                    <div class="toast align-items-center bg-red-100 border-0" role="alert" aria-live="assertive"
-                        aria-atomic="true">
-                        <div class="d-flex">
-                            <div class="toast-body">
-                                <i class="fa-regular fa-triangle-exclamation" style="color: #dc0404;"></i>
-                                {{ session('error') }}
-                            </div>
-                            <button type="button" class="btn-close me-2 m-auto" data-bs-dismiss="toast"
-                                aria-label="Close"><i class="fa-solid fa-xmark"></i></button>
-                        </div>
-                    </div>
-                </div>
-            @endif
-
             <div class="feature-bar flex">
                 <div class="relative search-icon">
                     <i class="fa-solid fa-magnifying-glass icon"></i>
