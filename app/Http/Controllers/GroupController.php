@@ -7,9 +7,12 @@ use App\Models\GroupMember;
 use Illuminate\Support\Str;
 use Illuminate\Http\Request;
 use App\Mail\GroupInvitation;
+use Illuminate\Support\Facades\DB;
 use Spatie\Permission\Models\Role;
 use App\Models\ExpenseSharingGroup;
 use Illuminate\Support\Facades\Mail;
+use Illuminate\Support\Facades\Session;
+use Spatie\Permission\Models\Permission;
 
 class GroupController extends Controller
 {
@@ -24,10 +27,11 @@ class GroupController extends Controller
         }
 
         $group = ExpenseSharingGroup::find($activeGroupId);
+        $roles = Role::all();
+        $permissions = Permission::all();
         $members = $group->members()->with('roles')->get();
 
-
-        return view('groups.index', compact( 'group', 'members'));
+        return view('groups.index', compact('group', 'members', 'roles', 'permissions', 'activeGroupId'));
     }
 
     public function sendInvitation(Request $request, $groupId)
@@ -37,36 +41,47 @@ class GroupController extends Controller
             'email' => 'required|email',
         ]);
 
-        // Check if the user can invite to the group
         $group = ExpenseSharingGroup::findOrFail($groupId);
-        $this->authorize('sendInvitation', $group);
+        $user = auth()->user();
+        $groupMember = DB::table('group_members')
+            ->where('user_id', $user->id)
+            ->where('expense_sharing_group_id', $group->id)
+            ->first();
 
-        // Check if the user is already a member
-        $user = User::where('email', $request->input('email'))->first();
-        if ($user && $group->members->contains($user)) {
-            return redirect()->back()->with('error', 'User is already a member of the group.');
-        }
+        $requiredPermission = Permission::where('name', 'send group invitation')->first();
 
-        // Send an invitation email
-        $invitationToken = Str::random(64);
+        // Check if the user can invite to the group
+        if ($groupMember && in_array($requiredPermission->id, json_decode($groupMember->permissions, true))) {
 
-        // Create an invitation record in the database
-        $invitation = $group->invitations()->create([
-            'email' => $request->input('email'),
-            'token' => $invitationToken,
-        ]);
-
-        // Ensure that the email address is valid before attempting to send the email
-        if (filter_var($request->input('email'), FILTER_VALIDATE_EMAIL)) {
-            // Build the URL for accepting the invitation
-            $acceptUrl = route('groups.accept-invitation', ['groupId' => $group->id, 'token' => $invitation->token]);
+            // Check if the user is already a member
+            $user = User::where('email', $request->input('email'))->first();
+            if ($user && $group->members->contains($user)) {
+                return redirect()->back()->with('error', 'User is already a member of the group.');
+            }
 
             // Send an invitation email
-            Mail::to($request->input('email'))->send(new GroupInvitation($group, $invitationToken, $acceptUrl));
+            $invitationToken = Str::random(64);
 
-            return redirect()->back()->with('success', 'Invitation sent successfully.');
+            // Create an invitation record in the database
+            $invitation = $group->invitations()->create([
+                'email' => $request->input('email'),
+                'token' => $invitationToken,
+            ]);
+
+            // Ensure that the email address is valid before attempting to send the email
+            if (filter_var($request->input('email'), FILTER_VALIDATE_EMAIL)) {
+                // Build the URL for accepting the invitation
+                $acceptUrl = route('groups.accept-invitation', ['groupId' => $group->id, 'token' => $invitation->token]);
+
+                // Send an invitation email
+                Mail::to($request->input('email'))->send(new GroupInvitation($group, $invitationToken, $acceptUrl));
+
+                return redirect()->back()->with('success', 'Invitation sent successfully.');
+            } else {
+                return redirect()->back()->with('error', 'Invalid email address.');
+            }
         } else {
-            return redirect()->back()->with('error', 'Invalid email address.');
+            return redirect()->back()->with('error', 'You do not have the required permission to access this.');
         }
     }
 
@@ -99,5 +114,119 @@ class GroupController extends Controller
         $invitation->delete();
 
         return redirect()->route('dashboard')->with('success', 'Invitation accepted. You are now a member of the group.');
+    }
+
+    public function edit($groupId, $userId)
+    {
+        $group = ExpenseSharingGroup::findOrFail($groupId);
+        $currentUser = auth()->user();
+        // Fetch the group member record for the current user
+        $currentUserRecord = GroupMember::where('user_id', $currentUser->id)
+            ->where('expense_sharing_group_id', $group->id)
+            ->first();
+
+        // Fetch the group member record for the selected participant
+        $groupMember = GroupMember::where('user_id', $userId)
+            ->where('expense_sharing_group_id', $group->id)
+            ->first();
+
+        // Find the permission ID based on the name
+        $requiredPermission = Permission::where('name', 'edit participant')->first();
+
+        // Check if the user has the required permission
+        if ($currentUserRecord && $requiredPermission) {
+            $permissionsArray = json_decode($currentUserRecord->permissions, true);
+
+            // Check if permissionsArray is not null before using in_array
+            if ($permissionsArray && in_array($requiredPermission->id, $permissionsArray)) {
+                // User has permission, proceed with the logic
+                return response()->json($groupMember);
+            }
+        }
+
+        // Permission denied or other conditions not met
+        return response()->json(['error' => 'Unauthorized action.'], 403);
+    }
+
+
+    public function update(Request $request, $groupId, $userId)
+    {
+        // Validate the request and update the participant's role
+        $request->validate([
+            'role' => 'required|exists:roles,id',
+            'permissions' => 'nullable|array',
+            'permissions.*' => 'exists:permissions,id',
+        ]);
+
+        // Fetch the current user
+        $currentUser = auth()->user();
+
+        // Fetch the group member record for the current user
+        $currentUserRecord = GroupMember::where('user_id', $currentUser->id)
+            ->where('expense_sharing_group_id', $groupId)
+            ->first();
+
+        // Check if the current user has the required permission to update participants
+        $requiredPermission = Permission::where('name', 'edit participant')->first();
+
+        if ($currentUserRecord && $requiredPermission) {
+            $permissionsArray = json_decode($currentUserRecord->permissions, true);
+
+            // Check if permissionsArray is not null before using in_array
+            if ($permissionsArray && in_array($requiredPermission->id, $permissionsArray)) {
+                // Update the user's role and permissions in the group_members table
+                GroupMember::where('expense_sharing_group_id', $groupId)
+                    ->where('user_id', $userId)
+                    ->update([
+                        'role_id' => $request->input('role'),
+                        'permissions' => $request->input('permissions', []),
+                    ]);
+
+                return redirect()->route('groups.index')->with('success', 'Participant details updated successfully');
+            }
+        }
+
+        return redirect()->route('groups.index')->with('error', 'You cannot perform this action');
+    }
+
+    public function delete($groupId, $userId)
+    {
+        // Fetch the current user
+        $currentUser = auth()->user();
+
+        // Fetch the group member record for the current user
+        $currentUserRecord = GroupMember::where('user_id', $currentUser->id)
+            ->where('expense_sharing_group_id', $groupId)
+            ->first();
+
+        // Check if the current user has the required permission to update participants
+        $requiredPermission = Permission::where('name', 'remove participant')->first();
+
+        if ($currentUserRecord && $requiredPermission) {
+            $permissionsArray = json_decode($currentUserRecord->permissions, true);
+
+            // Check if permissionsArray is not null before using in_array
+            if ($permissionsArray && in_array($requiredPermission->id, $permissionsArray)) {
+                $group = GroupMember::where('expense_sharing_group_id', $groupId)->where('user_id', $userId);
+                $group->delete();
+
+                return redirect()->route('groups.index')->with('success', 'Group Participant removed');
+            }
+        }
+        return redirect()->route('groups.index')->with('error', 'You cannot perform this action');
+    }
+
+    public function leaveGroup($groupId, $userId)
+    {
+        // Find the group member record and remove
+        GroupMember::where('expense_sharing_group_id', $groupId)
+            ->where('user_id', $userId)
+            ->delete();
+
+        // Clear any group-related session variables
+        Session::forget('active_group_id');
+        session(['user_session_type' => 'personal']);
+
+        return redirect()->route('dashboard')->with('success', 'You have left the group successfully.');
     }
 }
