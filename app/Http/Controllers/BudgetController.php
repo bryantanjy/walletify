@@ -8,7 +8,9 @@ use App\Models\Record;
 use App\Models\Category;
 use Illuminate\Http\Request;
 use App\Models\PartAllocation;
+use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Auth;
+use Spatie\Permission\Models\Permission;
 use Illuminate\Support\Facades\Validator;
 
 class BudgetController extends Controller
@@ -91,49 +93,106 @@ class BudgetController extends Controller
      */
     public function storeDefaultTemplate(Request $request)
     {
+        $validator = Validator::make(
+            $request->all(),
+            [
+                'amount.*' => 'required|numeric|min:0.01',
+            ]
+        );
+
         $userId = auth()->id();
         $currentSession = session('app.user_session_type', 'personal');
         $activeGroupId = session('active_group_id');
 
-        // Check if a budget already exists for the user in the current group or personal session
-        $existingBudgets = Budget::userScope($userId, $currentSession)->get();
+        // Check if it's a personal session or a group session
+        if ($currentSession === 'personal') {
+            // Check if a personal budget already exists for the user
+            $existingPersonalBudget = Budget::userScope($userId, $currentSession)->first();
 
-        // If it's a personal session, check for any budget
-        if ($currentSession === 'personal' && $existingBudgets->count() > 0) {
-            return redirect()->route('budget.index')->with('error', 'You already have a budget. Only one budget is allowed per user account.');
-        }
+            if ($existingPersonalBudget) {
+                return redirect()->route('budget.index')->with('error', 'You already have a personal budget. Only one personal budget is allowed per user account.');
+            }
 
-        // If it's a group session, check for any budget in the current group
-        if ($currentSession === 'group' && $existingBudgets->count() > 0) {
-            $groupBudget = $existingBudgets->where('expense_sharing_group_id', $activeGroupId)->first();
+            if ($validator->fails()) {
+                return redirect()->back()->withErrors('Amount should not be empty');
+            }
 
-            if ($groupBudget) {
+            // Create a new personal budget record
+            $budget = Budget::create([
+                'user_id' => $userId,
+                'type' => $request->type,
+                'expense_sharing_group_id' => null, // Set expense_sharing_group_id to null for personal budgets
+            ]);
+
+            foreach ($request->input('part_name') as $key => $partName) {
+                $partAllocation = new PartAllocation([
+                    'budget_id' => $budget->id,
+                    'name' => $partName,
+                    'amount' => $request->input('allocation_amount')[$key],
+                ]);
+                // Save the part allocation
+                $partAllocation->save();
+
+                // Attach categories to the part allocation
+                $categoryIds = $request->input('category_id')[$key];
+                $partAllocation->partCategories()->attach($categoryIds);
+
+                // Store the part allocation in the array
+                $partAllocations[] = $partAllocation;
+            }
+        } elseif ($currentSession === 'group') {
+            // Check if the logged-in user is a member of the active group
+            $groupMember = DB::table('group_members')->where('user_id', $userId)
+                ->where('expense_sharing_group_id', $activeGroupId)
+                ->first();
+
+            if (!$groupMember) {
+                return redirect()->route('budget.index')->with('error', 'You are not a member of this group.');
+            }
+
+            // Check if the user has the necessary permission to create a budget within the group
+            $requiredPermission = Permission::where('name', 'create budget')->first();
+
+            $permissionsArray = json_decode($groupMember->permissions, true);
+
+            if (!$permissionsArray || !in_array($requiredPermission->id, $permissionsArray)) {
+                return redirect()->route('budget.index')->with('error', 'You do not have permission to create a budget in this group.');
+            }
+
+            // Check if a budget already exists for the user in the current group
+            $existingGroupBudget = Budget::userScope($userId, $currentSession)->where('expense_sharing_group_id', $activeGroupId)->first();
+
+            if ($existingGroupBudget) {
                 return redirect()->route('budget.index')->with('error', 'Your group already has a budget. Only one budget is allowed per group.');
             }
-        }
 
-        // Create a new budget record
-        $budget = Budget::create([
-            'user_id' => auth()->id(),
-            'type' => $request->type,
-            'expense_sharing_group_id' => $request->input('group_id'),
-        ]);
+            if ($validator->fails()) {
+                return redirect()->back()->withErrors('Amount should not be empty');
+            }
 
-        foreach ($request->input('part_name') as $key => $partName) {
-            $partAllocation = new PartAllocation([
-                'budget_id' => $budget->id,
-                'name' => $partName,
-                'amount' => $request->input('allocation_amount')[$key],
+            // Create a new group budget record
+            $budget = Budget::create([
+                'user_id' => $userId,
+                'type' => $request->type,
+                'expense_sharing_group_id' => $activeGroupId,
             ]);
-            // Save the part allocation
-            $partAllocation->save();
 
-            // Attach categories to the part allocation
-            $categoryIds = $request->input('category_id')[$key];
-            $partAllocation->partCategories()->attach($categoryIds);
+            foreach ($request->input('part_name') as $key => $partName) {
+                $partAllocation = new PartAllocation([
+                    'budget_id' => $budget->id,
+                    'name' => $partName,
+                    'amount' => $request->input('allocation_amount')[$key],
+                ]);
+                // Save the part allocation
+                $partAllocation->save();
 
-            // Store the part allocation in the array
-            $partAllocations[] = $partAllocation;
+                // Attach categories to the part allocation
+                $categoryIds = $request->input('category_id')[$key];
+                $partAllocation->partCategories()->attach($categoryIds);
+
+                // Store the part allocation in the array
+                $partAllocations[] = $partAllocation;
+            }
         }
 
         return redirect()->route('budget.index')->with('success', 'Default template created successfully');
@@ -159,43 +218,83 @@ class BudgetController extends Controller
         $currentSession = session('app.user_session_type', 'personal');
         $activeGroupId = session('active_group_id');
 
-        // Check if a budget already exists for the user in the current group or personal session
-        $existingBudgets = Budget::userScope($userId, $currentSession)->get();
+        // Check if it's a personal session or a group session
+        if ($currentSession === 'personal') {
+            // Check if a personal budget already exists for the user
+            $existingPersonalBudget = Budget::userScope($userId, $currentSession)->first();
 
-        // If it's a personal session, check for any budget
-        if ($currentSession === 'personal' && $existingBudgets->count() > 0) {
-            return redirect()->route('budget.index')->with('error', 'You already have a budget. Only one budget is allowed per user account.');
-        }
-
-        // If it's a group session, check for any budget in the current group
-        if ($currentSession === 'group' && $existingBudgets->count() > 0) {
-            $groupBudget = $existingBudgets->where('expense_sharing_group_id', $activeGroupId)->first();
-
-            if ($groupBudget) {
-                return redirect()->route('budget.index')->with('error', 'Your group already has a budget. Only one budget is allowed per group.');
+            if ($existingPersonalBudget) {
+                return redirect()->route('budget.index')->with('error', 'You already have a personal budget. Only one personal budget is allowed per user account.');
             }
-        }
 
-        // Create a new budget record
-        $budget = Budget::create([
-            'type' => $request->input('type'),
-            'user_id' => auth()->id(),
-            'expense_sharing_group_id' => $request->input('group_id'),
-        ]);
-
-        // Create a new budget template part record and part allocation record for each part
-        foreach ($request->input('part_name') as $key => $partName) {
-            $partAllocation = PartAllocation::create([
-                'budget_id' => $budget->id,
-                'name' => $partName,
-                'amount' => $request->input('amount')[$key],
+            // Create a new budget record
+            $budget = Budget::create([
+                'type' => $request->input('type'),
+                'user_id' => auth()->id(),
+                'expense_sharing_group_id' => $request->input('group_id'),
             ]);
 
-            $categoryIds = $request->input('categoryId')[$key];
-            $partAllocation->partCategories()->attach($categoryIds);
+            // Create a new budget template part record and part allocation record for each part
+            foreach ($request->input('part_name') as $key => $partName) {
+                $partAllocation = PartAllocation::create([
+                    'budget_id' => $budget->id,
+                    'name' => $partName,
+                    'amount' => $request->input('amount')[$key],
+                ]);
 
-            // Store the part allocation in the array
-            $partAllocations[] = $partAllocation;
+                $categoryIds = $request->input('categoryId')[$key];
+                $partAllocation->partCategories()->attach($categoryIds);
+
+                // Store the part allocation in the array
+                $partAllocations[] = $partAllocation;
+            }
+        } elseif ($currentSession === 'group') {
+            // Check if the logged-in user is a member of the active group
+            $groupMember = DB::table('group_members')->where('user_id', $userId)
+                ->where('expense_sharing_group_id', $activeGroupId)
+                ->first();
+
+            if (!$groupMember) {
+                return redirect()->route('budget.index')->with('error', 'You are not a member of this group.');
+            }
+
+            // Check if the user has the necessary permission to create a budget within the group
+            $requiredPermission = Permission::where('name', 'create budget')->first();
+
+            $permissionsArray = json_decode($groupMember->permissions, true);
+
+            if (!$permissionsArray || !in_array($requiredPermission->id, $permissionsArray)) {
+                return redirect()->route('budget.index')->with('error', 'You do not have permission to create a budget in this group.');
+            }
+
+            // Check if a budget already exists for the user in the current group
+            $existingGroupBudget = Budget::userScope($userId, $currentSession)->where('expense_sharing_group_id', $activeGroupId)->first();
+
+            if ($existingGroupBudget) {
+                return redirect()->route('budget.index')->with('error', 'Your group already has a budget. Only one budget is allowed per group.');
+            }
+
+            // Create a new budget record
+            $budget = Budget::create([
+                'type' => $request->input('type'),
+                'user_id' => auth()->id(),
+                'expense_sharing_group_id' => $request->input('group_id'),
+            ]);
+
+            // Create a new budget template part record and part allocation record for each part
+            foreach ($request->input('part_name') as $key => $partName) {
+                $partAllocation = PartAllocation::create([
+                    'budget_id' => $budget->id,
+                    'name' => $partName,
+                    'amount' => $request->input('amount')[$key],
+                ]);
+
+                $categoryIds = $request->input('categoryId')[$key];
+                $partAllocation->partCategories()->attach($categoryIds);
+
+                // Store the part allocation in the array
+                $partAllocations[] = $partAllocation;
+            }
         }
 
         return redirect()->route('budget.index')->with('success', 'User template created successfully');
@@ -208,11 +307,34 @@ class BudgetController extends Controller
     {
         $budget = Budget::find($budgetId);
         $currentSession = session('app.user_session_type', 'personal');
+        $activeGroupId = session('active_group_id');
         $partAllocations = $budget->partAllocations;
         $user = auth()->user();
 
         if (!$budget) {
             return redirect()->back()->with('error', 'Budget not found');
+        }
+
+        // Check if the logged-in user is a member of the group (for group budgets)
+        if ($budget->expense_sharing_group_id !== null) {
+            $groupMember = DB::table('group_members')->where('user_id', $user->id)
+                ->where('expense_sharing_group_id', $budget->expense_sharing_group_id)
+                ->first();
+
+            if (!$groupMember) {
+                return redirect()->route('budget.index')->with('error', 'You are not a member of this group.');
+            }
+
+            // Check if the user has the necessary permission to view a budget within the group
+            $requiredPermission = Permission::where('name', 'view budget')->first();
+            $permissionsArray = json_decode($groupMember->permissions, true);
+
+            if (!$requiredPermission || !$permissionsArray || !in_array($requiredPermission->id, $permissionsArray)) {
+                return redirect()->route('budget.index')->with('error', 'You do not have permission to view this budget in this group.');
+            }
+        } elseif ($budget->user_id !== $user->id) {
+            // Check if the logged-in user is the owner of the budget (for personal budgets)
+            return redirect()->route('budget.index')->with('error', 'You do not have permission to view this budget.');
         }
 
         // Generate date range for the current month
@@ -257,7 +379,6 @@ class BudgetController extends Controller
                 'data' => $data,
             ];
         }
-
 
         return view('budget.show', compact('budget', 'chartData', 'dates', 'totalUsed'));
     }
@@ -326,7 +447,6 @@ class BudgetController extends Controller
      */
     public function updateDefaultTemplate(Request $request, $budgetId)
     {
-        // dd($request->all());
         $validator = Validator::make(
             $request->all(),
             [
@@ -338,22 +458,45 @@ class BudgetController extends Controller
         );
 
         $budget = Budget::find($budgetId);
+        $user = auth()->user();
 
         if (!$budget) {
             return redirect()->back()->with('error', 'Budget not found');
+        }
+
+        // Check if the logged-in user is the owner of the budget (for personal budgets)
+        if ($budget->expense_sharing_group_id === null && $budget->user_id !== $user->id) {
+            return redirect()->route('budget.index')->with('error', 'You do not have permission to edit this budget.');
+        }
+
+        // Check if the logged-in user is a member of the group (for group budgets)
+        if ($budget->expense_sharing_group_id !== null) {
+            $groupMember = DB::table('group_members')->where('user_id', $user->id)
+                ->where('expense_sharing_group_id', $budget->expense_sharing_group_id)
+                ->first();
+
+            if (!$groupMember) {
+                return redirect()->route('budget.index')->with('error', 'You are not a member of this group.');
+            }
+
+            // Check if the user has the necessary permission to edit a budget within the group
+            $requiredPermission = Permission::where('name', 'edit budget')->first();
+            $permissionsArray = json_decode($groupMember->permissions, true);
+
+            if (!$permissionsArray || !in_array($requiredPermission->id, $permissionsArray)) {
+                return redirect()->route('budget.index')->with('error', 'You do not have permission to edit this budget in this group.');
+            }
         }
 
         if ($validator->fails()) {
             return back()->withErrors($validator)->withInput();
         }
 
-        $budget->update([
-            'type' => $request->input('type'),
-        ]);
+        $budget->update(['type' => $request->input('type')]);
 
         // Loop through the part allocations and update them
         foreach ($request->input('part_name') as $index => $partName) {
-            $partAllocation = $budget->partAllocations()->where('id', $request->input('part_allocation_id')[$index])->first();
+            $partAllocation = $budget->partAllocations()->find($request->input('part_allocation_id')[$index]);
 
             $partAllocation->update([
                 'name' => $partName,
@@ -382,6 +525,35 @@ class BudgetController extends Controller
         );
 
         $budget = Budget::find($budgetId);
+        $user = auth()->user();
+
+        if (!$budget) {
+            return redirect()->back()->with('error', 'Budget not found');
+        }
+
+        // Check if the logged-in user is the owner of the budget (for personal budgets)
+        if ($budget->expense_sharing_group_id === null && $budget->user_id !== $user->id) {
+            return redirect()->route('budget.index')->with('error', 'You do not have permission to edit this budget.');
+        }
+
+        // Check if the logged-in user is a member of the group (for group budgets)
+        if ($budget->expense_sharing_group_id !== null) {
+            $groupMember = DB::table('group_members')->where('user_id', $user->id)
+                ->where('expense_sharing_group_id', $budget->expense_sharing_group_id)
+                ->first();
+
+            if (!$groupMember) {
+                return redirect()->route('budget.index')->with('error', 'You are not a member of this group.');
+            }
+
+            // Check if the user has the necessary permission to edit a budget within the group
+            $requiredPermission = Permission::where('name', 'edit budget')->first();
+            $permissionsArray = json_decode($groupMember->permissions, true);
+
+            if (!$permissionsArray || !in_array($requiredPermission->id, $permissionsArray)) {
+                return redirect()->route('budget.index')->with('error', 'You do not have permission to edit this budget in this group.');
+            }
+        }
 
         if ($validator->fails()) {
             return back()->withErrors($validator)->withInput();
@@ -393,7 +565,7 @@ class BudgetController extends Controller
 
         // Loop through the part allocations and update them
         foreach ($request->input('part_name') as $index => $partName) {
-            $partAllocation = $budget->partAllocations()->where('id', $request->input('part_allocation_id')[$index])->first();
+            $partAllocation = $budget->partAllocations()->find($request->input('part_allocation_id')[$index]);
 
             $partAllocation->update([
                 'name' => $partName,
@@ -412,10 +584,31 @@ class BudgetController extends Controller
     public function delete(Budget $budget)
     {
         $user = Auth::id();
-        if ($budget->user_id === $user) {
+        if ($budget->user_id === $user && is_null($budget->expense_sharing_group_id)) {
             $budget->delete();
+            return redirect()->route('budget.index')->with('success', 'Budget deleted successfully');
         }
 
-        return redirect()->route('budget.index')->with('success', 'Budget deleted successfully');
+        // If it's not the personal budget, check for group permission
+        $activeGroupId = session('active_group_id');
+        $groupMember = DB::table('group_members')->where('user_id', $user)
+            ->where('expense_sharing_group_id', $activeGroupId)
+            ->first();
+
+        if ($groupMember) {
+            // Check if the user has the necessary permission to delete budgets within the group
+            $requiredPermission = Permission::where('name', 'delete budget')->first();
+
+            $permissionsArray = json_decode($groupMember->permissions, true);
+
+            if ($permissionsArray && in_array($requiredPermission->id, $permissionsArray)) {
+                // The user has permission, delete the budget
+                $budget->delete();
+                return redirect()->route('budget.index')->with('success', 'Budget deleted successfully');
+            }
+        }
+
+        // Permission denied
+        return redirect()->route('budget.index')->with('error', 'You do not have permission to delete this budget.');
     }
 }
