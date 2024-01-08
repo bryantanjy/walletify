@@ -18,18 +18,16 @@ $(document).ready(function () {
     // when user enter the word, it will retrieve the word; make delay to 1 seconds
     $('#search').on('keyup', delay(function () {
         var query = $(this).val();
-        var currentPage = getCurrentPageNumber();
-        fetchSearchResults(query, currentPage);
+        fetchSearchResults(query);
         window.lastOperation = 'search';
     }, 1000));
 
-    window.fetchSearchResults = function (query, page) {
+    window.fetchSearchResults = function (query) {
         $.ajax({
             url: '/record/search',
             type: 'GET',
             data: {
                 'search': query,
-                'page': page,
                 'userSessionType': window.userSessionType,
             },
             success: function (data) {
@@ -41,22 +39,6 @@ $(document).ready(function () {
         });
     }
 
-    $(document).on('click', '.pagination a', function (event) {
-        event.preventDefault();
-        var page = $(this).attr('href').split('page=')[1];
-        if (window.lastOperation === 'search') { // Check if the last operation was a search
-            var query = $('#search').val();
-            fetchSearchResults(query, page);
-        } else if (window.lastOperation === 'filter') { // Check if the last operation was a filter
-            filterParams.page = page; // Update the page number in the filter parameters
-            fetchFilterResults(filterParams); // Pass the filter parameters to the function
-        } else if (window.lastOperation === 'datepicker') { // Check if the last operation was a datepicker
-            var start = moment($('#reportrange span').html().split(' - ')[0], 'D MMM YYYY');
-            var end = moment($('#reportrange span').html().split(' - ')[1], 'D MMM YYYY');
-            fetchRecords(start, end, page); // Fetch records for the selected date range and the clicked page
-        }
-    });
-
     $('input[type=checkbox]').on('change', function () {
         var categories = [];
         $('input[name="categories[]"]:checked').each(function () {
@@ -66,15 +48,11 @@ $(document).ready(function () {
         $('input[name="type[]"]:checked').each(function () {
             types.push($(this).val());
         });
-        var currentPage = getCurrentPageNumber(); // Add this function to get the current page
         filterParams = { // Store the filter parameters
             'categories': categories,
             'types': types,
-            'sort': $('#sort').val(),
-            'page': currentPage
         };
         fetchFilterResults(filterParams);
-        window.lastOperation = 'filter'; // Set lastOperation to 'filter' here
     });
 
     window.fetchFilterResults = function (filterParams) {
@@ -85,8 +63,6 @@ $(document).ready(function () {
             data: {
                 'categories': filterParams.categories,
                 'types': filterParams.types,
-                'sort': filterParams.sort,
-                'page': filterParams.page
             },
             success: function (data) {
                 $('#records-container').html(data);
@@ -96,24 +72,6 @@ $(document).ready(function () {
             }
         });
     }
-
-    $('#reset').on('click', function (event) {
-        event.preventDefault();
-        // Uncheck all checkboxes
-        $('input[type=checkbox]').prop('checked', false);
-
-        // Fetch the default records
-        var currentPage = getCurrentPageNumber();
-        fetchDefaultRecords(currentPage);
-
-        // Set lastOperation to 'default'
-        window.lastOperation = 'default';
-    });
-
-    function getCurrentPageNumber() {
-        return parseInt($('.pagination .active span').text());
-    }
-
 });
 
 $(document).on('click', '.createRecordBtn', function () {
@@ -136,13 +94,19 @@ $(document).on('click', '.viewRecordBtn', function () {
         type: 'GET',
         url: '/record/show/' + recordId,
         success: function (data) {
-            showRecord.find('#account_name').text(data.account.name);
+            // showRecord.find('#account_name').text(data.account.name);
             showRecord.find('#category_name').text(data.category.name);
             showRecord.find('#record_type').text(data.type);
             showRecord.find('#amount').text(data.amount);
             var formattedDate = moment(data.datetime).format('DD/MM/YYYY, h:m A');
             showRecord.find('#datetime').text(formattedDate);
             showRecord.find('#description').text(data.description);
+            // Conditionally display the account name if it exists
+            if (data.account) {
+                showRecord.find('#account_name').text(data.account.name);
+            } else {
+                showRecord.find('#account_name').text('N/A');
+            }
 
             showRecord.modal('show');
         },
@@ -182,18 +146,22 @@ $(document).on('click', '.editRecordBtn', function () {
 
 $(document).on('submit', '#editRecord', function (event) {
     event.preventDefault();
-    var editRecord = $('#editRecordModal');
-    var formData = $(this).serialize();
-    var recordId = editRecord.find('#record_id').val();
+    var recordId = $('#editRecordModal').find('#record_id').val();
+    var formData = new FormData(this);
 
     $.ajax({
-        type: 'PUT',
+        headers: {
+            'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')
+        },
+        type: 'POST',
         url: '/record/update/' + recordId,
         data: formData,
+        contentType: false,
+        processData: false,
         success: function (response) {
             console.log('Record updated successfully:', response);
-            editRecord.modal('hide');
-            window.location.replace('/record');
+            $('#editRecordModal').modal('hide');
+            window.location.reload();
         },
         error: function (error) {
             console.error('Error updating record:', error);
