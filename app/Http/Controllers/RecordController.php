@@ -62,9 +62,9 @@ class RecordController extends Controller
 
         $records = Record::search($searchTerm)
             ->with('category', 'account', 'user')
-            ->userScope($user->id)
+            ->userScope($user->id, $currentSession)
             ->sortedBy($sort)
-            ->paginate(14);
+            ->get();
 
         $categories = Category::all(); // Retrieve all categories
         $accounts = Account::where('user_id', Auth::user()->id)->get(); // Retrieve all accounts for the current user
@@ -82,13 +82,13 @@ class RecordController extends Controller
         $endDate = Carbon::parse($request->input('endDate'))->endOfDay();
         $sort = $request->input('sort');
         $user = Auth::user();
-        $currentSession = $request->input('userSessionType', 'personal');
+        $currentSession = session('app.user_session_type', 'personal');
 
         $records = Record::with('category', 'account', 'user')
             ->userScope($user->id, $currentSession)
             ->dateRange($startDate, $endDate)
             ->sortedBy($sort)
-            ->paginate(14);
+            ->get();
 
         $categories = Category::all(); // Retrieve all categories
         $accounts = Account::where('user_id', Auth::user()->id)->get(); // Retrieve all accounts for the current user
@@ -110,28 +110,32 @@ class RecordController extends Controller
 
     public function filter(Request $request)
     {
-        $sort = $request->input('sort');
         $user = Auth::user();
         $currentSession = session('app.user_session_type', 'personal');
 
-        $records = Record::with('category', 'account', 'user')
-            ->where('user_id', $user->id);
+        $records = Record::with('category', 'account', 'user');
+
+        if ($currentSession === 'personal') {
+            $records->where('user_id', $user->id);
+        } else {
+            $activeGroupId = session('active_group_id');
+            $records->where('expense_sharing_group_id', $activeGroupId);
+        }
 
         if ($request->has('categories')) {
             $records->whereIn('category_id', $request->categories);
         }
+
         if ($request->has('types')) {
             $records->whereIn('type', $request->types);
         }
 
+        $sort = $request->input('sort', 'latest');
         $records->orderBy('datetime', $sort == 'oldest' ? 'asc' : 'desc');
+        $records = $records->get();
 
-        $records = $records->paginate(14);
-
-        $records->appends(['categories' => $request->categories, 'types' => $request->types]);
-
-        $categories = Category::all(); // Retrieve all categories
-        $accounts = Account::where('user_id', Auth::user()->id)->get(); // Retrieve all accounts for the current user
+        $categories = Category::all();
+        $accounts = Account::where('user_id', Auth::user()->id)->get();
         $totalBalance = $this->calculateTotalBalance($records);
 
         return view('record.record_list', compact('records', 'categories', 'accounts', 'totalBalance'));
@@ -277,7 +281,7 @@ class RecordController extends Controller
     public function delete(Record $record)
     {
         $userId = Auth::id();
-        
+
         if ($record->user_id === $userId && is_null($record->expense_sharing_group_id)) {
             $record->delete();
             return redirect()->route('record.index')->with('success', 'Record deleted successfully');
