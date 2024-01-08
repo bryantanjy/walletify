@@ -106,9 +106,16 @@ class GroupController extends Controller
         }
 
         $collaboratorRoleId = Role::where('name', 'Group Collaborator')->first()->id;
-
+        // Fetch permission IDs by name
+        $permissions = Permission::whereIn('name', ['create record', 'view record', 'edit record', 'delete record', 'view budget', 'view participant'])->pluck('id')->toArray();
         // Attach the user to the group_members pivot table with the 'organizer' role
-        $group->members()->attach(auth()->user()->id, ['role_id' => $collaboratorRoleId]);
+        $group->members()->attach(
+            auth()->user()->id,
+            [
+                'role_id' => $collaboratorRoleId,
+                'permissions' => json_encode($permissions),
+            ]
+        );
 
         // Delete the invitation
         $invitation->delete();
