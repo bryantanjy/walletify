@@ -10,12 +10,10 @@
         @php
             $userSessionType = session('user_session_type', 'personal');
         @endphp
-        @if ($userSessionType == 'personal')
+        @if ($userSessionType == 'personal' && $record->account)
             <div class="col-start-4 col-end-4 account_name">{{ $record->account->name }}</div>
-            <div class="col-start-5 col-end-8 description">{{ $record->description }}</div>
-        @else
-            <div class="col-start-4 col-end-8 description">{{ $record->description }}</div>
         @endif
+        <div class="col-start-5 col-end-8 description">{{ $record->description }}</div>
         <div class="col-start-8 col-end-8 username">{{ $record->user->name }}</div>
         <div class="text-right dropdown-container col-start-9 col-end-9" tabindex="-1">
             @if ($record->type === 'Expense')
@@ -34,4 +32,3 @@
         </div>
     </div>
 @endforeach
-<div class="mt-2 flex justify-center">{{ $records->appends(request()->query())->links() }}</div>
