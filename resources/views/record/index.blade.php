@@ -33,30 +33,28 @@
                     <div class="filter">
                         <h3>FILTER</h3>
                         <h3>CATEGORIES</h3>
-                        <form id="filter-form" action="{{ route('record.filter') }}" method="GET">
-                            @csrf
-                            @foreach ($categories as $category)
-                                <label class="flex items-center">
-                                    <input type="checkbox" class="mr-4" name="categories[]"
-                                        value="{{ $category->id }}">
-                                    {{ $category->name }}
-                                </label>
-                            @endforeach
+                        {{-- <form id="filter-form" action="{{ route('record.filter') }}" method="GET"> --}}
+                        {{-- @csrf --}}
+                        @foreach ($categories as $category)
+                            <label class="flex items-center">
+                                <input type="checkbox" class="mr-4" name="categories[]" value="{{ $category->id }}">
+                                {{ $category->name }}
+                            </label>
+                        @endforeach
 
-                            <h3 class="mt-4">RECORD TYPES</h3>
-                            <label class="flex items-center">
-                                <input type="checkbox" class="mr-4" name="type[]" value="Expense">
-                                Expense
-                            </label>
-                            <label class="flex items-center">
-                                <input type="checkbox" class="mr-4" name="type[]" value="Income">
-                                Income
-                            </label>
-                            <div class="flex justify-center mt-3">
+                        <h3 class="mt-4">RECORD TYPES</h3>
+                        <label class="flex items-center">
+                            <input type="checkbox" class="mr-4" name="type[]" value="Expense">
+                            Expense
+                        </label>
+                        <label class="flex items-center">
+                            <input type="checkbox" class="mr-4" name="type[]" value="Income">
+                            Income
+                        </label>
+                        {{-- <div class="flex justify-center mt-3">
                                 <button id="reset" class="bg-white w-20 rounded-md">Clear</button>
-                            </div>
-                            <input type="hidden" name="_token" value="{{ csrf_token() }}">
-                        </form>
+                            </div> --}}
+                        {{-- </form> --}}
                     </div>
                 </div>
             </div>
@@ -76,19 +74,16 @@
                     <i class="fa fa-caret-right mr-2 cursor-pointer" id="nextPeriod"></i>
                 </div>
                 <div>
-                    <form action="{{ route('record.index') }}" method="GET">
-                        @csrf
-                        <label for="sorting">
-                            Sort:
-                            <select name="sort" id="sort" class="rounded-md border-0 sort"
-                                onchange="this.form.submit()">
-                                <option value="latest" {{ request('sort') == 'latest' ? 'selected' : '' }} selected>
-                                    Latest</option>
-                                <option value="oldest" {{ request('sort') == 'oldest' ? 'selected' : '' }}>Oldest
-                                </option>
-                            </select>
-                        </label>
-                    </form>
+                    <label for="sorting">
+                        Sort:
+                        <select name="sort" id="sort" class="rounded-md border-0 sort"
+                            onchange="this.form.submit()">
+                            <option value="latest" {{ request('sort') == 'latest' ? 'selected' : '' }} selected>
+                                Latest</option>
+                            <option value="oldest" {{ request('sort') == 'oldest' ? 'selected' : '' }}>Oldest
+                            </option>
+                        </select>
+                    </label>
                 </div>
             </div>
             @if ($records && count($records) > 0)
