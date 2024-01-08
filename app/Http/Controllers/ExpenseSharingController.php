@@ -4,9 +4,11 @@ namespace App\Http\Controllers;
 
 use App\Models\GroupMember;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\DB;
 use Spatie\Permission\Models\Role;
 use App\Models\ExpenseSharingGroup;
 use Illuminate\Support\Facades\Auth;
+use Spatie\Permission\Models\Permission;
 use Illuminate\Support\Facades\Validator;
 
 class ExpenseSharingController extends Controller
@@ -59,9 +61,13 @@ class ExpenseSharingController extends Controller
 
         // Get the 'organizer' role id
         $organizerRoleId = Role::where('name', 'Group Organizer')->first()->id;
-
+        // Fetch permission IDs by name
+        $permissions = Permission::whereIn('name', ['create record', 'view record', 'edit record', 'delete record', 'create budget', 'view budget', 'edit budget', 'delete budget', 'send group invitation', 'view participant', 'edit participant', 'remove participant'])->pluck('id')->toArray();
         // Attach the user to the group_members pivot table with the 'organizer' role
-        $expenseSharing->members()->attach(auth()->user()->id, ['role_id' => $organizerRoleId]);
+        $expenseSharing->members()->attach(auth()->user()->id, [
+            'role_id' => $organizerRoleId,
+            'permissions' => json_encode($permissions),
+        ]);
 
         return redirect()->route('expense-sharing.index')->with('success', 'Your Expense Sharing Group created successfully');
     }
@@ -104,8 +110,16 @@ class ExpenseSharingController extends Controller
     {
         $userId = Auth::id();
         if ($group->user_id === $userId) {
-            $group->delete();
+            // Use a transaction to ensure consistency
+            DB::transaction(function () use ($group) {
+                // Detach all group members
+                $group->members()->detach();
+
+                // Delete the group
+                $group->delete();
+            });
+
+            return redirect()->route('expense-sharing.index')->with('success', 'Group deleted successfully');
         }
-        return redirect()->route('expense-sharing.index')->with('success', 'Group deleted successfully');
     }
 }
