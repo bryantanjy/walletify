@@ -20,27 +20,27 @@ class PermissionSeeder extends Seeder
 
         // Create permissions for account module
         $accountPermissions = [
-            'list account', 'create account', 'view account', 'edit account', 'delete account',
+            'create account', 'view account', 'edit account', 'delete account',
         ];
 
         // Create permissions for record module
         $recordPermissions = [
-            'list record', 'create record', 'view record', 'edit record', 'delete record',
+            'create record', 'view record', 'edit record', 'delete record',
         ];
 
         // Create permissions for budget module
         $budgetPermissions = [
-            'list budget', 'create budget', 'view budget', 'edit budget', 'delete budget',
+            'create budget', 'view budget', 'edit budget', 'delete budget',
         ];
 
         // Create permissions for expense sharing module
         $groupPermissions = [
-            'list group', 'create group', 'view group', 'edit group', 'delete group',
+            'create group', 'view group', 'edit group', 'delete group',
         ];
 
         // Create permissions for in-group module
         $participantPermissions = [
-            'list participant', 'send group invitation', 'view participant', 'edit participant', 'remove participant',
+            'send group invitation', 'view participant', 'edit participant', 'remove participant',
         ];
 
         // Create permissions for statistics module
@@ -68,14 +68,10 @@ class PermissionSeeder extends Seeder
             $organizer->givePermissionTo($permission);
         }
 
-        foreach ($statisticsPermissions as $permission) {
-            Permission::create(['name' => $permission]);
-            $organizer->givePermissionTo($permission);
-        }
 
         // Assign specific permissions to the collaborator role
         $collaborator->givePermissionTo([
-            'list record', 'create record', 'view record', 'edit record', 'delete record', 'list budget', 'view budget', 'list participant', 'view participant', 'view statistics', 'view expense', 'view income',
+            'create record', 'view record', 'edit record', 'delete record', 'view budget', 'view participant',
         ]);
     }
 }
