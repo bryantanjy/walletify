@@ -72,12 +72,9 @@ class Record extends Model
         } else {
             // Get the active group id
             $activeGroupId = session('active_group_id');
-    
-            // Get the ids of all users in the active group
-            $groupUserIds = ExpenseSharingGroup::find($activeGroupId)->members->pluck('id');
-    
-            // Include records where the user_id is in the groupUserIds array and the expense_sharing_group_id matches the active group id
-            return $query->whereIn('user_id', $groupUserIds)->where('expense_sharing_group_id', $activeGroupId);
+
+            // Include records where the user_id is the current user and belongs to the active group
+            return $query->where('expense_sharing_group_id', $activeGroupId);
         }
     }
 
