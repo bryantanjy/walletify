@@ -5,14 +5,14 @@
     <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
 </head>
 
-
 <x-app-layout>
     <x-slot name="header" class="max-w-screen-xl px-4 py-3 mx-auto">
 
         <form method="POST" action="{{ route('switch-session') }}">
             @csrf
             <div class="flex">
-                <button type="submit" class="rounded-md text-xl text-gray-800 leading-tight block mr-5"
+                <button type="submit"
+                    class="rounded-md text-xl text-gray-800 leading-tight block mr-5"
                     style="background-color: #5FA7FB;width: 130px; height:40px; font-size:16px; font-weight: bold">
                     {{ __('Main Account') }}
                 </button>
@@ -22,7 +22,7 @@
                     @foreach ($groups as $group)
                         <button type="submit" name="group_id"
                             class="rounded-md text-xl text-gray-800 leading-tight block mr-5 group-button"
-                            style="background-color: #5FA7FB;width: 130px; height:40px; font-size:16px; font-weight: bold"
+                            style="background-color: #8e34ca;width: 130px; height:40px; font-size:16px; font-weight: bold"
                             value="{{ $group->id }}">{{ __($group->name) }}
                         </button>
                     @endforeach
@@ -120,7 +120,6 @@
     </main>
 
 </x-app-layout>
-
 <script>
     // doughnut chart component
     var labels = [];
