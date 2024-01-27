@@ -21,14 +21,14 @@ class RecordFactory extends Factory
     public function definition(): array
     {
         return [
-            'user_id' => User::inRandomOrder()->pluck('id')->first(),
-            'account_id' => Account::inRandomOrder()->pluck('id')->first(),
+            'user_id' => 2,
+            'account_id' => 5,
             'category_id' => Category::inRandomOrder()->pluck('id')->first(),
-            'expense_sharing_group_id' => rand(0, 1) ? ExpenseSharingGroup::inRandomOrder()->pluck('id')->first() : null,
+            'expense_sharing_group_id' => null,
             'type' => $this->faker->randomElement(['Expense', 'Income']),
-            'amount' => $this->faker->randomFloat(2, 1, 1000),
-            'datetime' => $this->faker->dateTimeThisYear(),
-            'description' => $this->faker->sentence(),
+            'amount' => $this->faker->randomFloat(2, 1, 50),
+            'datetime' => $this->faker->dateTimeBetween('-1 year first day of October', 'now')->format('Y-m-d H:i:s'),
+            'description' => null,
         ];
     }
 }
