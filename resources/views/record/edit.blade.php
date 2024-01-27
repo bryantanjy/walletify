@@ -40,7 +40,7 @@
 
                             <div class="flex items-center">
                                 <label for="recordType" class="w-32 text-left pr-2 mt-4">Type of Record</label>
-                                <select name="type" id="type" class="rounded-md border-0"
+                                <select name="type" id="type" class="rounded-md border-0" onchange="updateCategories()"
                                     style="height: 30px; width:225px; padding:0px 10px; margin:15px 0px 0px 20px;"
                                     required>
                                     <option value="Expense">Expense</option>
@@ -90,3 +90,40 @@
         </div>
     </div>
 </div>
+
+<script>
+    function updateCategories() {
+        var typeSelect = document.getElementById('type');
+        var categorySelect = document.getElementById('category_id');
+        var categories = <?php echo json_encode($categories); ?>;
+
+        // Clear existing options
+        categorySelect.innerHTML = '<option value="" selected disabled>Select a category</option>';
+
+        // Add options based on the selected type
+        if (typeSelect.value === 'Expense') {
+            // Show all categories except Income
+            categories.forEach(function (category) {
+                if (category.name !== 'Income') {
+                    var option = document.createElement('option');
+                    option.value = category.id;
+                    option.text = category.name;
+                    categorySelect.add(option);
+                }
+            });
+        } else if (typeSelect.value === 'Income') {
+            // Show only Income category
+            categories.forEach(function (category) {
+                if (category.name === 'Income') {
+                    var option = document.createElement('option');
+                    option.value = category.id;
+                    option.text = category.name;
+                    categorySelect.add(option);
+                }
+            });
+        }
+    }
+
+    // Initial call to set up the initial state
+    updateCategories();
+</script>

@@ -32,7 +32,7 @@
                         @if ($userSessionType == 'personal')
                             <div class="flex items-center form-group">
                                 <label for="account_id" class="w-32 pr-2 mt-4">Account Type</label>
-                                <select name="account_id" class="rounded-md border-0" value="{{ old('account_id') }}"
+                                <select name="account_id" class="rounded-md border-0"
                                     style="height: 30px; width:225px; padding:0px 10px; margin:15px 0px 0px 20px;"
                                     required>
                                     <option value="" selected disabled>Select an account</option>
@@ -45,7 +45,7 @@
 
                         <div class="flex items-center form-group">
                             <label for="type" class="w-32 pr-2 mt-4">Type of record</label>
-                            <select name="type" class="rounded-md border-0" value="{{ old('type') }}"
+                            <select name="type" class="rounded-md border-0" id="type" onchange="updateCategories()"
                                 style="height: 30px; width:225px; padding:0px 10px; margin:15px 0px 0px 20px;" required>
                                 <option value="Expense">Expense</option>
                                 <option value="Income">Income</option>
@@ -53,7 +53,7 @@
                         </div>
                         <div class="flex items-center form-group">
                             <label for="category_id" class="w-32 pr-2 mt-4">Category</label>
-                            <select name="category_id" class="rounded-md border-0" value="{{ old('category_id') }}"
+                            <select name="category_id" id="category_id" class="rounded-md border-0"
                                 style="height: 30px; width:225px; padding:0px 10px; margin:15px 0px 0px 20px;" required>
                                 <option value="" selected disabled>Select a category</option>
                                 @foreach ($categories as $category)
@@ -64,19 +64,18 @@
                         <div class="flex items-center form-group">
                             <label for="amount" class="w-32 pr-2 mt-4">Amount</label>
                             <input type="number" step="0.01" class="rounded-md border-0" name="amount"
-                                placeholder="0.00" value="{{ old('amount') }}"
+                                placeholder="0.00"
                                 style="height: 30px; width:225px; padding:0px 10px; margin:15px 0px 0px 20px; text-align:right;"
                                 required>
                         </div>
                         <div class="flex items-center form-group">
                             <label for="datetime" class="w-32 pr-2 mt-4">Date</label>
                             <input type="datetime-local" class="rounded-md border-0" name="datetime"
-                                value="{{ old('datetime') }}"
                                 style="height: 30px; width:225px; margin:15px 0px 0px 20px;" required>
                         </div>
                         <div class="flex items-center form-group">
                             <label for="description" class="w-32 pr-2 mt-4">Description</label>
-                            <textarea type="text" name="description" class="rounded-md flex-grow border-0" value="{{ old('description') }}"
+                            <textarea type="text" name="description" class="rounded-md flex-grow border-0"
                                 placeholder="Remarks" maxlength="255" style="height: 60px; padding:0px 10px; margin:15px 0px 0px 20px;"></textarea>
                         </div>
                         <div class="flex mt-6 justify-center">
