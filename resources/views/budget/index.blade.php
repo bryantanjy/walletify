@@ -64,30 +64,44 @@
                                 </label>
                                 <div>
                                     RM {{ $partAllocation->currentBudget }} / RM {{ $partAllocation->amount }}
-                                    ({{ round($partAllocation->percentage, 0) }}%)
+                                    ({{ round($partAllocation->percentage, 2) }}%)
                                 </div>
                             </div>
                             <div class="w-full bg-gray-200 rounded-full h-4 mb-4">
-                                <div class="bg-{{ $partAllocation->percentageWidth >= 80 ? 'red' : 'green' }}-400 h-4 rounded-full"
-                                    style="width: {{ $partAllocation->percentageWidth }}%">
-                                </div>
+                                @if ($partAllocation->name !== 'Savings')
+                                    <div class="bg-{{ $partAllocation->percentage > 0 ? 'red' : 'green' }}-400 h-4 rounded-full"
+                                        style="width: {{ abs($partAllocation->percentageWidth) }}%">
+                                    </div>
+                                @else
+                                    <div class="bg-green-400 h-4 rounded-full"
+                                        style="width: {{ abs($partAllocation->percentageWidth) }}%">
+                                    </div>
+                                @endif
                             </div>
                         @endforeach
 
-                        <div class="float-right mt-3">
-                            <button type="button" class="bg-green-500 w-20 mr-2 rounded"
-                                    onclick="window.location.href='{{route('budget.show', ['budget'=>$budget->id])}}'">View</button>
-                            @if ($budget->type == 'Default Template')
-                                <button type="button" class="bg-blue-500 w-20 rounded editDefaultBudgetBtn"
-                                    data-bs-toggle="modal" data-bs-target="#editDefaultBudgetModal"
-                                    value="{{ $budget->id }}">Edit</button>
-                            @else
-                                <button type="button" class="bg-blue-500 w-20 rounded editUserBudgetBtn"
-                                    data-bs-toggle="modal" data-bs-target="#editUserBudgetModal"
-                                    value="{{ $budget->id }}">Edit</button>
-                            @endif
-                            <button type="button" class="bg-red-500 w-20 rounded ml-2 deleteBudgetBtn"
-                                onclick="budgetDeleteModal({{ $budget->id }})">Delete</button>
+                        <div class="flex justify-between mt-3">
+                            <div>
+                                <i class="fa-solid fa-square mr-2" style="color: #76FF03"></i><label class="mr-4">In
+                                    Limit</label>
+                                <i class="fa-solid fa-square mr-2" style="color:#F44336"></i><label
+                                    class="mr-4">Overspent</label>
+                            </div>
+                            <div>
+                                <button type="button" class="bg-green-500 w-20 mr-2 rounded"
+                                    onclick="window.location.href='{{ route('budget.show', ['budget' => $budget->id]) }}'">View</button>
+                                @if ($budget->type == 'Default Template')
+                                    <button type="button" class="bg-blue-500 w-20 rounded editDefaultBudgetBtn"
+                                        data-bs-toggle="modal" data-bs-target="#editDefaultBudgetModal"
+                                        value="{{ $budget->id }}">Edit</button>
+                                @else
+                                    <button type="button" class="bg-blue-500 w-20 rounded editUserBudgetBtn"
+                                        data-bs-toggle="modal" data-bs-target="#editUserBudgetModal"
+                                        value="{{ $budget->id }}">Edit</button>
+                                @endif
+                                <button type="button" class="bg-red-500 w-20 rounded ml-2 deleteBudgetBtn"
+                                    onclick="budgetDeleteModal({{ $budget->id }})">Delete</button>
+                            </div>
                         </div>
                     </div>
                 @endforeach

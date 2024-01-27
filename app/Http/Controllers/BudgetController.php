@@ -20,7 +20,6 @@ class BudgetController extends Controller
      */
     public function index()
     {
-
         $user = auth()->user();
         $categories = Category::all();
         $currentSession = session('app.user_session_type', 'personal');
@@ -30,8 +29,7 @@ class BudgetController extends Controller
             $totalAllocationAmount = 0;
 
             foreach ($budget->partAllocations as $partAllocation) {
-                $totalExpense = 0;
-                $totalIncome = 0;
+                $totalAmount = 0;
 
                 foreach ($partAllocation->partCategories as $category) {
                     $now = Carbon::now();
@@ -42,22 +40,27 @@ class BudgetController extends Controller
                         ->get();
 
                     foreach ($records as $record) {
-                        if ($record->type == 'Expense') {
-                            $totalExpense += $record->amount;
-                        } else {
-                            $totalIncome += $record->amount;
-                        }
+                        $totalAmount += $record->amount;
                     }
                 }
 
-                $currentBudget = $totalExpense - $totalIncome;
-                $percentage = ($currentBudget / $partAllocation->amount) * 100;
-                $percentageWidth = min(max($percentage, 0), 100);
+                $currentBudget = $totalAmount;
+                $allocationAmount = $partAllocation->amount;
+
+
+                $percentage = ($currentBudget / $allocationAmount - 1) * 100;
+                // $percentageWidth = min(max($percentage, -100), 100);
+                // Adjust the percentage width calculation
+                if ($percentage >= 0) {
+                    $percentageWidth = min($percentage +100, 100);
+                } else {
+                    $percentageWidth = max($percentage +100, 0);
+                }
 
                 $partAllocation->currentBudget = $currentBudget;
                 $partAllocation->percentage = $percentage;
                 $partAllocation->percentageWidth = $percentageWidth;
-                $totalAllocationAmount += $partAllocation->amount;
+                $totalAllocationAmount += $allocationAmount;
             }
         }
 
