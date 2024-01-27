@@ -90,7 +90,7 @@
                         <label for="partCategory2" class="w-32 pr-2 mt-4">Category</label>
                         <select class="rounded-md border-0" name="category_id[1][]" id="category_id2" multiple disabled>
                             @foreach ($categories as $category)
-                                <option value="{{ $category->id }}" @if (in_array($category->name, ['Shopping', 'Entertainment', 'Travel', 'Personal Care', 'Miscellaneous'])) selected @endif>
+                                <option value="{{ $category->id }}" @if (in_array($category->name, ['Shopping', 'Entertainment', 'Travel', 'Personal Care', 'Miscellaneous', 'Investments', 'Gift and Donations'])) selected @endif>
                                     {{ $category->name }}
                                 </option>
                             @endforeach
@@ -118,7 +118,7 @@
                         <select class="rounded-md border-0" name="category_id[2][]" id="category_id3" multiple
                             disabled>
                             @foreach ($categories as $category)
-                                <option value="{{ $category->id }}" @if (in_array($category->name, ['Investments', 'Gift and Donations', 'Income'])) selected @endif>
+                                <option value="{{ $category->id }}" @if (in_array($category->name, ['Income'])) selected @endif>
                                     {{ $category->name }}
                                 </option>
                             @endforeach
