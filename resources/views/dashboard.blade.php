@@ -42,7 +42,7 @@
                 </div>
                 <div class="flex justify-between">
                     <div>
-                        <span class="text-gray-400">Current Month</span><br>
+                        <span class="text-gray-400">Current Month Expenses</span><br>
                         <span id="total-expenses-placeholder"><strong></strong></span>
                     </div>
                 </div>
@@ -58,7 +58,7 @@
                                 <span class="flex items-center"><b>{{ $item->category->name }}</b></span>
                                 <div class="text-right">
                                     @if ($item->type === 'Expense')
-                                        <span style="color: rgb(250, 56, 56);"><b>-RM {{ $item->amount }}</b></span>
+                                        <span style="color: rgb(250, 56, 56);"><b>RM {{ $item->amount }}</b></span>
                                     @else
                                         <span style="color: rgb(90, 216, 90);"><b>RM {{ $item->amount }}</b></span>
                                     @endif
@@ -91,7 +91,7 @@
                     @endphp
 
                     <div class="mb-3">
-                        <span class="text-gray-400" style="font-size: 20px">Current Month</span><br>
+                        <span class="text-gray-400" style="font-size: 20px">Current Month Balance</span><br>
                         <span style="font-size: 20px"><b>RM{{ $totalBalance }}</b></span>
                     </div>
 
@@ -107,7 +107,7 @@
 
                     <label for="totalExpense" class="flex justify-between">
                         <div class="mb-1 text-base font-medium">Expense</div>
-                        <div><b>-RM {{ number_format($totalExpense, 2) }}</b></div>
+                        <div><b>RM {{ number_format($totalExpense, 2) }}</b></div>
                     </label>
                     <div class="w-full rounded-full h-4 mb-4 bg-gray-200">
                         <div class="bg-red-500 h-4 rounded-full"
@@ -153,7 +153,7 @@
     });
 
     var totalExpenses = data.reduce((sum, amount) => sum + parseFloat(amount), 0);
-    document.getElementById('total-expenses-placeholder').innerHTML = '<b>-RM ' + totalExpenses.toFixed(2) +
+    document.getElementById('total-expenses-placeholder').innerHTML = '<b>RM ' + totalExpenses.toFixed(2) +
         '</b>';
 
     // trigger toast @ notification
