@@ -1,3 +1,4 @@
 # Walletify: Personal Finance Tracking System
 Final Year Project (Solo)
- A finance tracking web app
+
+A finance tracking web app
