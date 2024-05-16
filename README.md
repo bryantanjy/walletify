@@ -1,5 +1,5 @@
 # Walletify: Personal Finance Tracking System
-A finance tracking web application - Final Year Project
+A finance tracking web application - Final Year Project.
 
 Framework used: 
 - Laravel 10
