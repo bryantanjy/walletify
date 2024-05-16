@@ -30,7 +30,7 @@
                         <label for="balance">Balance:</label>
                     </div>
                     <div class="col-4">
-                        <span>{{ $balance }}</span>
+                        <span>RM {{ $balance }}</span>
                     </div>
                 </div>
                 <div class="row">

@@ -366,7 +366,7 @@ class BudgetController extends Controller
 
             // Calculate the total amount used for this part allocation
             $totalUsed = $records->reduce(function ($carry, $record) {
-                $amount = ($record->type === 'Expense') ? $record->amount : -$record->amount;
+                $amount = $record->amount;
                 return $carry + $amount;
             }, 0);
 
@@ -397,7 +397,7 @@ class BudgetController extends Controller
             });
 
             foreach ($recordsOnDate as $record) {
-                $amount = ($record->type === 'Expense') ? $record->amount : -$record->amount;
+                $amount = $record->amount;
                 $cumulativeAmount += $amount;
 
                 // Set the cumulative amount for the current date
