@@ -1,6 +1,6 @@
-# Walletify: Personal Finance Tracking System (Solo FYP)
+# Walletify: Personal Finance Tracking System 
 
-A finance tracking web app
+A finance tracking web application (Solo FYP)
 
 Framework used: 
 - Laravel 10
