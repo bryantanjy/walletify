@@ -1,20 +1,20 @@
-<nav x-data="{ open: false }" class=" w-full z-50 bg-white border-b border-gray-100 fixed top-0">
+<nav x-data="{ open: false }" class="w-full z-50 bg-white border-b border-gray-100 fixed">
     <!-- Primary Navigation Menu -->
-    <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+    <div class="max-w-screen-2xl mx-auto px-4 sm:px-6 lg:px-8">
         <div class="flex justify-between h-16">
-            <div class="flex">
+            <div class="flex flex-1 items-center justify-center sm:items-stretch sm:justify-start">
                 <!-- Logo -->
-                <div class="flex items-center">
-                    <a href="{{ route('dashboard') }}">
-                        <img src="{{ asset('images/walletify-logo.png') }}" style="height:60px">
-                    </a>
-                </div>
+                {{-- <div class="flex flex-1 items-center justify-center sm:items-stretch sm:justify-start"> --}}
+                    <div class="flex flex-shrink-0 items-center">
+                        <img class="h-9 w-auto" src="{{ asset('images/walletify-logo.png') }}" alt="Walletify">
+                    </div>
+                {{-- </div> --}}
 
                 <!-- Navigation Links -->
-                <div class="hidden space-x-8 sm:-my-px sm:ml-8 sm:flex">
+                <div class="hidden text-center space-x-8 sm:-my-px sm:ml-8 sm:flex">
                     <x-nav-link href="{{ route('dashboard') }}" :active="request()->routeIs('dashboard')"
                         style="font-size: 16px; font-weight: bold;">
-                        {{ __('Home') }}
+                        {{ __('Dashboard') }}
                     </x-nav-link>
                 </div>
 
@@ -23,8 +23,8 @@
                 @endphp
                 {{-- Account navbar --}}
                 @if ($userSessionType === 'personal')
-                    <div class="hidden space-x-8 sm:-my-px sm:ml-8 sm:flex">
-                        <x-nav-link href="{{ route('account.index') }}" :active="request()->routeIs('account.index')"
+                    <div class="hidden text-center space-x-8 sm:-my-px sm:ml-8 sm:flex">
+                        <x-nav-link href="{{ route('account.index') }}" :active="request()->routeIs('account.*')"
                             style="font-size: 16px; font-weight: bold;">
                             {{ __('Account') }}
                         </x-nav-link>
@@ -32,23 +32,23 @@
                 @endif
 
                 {{-- Record navbar --}}
-                <div class="hidden space-x-8 sm:-my-px sm:ml-8 sm:flex">
-                    <x-nav-link href="{{ route('record.index') }}" :active="request()->routeIs('record.index')"
+                <div class="hidden text-center space-x-8 sm:-my-px sm:ml-8 sm:flex">
+                    <x-nav-link href="{{ route('record.index') }}" :active="request()->routeIs('record.*')"
                         style="font-size: 16px; font-weight: bold;">
                         {{ __('Record') }}
                     </x-nav-link>
                 </div>
 
                 {{-- Budget navbar --}}
-                <div class="hidden space-x-8 sm:-my-px sm:ml-8 sm:flex">
-                    <x-nav-link href="{{ route('budget.index') }}" :active="request()->routeIs('budget.index')"
+                <div class="hidden text-center space-x-8 sm:-my-px sm:ml-8 sm:flex">
+                    <x-nav-link href="{{ route('budget.index') }}" :active="request()->routeIs('budget.*')"
                         style="font-size: 16px; font-weight: bold;">
                         {{ __('Budget') }}
                     </x-nav-link>
                 </div>
 
                 {{-- Expense Sharing navbar --}}
-                <div class="hidden space-x-8 sm:-my-px sm:ml-8 sm:flex">
+                <div class="hidden text-center space-x-8 sm:-my-px sm:ml-8 sm:flex">
                     @if ($userSessionType === 'personal')
                         <x-nav-link href="{{ route('expense-sharing.index') }}" :active="request()->routeIs('expense-sharing.*')"
                             style="font-size: 16px; font-weight: bold;">
@@ -63,8 +63,8 @@
                 </div>
 
                 {{-- Statistics navbar --}}
-                <div class="hidden space-x-8 sm:-my-px sm:ml-8 sm:flex">
-                    <x-nav-link href="{{ route('statistic.index') }}" :active="request()->routeIs('statistic.index')"
+                <div class="hidden text-center space-x-8 sm:-my-px sm:ml-8 sm:flex">
+                    <x-nav-link href="{{ route('statistic.index') }}" :active="request()->routeIs('statistic.*')"
                         style="font-size: 16px; font-weight: bold;">
                         {{ __('Statistic') }}
                     </x-nav-link>
@@ -73,7 +73,7 @@
 
             <div class="hidden sm:flex sm:items-center sm:ml-6">
                 <!-- Teams Dropdown -->
-                @if (Laravel\Jetstream\Jetstream::hasTeamFeatures())
+                {{-- @if (Laravel\Jetstream\Jetstream::hasTeamFeatures())
                     <div class="ml-3 relative">
                         <x-dropdown align="right" width="60">
                             <x-slot name="trigger">
@@ -125,7 +125,7 @@
                             </x-slot>
                         </x-dropdown>
                     </div>
-                @endif
+                @endif --}}
 
                 <!-- Settings Dropdown -->
                 <div class="ml-3 relative">
@@ -206,6 +206,29 @@
             <x-responsive-nav-link href="{{ route('dashboard') }}" :active="request()->routeIs('dashboard')">
                 {{ __('Dashboard') }}
             </x-responsive-nav-link>
+            @if ($userSessionType === 'personal')
+                <x-responsive-nav-link href="{{ route('account.index') }}" :active="request()->routeIs('account.*')">
+                    {{ __('Account') }}
+                </x-responsive-nav-link>
+            @endif
+            <x-responsive-nav-link href="{{ route('record.index') }}" :active="request()->routeIs('record.*')">
+                {{ __('Record') }}
+            </x-responsive-nav-link>
+            <x-responsive-nav-link href="{{ route('budget.index') }}" :active="request()->routeIs('budget.*')">
+                {{ __('Budget') }}
+            </x-responsive-nav-link>
+            @if ($userSessionType === 'personal')
+                <x-responsive-nav-link href="{{ route('expense-sharing.index') }}" :active="request()->routeIs('expense-sharing.*')">
+                    {{ __('Expense Sharing') }}
+                </x-responsive-nav-link>
+            @else
+                <x-responsive-nav-link href="{{ route('groups.index') }}" :active="request()->routeIs('expense-sharing.groups.*')">
+                    {{ __('Expense Sharing') }}
+                </x-responsive-nav-link>
+            @endif
+            <x-responsive-nav-link href="{{ route('statistic.index') }}" :active="request()->routeIs('statistic.*')">
+                {{ __('Statistic') }}
+            </x-responsive-nav-link>
         </div>
 
         <!-- Responsive Settings Options -->
@@ -246,7 +269,7 @@
                 </form>
 
                 <!-- Team Management -->
-                @if (Laravel\Jetstream\Jetstream::hasTeamFeatures())
+                {{-- @if (Laravel\Jetstream\Jetstream::hasTeamFeatures())
                     <div class="border-t border-gray-200"></div>
 
                     <div class="block px-4 py-2 text-xs text-gray-400">
@@ -277,7 +300,7 @@
                             <x-switchable-team :team="$team" component="responsive-nav-link" />
                         @endforeach
                     @endif
-                @endif
+                @endif --}}
             </div>
         </div>
     </div>
