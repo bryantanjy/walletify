@@ -21,7 +21,7 @@
     <nav class="bg-white border-gray-200 fixed w-full z-20 top-0 left-0 border-b">
         <div class="max-w-screen-xl flex flex-wrap items-center justify-between mx-auto p-4">
             <a href="{{ url('/') }}" class="flex items-center">
-                <img src="{{ asset('images/walletify-logo.png') }}" class="h-12 mr-3" alt="Walletify Logo" />
+                <img src="{{ asset('images/walletify-logo.png') }}" class="h-12 mr-3" alt="Walletify" />
 
             </a>
             @if (Route::has('login'))

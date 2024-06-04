@@ -6,14 +6,13 @@
 </head>
 
 <x-app-layout>
-    <x-slot name="header" class="max-w-screen-xl px-4 py-3 mx-auto">
-
-        <form method="POST" action="{{ route('switch-session') }}">
+    <x-slot name="header">
+        <form class="m-0" method="POST" action="{{ route('switch-session') }}">
             @csrf
             <div class="flex">
                 <button type="submit"
-                    class="rounded-md text-xl text-gray-800 leading-tight block mr-5"
-                    style="background-color: #5FA7FB;width: 130px; height:40px; font-size:16px; font-weight: bold">
+                    class="rounded-md font-semibold text-sm leading-tight block mr-5 h-10"
+                    style="background-color: #5FA7FB; width: 100px">
                     {{ __('Main Account') }}
                 </button>
 
@@ -21,15 +20,14 @@
                 @if (!empty($groups))
                     @foreach ($groups as $group)
                         <button type="submit" name="group_id"
-                            class="rounded-md text-xl text-gray-800 leading-tight block mr-5 group-button"
-                            style="background-color: #8e34ca;width: 130px; height:40px; font-size:16px; font-weight: bold"
+                            class="rounded-md font-semibold text-sm leading-tight block mr-5 h-10 group-button"
+                            style="background-color: #8e34ca; width: 100px"
                             value="{{ $group->id }}">{{ __($group->name) }}
                         </button>
                     @endforeach
                 @endif
             </div>
         </form>
-
     </x-slot>
 
     <main>
