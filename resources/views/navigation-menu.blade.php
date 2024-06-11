@@ -1,14 +1,12 @@
-<nav x-data="{ open: false }" class="w-full z-50 bg-white border-b border-gray-100 fixed">
+<nav x-data="{ open: false }" class="w-full z-10 bg-white border-b border-gray-100 fixed  top-0 left-0 right-0 shadow">
     <!-- Primary Navigation Menu -->
     <div class="max-w-screen-2xl mx-auto px-4 sm:px-6 lg:px-8">
         <div class="flex justify-between h-16">
-            <div class="flex flex-1 items-center justify-center sm:items-stretch sm:justify-start">
+            <div class="flex flex-1 items-center sm:items-stretch sm:justify-start items-baseline">
                 <!-- Logo -->
-                {{-- <div class="flex flex-1 items-center justify-center sm:items-stretch sm:justify-start"> --}}
-                    <div class="flex flex-shrink-0 items-center">
-                        <img class="h-9 w-auto" src="{{ asset('images/walletify-logo.png') }}" alt="Walletify">
-                    </div>
-                {{-- </div> --}}
+                <div class="flex flex-shrink-0 my-auto">
+                    <img class="h-9 w-auto" src="{{ asset('images/walletify-logo.png') }}" alt="Walletify">
+                </div>
 
                 <!-- Navigation Links -->
                 <div class="hidden text-center space-x-8 sm:-my-px sm:ml-8 sm:flex">
@@ -172,7 +170,7 @@
                             <div class="border-t border-gray-200"></div>
 
                             <!-- Authentication -->
-                            <form method="POST" action="{{ route('logout') }}" x-data>
+                            <form class="m-0" method="POST" action="{{ route('logout') }}" x-data>
                                 @csrf
 
                                 <x-dropdown-link href="{{ route('logout') }}" @click.prevent="$root.submit();">
