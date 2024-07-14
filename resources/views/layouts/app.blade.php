@@ -22,51 +22,53 @@
     <body class="font-sans antialiased">
         <x-banner />
 
-        <div class="min-h-screen" style="background-color: #92C3E3; display: flex; flex-direction: column; height:100%; overflow-y:auto">
+        <div class="min-h-screen bg-[#CDD6FF]">
             @livewire('navigation-menu')
 
-            <!-- Page Heading -->
-            @if (isset($header))
-                <header style="background: #C4DBFD; margin-top: 65px;">
-                    <div class="max-w-7xl mx-auto py-2 px-4 sm:px-6 lg:px-8">
-                        {{ $header }}
-                    </div>
-                </header>
-            @endif
-
-            <!-- Page Content -->
-            <main class="flex-grow">
-                {{ $slot }}
-                @if (session('success'))
-                    <div class="position-fixed top-20 end-0 p-3" style="z-index: 100">
-                        <div class="toast align-items-center bg-green-100 border-0" role="alert" aria-live="assertive"
-                            aria-atomic="true">
-                            <div class="d-flex">
-                                <div class="toast-body">
-                                    <i class="fa-regular fa-circle-check" style="color: #48f745;"></i>
-                                    {{ session('success') }}
-                                </div>
-                                <button type="button" class="btn-close me-2 m-auto" data-bs-dismiss="toast"
-                                    aria-label="Close"><i class="fa-solid fa-xmark"></i></button>
-                            </div>
+            <div class="pt-16">
+                <!-- Page Heading -->
+                @if (isset($header))
+                    <header class="bg-[#C4DBFD] shadow">
+                        <div class="max-w-screen-2xl mx-auto py-2 px-4 sm:px-6 lg:px-8">
+                            {{ $header }}
                         </div>
-                    </div>
-                @elseif (session('error'))
-                    <div class="position-fixed top-20 end-0 p-3" style="z-index: 100">
-                        <div class="toast align-items-center bg-red-100 border-0" role="alert" aria-live="assertive"
-                            aria-atomic="true">
-                            <div class="d-flex">
-                                <div class="toast-body">
-                                    <i class="fa-solid fa-triangle-exclamation" style="color: #dc0404;"></i>
-                                    {{ session('error') }}
-                                </div>
-                                <button type="button" class="btn-close me-2 m-auto" data-bs-dismiss="toast"
-                                    aria-label="Close"><i class="fa-solid fa-xmark"></i></button>
-                            </div>
-                        </div>
-                    </div>
+                    </header>
                 @endif
-            </main>
+
+                <!-- Page Content -->
+                <main class="mx-auto max-w-screen-2xl px-4 sm:px-6 lg:px-8 overflow-hidden">
+                    {{ $slot }}
+                    @if (session('success'))
+                        <div class="position-fixed top-20 end-0 p-3" style="z-index: 100">
+                            <div class="toast align-items-center bg-green-100 border-0" role="alert" aria-live="assertive"
+                                aria-atomic="true">
+                                <div class="d-flex">
+                                    <div class="toast-body">
+                                        <i class="fa-regular fa-circle-check" style="color: #48f745;"></i>
+                                        {{ session('success') }}
+                                    </div>
+                                    <button type="button" class="btn-close me-2 m-auto" data-bs-dismiss="toast"
+                                        aria-label="Close"><i class="fa-solid fa-xmark"></i></button>
+                                </div>
+                            </div>
+                        </div>
+                    @elseif (session('error'))
+                        <div class="position-fixed top-20 end-0 p-3" style="z-index: 100">
+                            <div class="toast align-items-center bg-red-100 border-0" role="alert" aria-live="assertive"
+                                aria-atomic="true">
+                                <div class="d-flex">
+                                    <div class="toast-body">
+                                        <i class="fa-solid fa-triangle-exclamation" style="color: #dc0404;"></i>
+                                        {{ session('error') }}
+                                    </div>
+                                    <button type="button" class="btn-close me-2 m-auto" data-bs-dismiss="toast"
+                                        aria-label="Close"><i class="fa-solid fa-xmark"></i></button>
+                                </div>
+                            </div>
+                        </div>
+                    @endif
+                </main>
+            </div>
         </div>
 
         @stack('modals')
