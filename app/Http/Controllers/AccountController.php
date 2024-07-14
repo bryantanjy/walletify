@@ -22,12 +22,21 @@ class AccountController extends Controller
         }
 
         $user = auth()->user();
-        $accounts = Account::where('user_id', $user->id)->oldest()->get();
-        $balance = [];
+        $accountsQuery = Account::where('user_id', $user->id);
+
+        if ($request->has('type')) {
+            $types = $request->input('type');
+            $accountsQuery->whereIn('type', $types);
+        }
+
+        $accounts = $accountsQuery->oldest()->get();
         $balances = [];
 
         foreach ($accounts as $account) {
-            $records = Record::where('user_id', $user->id)->where('account_id', $account->id)->whereNull('expense_sharing_group_id')->get();
+            $records = Record::where('user_id', $user->id)
+                ->where('account_id', $account->id)
+                ->whereNull('expense_sharing_group_id')
+                ->get();
 
             $totalExpense = 0;
             $totalIncome = 0;
@@ -41,8 +50,27 @@ class AccountController extends Controller
                     }
                 }
             }
-            $balance = $totalIncome - $totalExpense;
-            $balances[$account->id] = $balance;
+            $balances[$account->id] = $totalIncome - $totalExpense;
+        }
+
+        $sort = $request->input('sort', 'default');
+        switch ($sort) {
+            case 'newest':
+                $accounts = $accounts->sortByDesc('created_at');
+                break;
+            case 'balance_low':
+                $accounts = $accounts->sortBy(function ($account) use ($balances) {
+                    return $balances[$account->id];
+                });
+                break;
+            case 'balance_high':
+                $accounts = $accounts->sortByDesc(function ($account) use ($balances) {
+                    return $balances[$account->id];
+                });
+                break;
+            default:
+                $accounts = $accounts->sortBy('created_at');
+                break;
         }
 
         return view('account.index', compact('accounts', 'balances'));
@@ -107,7 +135,7 @@ class AccountController extends Controller
             }
         }
         $balance = $totalIncome - $totalExpense;
-        
+
 
         return view('account.view', compact('account', 'balance', 'totalBalance', 'dates'));
     }
