@@ -2,7 +2,7 @@
     <!-- Primary Navigation Menu -->
     <div class="max-w-screen-2xl mx-auto px-4 sm:px-6 lg:px-8">
         <div class="flex justify-between h-16">
-            <div class="flex flex-1 items-center sm:items-stretch sm:justify-start items-baseline">
+            <div class="flex flex-1 items-center sm:items-stretch sm:justify-start">
                 <!-- Logo -->
                 <div class="flex flex-shrink-0 my-auto">
                     <img class="h-9 w-auto" src="{{ asset('images/walletify-logo.png') }}" alt="Walletify">
