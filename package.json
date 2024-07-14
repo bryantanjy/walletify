@@ -19,6 +19,6 @@
     },
     "dependencies": {
         "chart.js": "^4.4.0",
-        "flowbite": "^2.3.0"
+        "flowbite": "^2.4.1"
     }
 }
