@@ -2,10 +2,11 @@
 
 namespace App\Http\Controllers;
 
+use Carbon\Carbon;
 use App\Models\Record;
 use App\Models\Account;
-use Carbon\Carbon;
 use Illuminate\Http\Request;
+use Illuminate\Validation\Rule;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Validator;
 
@@ -94,7 +95,12 @@ class AccountController extends Controller
             $request->all(),
             [
                 'type' => 'required|string|max:255',
-                'name' => 'required|string|max:255',
+                'name' => [
+                    'required',
+                    'string',
+                    'max:255',
+                    Rule::unique('accounts', 'name')->where(fn ($query) => $query->where('user_id', Auth::id()))->whereNull('deleted_at'),
+                ],
             ]
         );
 
@@ -136,7 +142,6 @@ class AccountController extends Controller
         }
         $balance = $totalIncome - $totalExpense;
 
-
         return view('account.view', compact('account', 'balance', 'totalBalance', 'dates'));
     }
 
@@ -166,16 +171,28 @@ class AccountController extends Controller
             return response()->json(['error' => 'Account not found'], 404);
         }
 
-        $request->validate([
-            'account_type' => 'required|string|max:255',
-            'account_name' => 'required|string|max:255',
-        ]);
+        $validator = Validator::make(
+            $request->all(),
+            [
+                'type' => 'required|string|max:255',
+                'name' => [
+                    'required',
+                    'string',
+                    'max:255',
+                    // Rule::unique('accounts', 'name')->where(fn ($query) => $query->where('user_id', Auth::id()))->whereNull('deleted_at'),
+                ],
+            ]
+        );
 
-        $account->type = $request->input('account_type');
-        $account->name = $request->input('account_name');
-        $account->save();
+        if ($validator->fails()) {
+            return back()->withErrors($validator)->withInput();
+        } else {
+            $account->type = $request->type;
+            $account->name = $request->name;
+            $account->save();
+        }
 
-        return response()->json(['success' => 'Account updated successfully'], 200);
+        return redirect()->route('account.index')->with('success', 'Account updated');
     }
 
     /**

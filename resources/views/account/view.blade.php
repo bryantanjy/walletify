@@ -16,7 +16,7 @@
                     <h4 class="text-xl font-semibold tracking-tight text-gray-900">Account details</h4>
                 </div>
 
-                <div class="mt-3 p-4 card mx-auto shadow rounded-md">
+                <div class="mt-3 p-4 card mx-auto shadow-lg rounded-md">
                     <div class="px-4 lg:grid lg:grid-cols-3">
                         <div>
                             <label for="name">Name &nbsp;&nbsp;&nbsp;&nbsp;: </label>
@@ -33,7 +33,7 @@
                     </div>
                 </div>
 
-                <div class="flex p-4 mt-5 card shadow mx-auto">
+                <div class="flex p-4 mt-5 card shadow-2xl` mx-auto">
                     <canvas id="account"></canvas>
                 </div>
             </main>

@@ -1,15 +1,7 @@
-<head>
-    {{-- <script src="https://code.jquery.com/jquery-3.7.1.min.js"
-        integrity="sha256-/JqT3SQfawRcv/BIHPThkBvs0OEvtFFmqPF/lYI/Cxo=" crossorigin="anonymous"></script> --}}
-    {{-- <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"></script>
-    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css"> --}}
-    <script type="text/javascript" src="{{ asset('js/account.js') }}"></script>
-</head>
-
 <x-app-layout>
     <div class="bg-white" style="height: calc(100vh - 64px);">
         <div class="h-screen overflow-hidden">
-            {{-- mobile side bar filter --}}
+            <!-- mobile side bar filter -->
             <div x-data="{open: false}">
                 <div class="relative z-10" aria-labelledby="slide-over-title" role="dialog" aria-modal="true"
                     x-show="open" x-cloak>
@@ -60,7 +52,8 @@
                                                                     value="General" type="checkbox"
                                                                     class="h-4 w-4 rounded border-gray-300 text-indigo-600 focus:ring-indigo-500"
                                                                     onchange="this.form.submit()" {{ in_array('General',
-                                                                    request()->input('type', [])) ? 'checked' : '' }}>
+                                                                    (array) request()->input('type', [])) ? 'checked' :
+                                                                '' }}>
                                                                 <label for="filter-mobile-type-0"
                                                                     class="ml-3 min-w-0 flex-1 text-gray-500">General</label>
                                                             </div>
@@ -69,7 +62,8 @@
                                                                     value="Saving" type="checkbox"
                                                                     class="h-4 w-4 rounded border-gray-300 text-indigo-600 focus:ring-indigo-500"
                                                                     onchange="this.form.submit()" {{ in_array('Saving
-                                                                    Account', request()->input('type', [])) ? 'checked'
+                                                                    Account', (array) request()->input('type', [])) ?
+                                                                'checked'
                                                                 : '' }}>
                                                                 <label for="filter-mobile-type-1"
                                                                     class="ml-3 min-w-0 flex-1 text-gray-500">Saving
@@ -80,7 +74,7 @@
                                                                     value="Credit/Debit Card" type="checkbox"
                                                                     class="h-4 w-4 rounded border-gray-300 text-indigo-600 focus:ring-indigo-500"
                                                                     onchange="this.form.submit()" {{
-                                                                    in_array('Credit/Debit Card',
+                                                                    in_array('Credit/Debit Card', (array)
                                                                     request()->input('type', [])) ? 'checked' : '' }}>
                                                                 <label for="filter-mobile-type-2"
                                                                     class="ml-3 min-w-0 flex-1 text-gray-500">Credit/Debit
@@ -91,7 +85,8 @@
                                                                     value="Cash" type="checkbox"
                                                                     class="h-4 w-4 rounded border-gray-300 text-indigo-600 focus:ring-indigo-500"
                                                                     vonchange="this.form.submit()" {{ in_array('Cash',
-                                                                    request()->input('type', [])) ? 'checked' : '' }}>
+                                                                    (array) request()->input('type', [])) ? 'checked' :
+                                                                '' }}>
                                                                 <label for="filter-mobile-type-3"
                                                                     class="ml-3 min-w-0 flex-1 text-gray-500">Cash</label>
                                                             </div>
@@ -100,7 +95,8 @@
                                                                     value="Insurance" type="checkbox"
                                                                     class="h-4 w-4 rounded border-gray-300 text-indigo-600 focus:ring-indigo-500"
                                                                     onchange="this.form.submit()" {{
-                                                                    in_array('Insurance', request()->input('type', []))
+                                                                    in_array('Insurance', (array)
+                                                                    request()->input('type', []))
                                                                 ? 'checked' : '' }}>
                                                                 <label for="filter-mobile-type-4"
                                                                     class="ml-3 min-w-0 flex-1 text-gray-500">Insurance</label>
@@ -110,7 +106,8 @@
                                                                     value="Loan" type="checkbox"
                                                                     class="h-4 w-4 rounded border-gray-300 text-indigo-600 focus:ring-indigo-500"
                                                                     onchange="this.form.submit()" {{ in_array('Loan',
-                                                                    request()->input('type', [])) ? 'checked' : '' }}>
+                                                                    (array) request()->input('type', [])) ? 'checked' :
+                                                                '' }}>
                                                                 <label for="filter-mobile-type-5"
                                                                     class="ml-3 min-w-0 flex-1 text-gray-500">Loan</label>
                                                             </div>
@@ -119,7 +116,8 @@
                                                                     value="Investment" type="checkbox"
                                                                     class="h-4 w-4 rounded border-gray-300 text-indigo-600 focus:ring-indigo-500"
                                                                     onchange="this.form.submit()" {{
-                                                                    in_array('Investment', request()->input('type', []))
+                                                                    in_array('Investment', (array)
+                                                                    request()->input('type', []))
                                                                 ? 'checked' : '' }}>
                                                                 <label for="filter-mobile-type-6"
                                                                     class="ml-3 min-w-0 flex-1 text-gray-500">Investment</label>
@@ -145,16 +143,17 @@
 
                         <div
                             class="flex flex-col items-stretch justify-end flex-shrink-0 w-full space-y-2 md:w-auto md:flex-row md:space-y-0 md:items-center md:space-x-3">
-                            <button type="button"
-                                class="justify-center rounded-lg px-4 py-2.5 text-white text-sm font-medium bg-blue-500 hover:bg-blue-700 createAccountBtn"
-                                data-bs-toggle="modal" data-bs-target="#createAccountModal">
+                            <button data-modal-target="create-account-modal" data-modal-toggle="create-account-modal"
+                                type="button"
+                                class="justify-center rounded-lg px-4 py-2.5 text-white text-sm font-medium bg-blue-500 hover:bg-blue-700"
+                                x-on:open-modal.window>
                                 <i class="far fa-plus" style="color: #ffffff;"></i>
-                                <span>Add Account</span>
+                                <span>Create Account</span>
                             </button>
                             <div class="flex items-center w-full space-x-3 md:w-auto justify-end">
                                 <div>
                                     <button type="button" data-dropdown-toggle="dropdown"
-                                        class="group inline-flex justify-center rounded-lg px-4 py-2.5 border text-sm font-medium text-gray-700 hover:text-gray-900"
+                                        class="group inline-flex justify-center rounded-lg px-4 py-2.5 border text-sm font-medium text-gray-700 hover:text-gray-900 hover:bg-gray-100"
                                         id="menu-button" aria-expanded="false" aria-haspopup="true">
                                         Sort
                                         <svg class="-mr-1 ml-1 h-5 w-5 flex-shrink-0 text-gray-400 group-hover:text-gray-500"
@@ -171,26 +170,27 @@
                                     <div class="py-1" role="none">
                                         <a href="{{ route('account.index', array_merge(request()->query(), ['sort' => 'default'])) }}"
                                             class="text-gray-500 block px-4 py-2 text-sm hover:bg-gray-100 rounded-md"
-                                            @if(request('sort', 'default') == 'default') style="background-color: #CDD6FF" @endif
-                                            role="menuitem" tabindex="-1" id="menu-item-0">
+                                            @if(request('sort', 'default' )=='default' )
+                                            style="background-color: #CDD6FF" @endif role="menuitem" tabindex="-1"
+                                            id="menu-item-0">
                                             Default
                                         </a>
                                         <a href="{{ route('account.index', array_merge(request()->query(), ['sort' => 'newest'])) }}"
                                             class="text-gray-500 block px-4 py-2 text-sm hover:bg-gray-100 rounded-md"
-                                            @if(request('sort') == 'newest') style="background-color: #CDD6FF" @endif
+                                            @if(request('sort')=='newest' ) style="background-color: #CDD6FF" @endif
                                             role="menuitem" tabindex="-1" id="menu-item-1">
                                             Newest
                                         </a>
                                         <a href="{{ route('account.index', array_merge(request()->query(), ['sort' => 'balance_low'])) }}"
                                             class="text-gray-500 block px-4 py-2 text-sm hover:bg-gray-100 rounded-md"
-                                            @if(request('sort') == 'balance_low') style="background-color: #CDD6FF" @endif
-                                            role="menuitem" tabindex="-1" id="menu-item-2">
+                                            @if(request('sort')=='balance_low' ) style="background-color: #CDD6FF"
+                                            @endif role="menuitem" tabindex="-1" id="menu-item-2">
                                             Balance: Low to High
                                         </a>
                                         <a href="{{ route('account.index', array_merge(request()->query(), ['sort' => 'balance_high'])) }}"
                                             class="text-gray-500 block px-4 py-2 text-sm hover:bg-gray-100 rounded-md"
-                                            @if(request('sort') == 'balance_high') style="background-color: #CDD6FF" @endif
-                                            role="menuitem" tabindex="-1" id="menu-item-3">
+                                            @if(request('sort')=='balance_high' ) style="background-color: #CDD6FF"
+                                            @endif role="menuitem" tabindex="-1" id="menu-item-3">
                                             Balance: High to Low
                                         </a>
                                     </div>
@@ -209,8 +209,7 @@
                         </div>
                     </div>
 
-                    <section aria-labelledby="products-heading" class="pb-24 pt-6">
-
+                    <section class="pb-24 pt-6">
                         <div class="grid grid-cols-1 gap-x-8 gap-y-10 lg:grid-cols-4">
                             <!-- Filters -->
                             <form class="hidden lg:block" method="GET" action="{{route('account.index')}}">
@@ -221,8 +220,8 @@
                                         <div class="space-y-4">
                                             <div class="flex items-center">
                                                 <input id="filter-type-0" name="type[]" value="General" type="checkbox"
-                                                    class="h-4 w-4 rounded border-gray-300 text-indigo-600 focus:ring-indigo-500"
-                                                    onchange="this.form.submit()" {{ in_array('General',
+                                                    class="h-4 w-4 rounded border-gray-300 text-indigo-600 focus:ring-indigo-500 cursor-pointer"
+                                                    onchange="this.form.submit()" {{ in_array('General', (array)
                                                     request()->input('type', [])) ? 'checked' : '' }}>
                                                 <label for="filter-type-0"
                                                     class="ml-3 text-sm text-gray-600">General</label>
@@ -230,8 +229,8 @@
                                             <div class="flex items-center">
                                                 <input id="filter-type-1" name="type[]" value="Saving Account"
                                                     type="checkbox"
-                                                    class="h-4 w-4 rounded border-gray-300 text-indigo-600 focus:ring-indigo-500"
-                                                    onchange="this.form.submit()" {{ in_array('Saving Account',
+                                                    class="h-4 w-4 rounded border-gray-300 text-indigo-600 focus:ring-indigo-500 cursor-pointer"
+                                                    onchange="this.form.submit()" {{ in_array('Saving Account', (array)
                                                     request()->input('type', [])) ? 'checked' : '' }}>
                                                 <label for="filter-type-1" class="ml-3 text-sm text-gray-600">Saving
                                                     Account</label>
@@ -239,16 +238,16 @@
                                             <div class="flex items-center">
                                                 <input id="filter-type-2" name="type[]" value="Credit/Debit Card"
                                                     type="checkbox"
-                                                    class="h-4 w-4 rounded border-gray-300 text-indigo-600 focus:ring-indigo-500"
+                                                    class="h-4 w-4 rounded border-gray-300 text-indigo-600 focus:ring-indigo-500 cursor-pointer"
                                                     onchange="this.form.submit()" {{ in_array('Credit/Debit Card',
-                                                    request()->input('type', [])) ? 'checked' : '' }}>
+                                                    (array) request()->input('type', [])) ? 'checked' : '' }}>
                                                 <label for="filter-type-2"
                                                     class="ml-3 text-sm text-gray-600">Credit/Debit Card</label>
                                             </div>
                                             <div class="flex items-center">
                                                 <input id="filter-type-3" name="type[]" value="Cash" type="checkbox"
-                                                    class="h-4 w-4 rounded border-gray-300 text-indigo-600 focus:ring-indigo-500"
-                                                    onchange="this.form.submit()" {{ in_array('Cash',
+                                                    class="h-4 w-4 rounded border-gray-300 text-indigo-600 focus:ring-indigo-500 cursor-pointer"
+                                                    onchange="this.form.submit()" {{ in_array('Cash', (array)
                                                     request()->input('type', [])) ? 'checked' : '' }}>
                                                 <label for="filter-type-3"
                                                     class="ml-3 text-sm text-gray-600">Cash</label>
@@ -256,27 +255,27 @@
                                             <div class="flex items-center">
                                                 <input id="filter-type-4" name="type[]" value="Insurance"
                                                     type="checkbox"
-                                                    class="h-4 w-4 rounded border-gray-300 text-indigo-600 focus:ring-indigo-500"
-                                                    onchange="this.form.submit()" {{ in_array('Insurance',
+                                                    class="h-4 w-4 rounded border-gray-300 text-indigo-600 focus:ring-indigo-500 cursor-pointer"
+                                                    onchange="this.form.submit()" {{ in_array('Insurance', (array)
                                                     request()->input('type', [])) ? 'checked' : '' }}>
                                                 <label for="filter-type-4"
                                                     class="ml-3 text-sm text-gray-600">Insurance</label>
                                             </div>
                                             <div class="flex items-center">
                                                 <input id="filter-type-5" name="type[]" value="Loan" type="checkbox"
-                                                    class="h-4 w-4 rounded border-gray-300 text-indigo-600 focus:ring-indigo-500"
-                                                    onchange="this.form.submit()" {{ in_array('Loan',
+                                                    class="h-4 w-4 rounded border-gray-300 text-indigo-600 focus:ring-indigo-500 cursor-pointer"
+                                                    onchange="this.form.submit()" {{ in_array('Loan', (array)
                                                     request()->input('type', [])) ? 'checked' : '' }}>
                                                 <label for="filter-type-5"
                                                     class="ml-3 text-sm text-gray-600">Loan</label>
                                             </div>
                                             <div class="flex items-center">
-                                                <input id="filter-type-5" name="type[]" value="Investment"
+                                                <input id="filter-type-6" name="type[]" value="Investment"
                                                     type="checkbox"
-                                                    class="h-4 w-4 rounded border-gray-300 text-indigo-600 focus:ring-indigo-500"
-                                                    onchange="this.form.submit()" {{ in_array('Investment',
+                                                    class="h-4 w-4 rounded border-gray-300 text-indigo-600 focus:ring-indigo-500 cursor-pointer"
+                                                    onchange="this.form.submit()" {{ in_array('Investment', (array)
                                                     request()->input('type', [])) ? 'checked' : '' }}>
-                                                <label for="filter-type-5"
+                                                <label for="filter-type-6"
                                                     class="ml-3 text-sm text-gray-600">Investment</label>
                                             </div>
                                         </div>
@@ -286,11 +285,14 @@
 
                             <!-- Product grid -->
                             <div class="lg:col-span-3">
-                                @if ($accounts && count($accounts) > 0)
-                                <div class="p-4" id="account-container">
-                                    @foreach ($accounts as $account)
+                                <div class="p-4">
+                                    @php
+                                      $i = 1;  
+                                    @endphp
+                                    @forelse ($accounts as $account)
                                     <div class="rounded-md bg-white mb-3 shadow-lg">
-                                        <div class="border grid grid-cols-7 gap-2 items-center rounded-md px-8 hover:bg-blue-100"
+                                        <div id="account-container"
+                                            class="border grid grid-cols-7 gap-2 items-center rounded-md px-8 hover:bg-blue-100"
                                             style="height: 50px">
                                             <div class="col-span-2" id="account_name">
                                                 <span class="text-xs text-gray-400">Name:</span><br>
@@ -308,21 +310,23 @@
                                                     title="RM {{ $balances[$account->id] }}">RM {{
                                                     $balances[$account->id] }}</div>
                                             </div>
-                                            <div class="flex justify-end hidden md:block">
-                                                <button class="viewAccountBtn mr-4" title="View"
+                                            <div class="justify-end hidden md:block">
+                                                <button class="mr-4" title="View"
                                                     onclick="window.location.href='{{ route('account.show', ['account' => $account->id]) }}'">
                                                     <i class="fas fa-eye hover:text-blue-500"></i>
                                                 </button>
-                                                <button class="editAccountBtn mr-4" title="Edit"
-                                                    value="{{ $account->id }}">
+                                                <button class="mr-4" title="Edit"
+                                                    data-modal-target="edit-account-modal{{$i}}"
+                                                    data-modal-toggle="edit-account-modal{{$i}}">
                                                     <i class="fas fa-edit hover:text-green-400"></i>
                                                 </button>
-                                                <button class="deleteAccountBtn" title="Remove" data-bs-toggle="modal"
-                                                    data-bs-target="#deleteModal">
+                                                <button title="Remove"
+                                                    data-modal-toggle="del-account-modal{{$i}}"
+                                                    data-modal-target="del-account-modal{{$i}}">
                                                     <i class="fas fa-trash hover:text-red-600"></i>
                                                 </button>
                                             </div>
-                                            <div class="flex justify-end dropdown-container block md:hidden">
+                                            <div class="justify-end dropdown-container block md:hidden">
                                                 <i class="fa-solid fa-ellipsis-vertical p-1 focus-ring cursor-pointer"
                                                     data-dropdown-toggle="action-dropdown-{{ $account->id }}"></i>
                                                 <div id="action-dropdown-{{ $account->id }}"
@@ -332,63 +336,66 @@
                                                         <a href="{{ route('account.show', ['account' => $account->id]) }}"
                                                             class="text-gray-500 block px-4 py-2 text-sm hover:bg-gray-100 rounded-md"
                                                             tabindex="-1" value="{{ $account->id }}">View</a>
-                                                        <a class="text-gray-500 block px-4 py-2 text-sm hover:bg-gray-100 rounded-md"
-                                                            tabindex="-1" value="{{ $account->id }}">Edit</a>
+                                                        <a class="text-gray-500 block px-4 py-2 text-sm hover:bg-gray-100 rounded-md edit-btn"
+                                                            tabindex="-1" data-modal-target="edit-account-modal{{$i}}"
+                                                            data-modal-toggle="edit-account-modal{{$i}}">Edit</a>
                                                         <hr>
                                                         <a class="text-gray-500 block px-4 py-2 text-sm hover:bg-red-500 hover:text-white rounded-md"
-                                                            tabindex="-1" data-bs-toggle="modal"
-                                                            data-bs-target="#deleteModal">Delete</a>
+                                                            tabindex="-1" data-modal-toggle="del-account-modal{{$i}}"
+                                                            data-modal-target="del-account-modal{{$i}}">Delete</a>
                                                     </div>
                                                 </div>
                                             </div>
                                         </div>
                                     </div>
-                                    @endforeach
-                                </div>
 
-                                {{-- @include('account.create') --}}
-                                {{-- @include('account.edit') --}}
-                                @else
-                                <p class="m-3 flex justify-center" style="font-size: 20px">No accounts found.</p>
-                                @endif
+                                    <!-- Delete Modal -->
+                                    <div id="del-account-modal{{$i}}" tabindex="-1" class="hidden overflow-y-auto overflow-x-hidden fixed top-0 right-0 left-0 z-50 justify-center items-center w-full md:inset-0 h-[calc(100%-1rem)] max-h-full">
+                                        <div class="relative p-4 w-full max-w-md max-h-full">
+                                            <div class="relative bg-white rounded-lg shadow dark:bg-gray-700">
+                                                <button type="button" class="absolute top-3 end-2.5 text-gray-400 bg-transparent hover:bg-gray-200 hover:text-gray-900 rounded-lg text-sm w-8 h-8 ms-auto inline-flex justify-center items-center dark:hover:bg-gray-600 dark:hover:text-white" data-modal-hide="del-account-modal{{$i}}">
+                                                    <svg class="w-3 h-3" aria-hidden="true" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 14 14">
+                                                        <path stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="m1 1 6 6m0 0 6 6M7 7l6-6M7 7l-6 6"/>
+                                                    </svg>
+                                                    <span class="sr-only">Close modal</span>
+                                                </button>
+                                                <div class="p-4 md:p-5 text-center">
+                                                    <svg class="mx-auto mb-4 text-gray-400 w-12 h-12 dark:text-gray-200" aria-hidden="true" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 20 20">
+                                                        <path stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10 11V6m0 8h.01M19 10a9 9 0 1 1-18 0 9 9 0 0 1 18 0Z"/>
+                                                    </svg>
+                                                    <h3 class="mb-5 text-lg font-normal text-gray-500 dark:text-gray-400">Are you sure you want to remove <b>{{ $account->name }}</b>?</h3>
+                                                    <form class="inline-flex items-center " action="{{ route('account.delete', ['account' => $account->id]) }}" method="post">
+                                                        @csrf
+                                                        @method('DELETE')
+                                                        <button type="submit" class="text-white bg-red-600 hover:bg-red-800 focus:ring-4 focus:outline-none focus:ring-red-300 dark:focus:ring-red-800 font-medium rounded-lg text-sm px-5 py-2.5 text-center">
+                                                            Remove
+                                                        </button>
+                                                    </form>
+                                                    <button data-modal-hide="del-account-modal{{$i}}" type="button" class="py-2.5 px-5 ms-3 text-sm font-medium text-gray-900 focus:outline-none bg-white rounded-lg border border-gray-200 hover:bg-gray-100 focus:z-10 focus:ring-4 focus:ring-gray-100 dark:focus:ring-gray-700 dark:bg-gray-800 dark:text-gray-400 dark:border-gray-600 dark:hover:text-white dark:hover:bg-gray-700">No, cancel</button>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+
+                                    @include('account.edit')
+
+                                    @php
+                                        $i++;
+                                    @endphp
+
+                                    @empty
+                                    <p class="m-3 flex justify-center" style="font-size: 20px">No accounts found.</p>
+                                    @endforelse
+                                </div>
                             </div>
                         </div>
+                        @include('account.create')
                     </section>
                 </main>
             </div>
         </div>
     </div>
 </x-app-layout>
-
-{{-- Delete Modal --}}
-{{-- <div class="modal fade" id="deleteModal" tabindex="-1" role="dialog" aria-labelledby="deleteModalLabel"
-    aria-hidden="true">
-    <div class="modal-dialog" role="document">
-        <div class="modal-content relative p-4 text-center rounded-lg sm:p-5" style="background-color: #E1F1FA">
-            <div class="modal-header flex justify-end">
-                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close">
-                    <i class="fa-solid fa-xmark"></i>
-                </button>
-            </div>
-            <div class="modal-body flex flex-col items-center">
-                Are you sure you want to delete this account?
-            </div>
-            <div class="flex justify-center items-center space-x-4">
-                @if (isset($account))
-                <form id="deleteForm" method="POST" action="{{ route('account.delete', ['account' => $account->id]) }}">
-                    @csrf
-                    @method('DELETE')
-                    <button type="submit" style="width: 120px"
-                        class="py-2 px-3 text-sm font-medium text-center text-white bg-red-600 rounded-lg hover:bg-red-700 mt-4">Yes</button>
-                </form>
-                @endif
-                <button type="button" style="width: 120px"
-                    class="py-2 px-3 text-sm font-medium text-gray-500 bg-white rounded-lg border border-gray-200 hover:bg-gray-100 hover:text-gray-900 focus:z-10"
-                    data-bs-dismiss="modal">Cancel</button>
-            </div>
-        </div>
-    </div>
-</div> --}}
 
 <script>
     window.addEventListener("load", function(event) {
