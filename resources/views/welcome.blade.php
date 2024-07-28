@@ -31,18 +31,18 @@
                         @auth
                             <li>
                                 <a href="{{ url('/dashboard') }}"
-                                    class="font-semibold text-gray-600 hover:text-gray-900 focus:outline focus:outline-2 focus:rounded-sm focus:outline-red-500">Dashboard</a>
+                                    class="font-semibold text-gray-600 hover:text-gray-900 hover:bg-gray-200">Dashboard</a>
                             </li>
                         @else
                             <li>
                                 <a href="{{ route('login') }}"
-                                    class="font-semibold text-gray-600 hover:text-gray-900 focus:outline focus:outline-2 focus:rounded-sm focus:outline-red-500">Login</a>
+                                    class="font-semibold text-gray-600 hover:text-gray-900 hover:bg-gray-200">Login</a>
                             </li>
 
                             @if (Route::has('register'))
                                 <li>
                                     <a href="{{ route('register') }}"
-                                        class="ml-4 font-semibold text-gray-600 hover:text-gray-900 focus:outline focus:outline-2 focus:rounded-sm focus:outline-red-500">Register</a>
+                                        class="font-semibold text-gray-600 hover:text-gray-900 hover:bg-gray-200">Register</a>
                                 </li>
                             @endif
                         @endauth
