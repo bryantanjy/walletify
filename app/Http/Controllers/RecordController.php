@@ -53,49 +53,49 @@ class RecordController extends Controller
     /**
      *  search function
      */
-    public function search(Request $request)
-    {
-        $searchTerm = $request->input('search');
-        $sort = $request->input('sort');
-        $user = Auth::user();
-        $currentSession = session('app.user_session_type', 'personal');
+    // public function search(Request $request)
+    // {
+    //     $searchTerm = $request->input('search');
+    //     $sort = $request->input('sort');
+    //     $user = Auth::user();
+    //     $currentSession = session('app.user_session_type', 'personal');
 
-        $records = Record::search($searchTerm)
-            ->with('category', 'account', 'user')
-            ->userScope($user->id, $currentSession)
-            ->sortedBy($sort)
-            ->get();
+    //     $records = Record::search($searchTerm)
+    //         ->with('category', 'account', 'user')
+    //         ->userScope($user->id, $currentSession)
+    //         ->sortedBy($sort)
+    //         ->get();
 
-        $categories = Category::all(); // Retrieve all categories
-        $accounts = Account::where('user_id', Auth::user()->id)->get(); // Retrieve all accounts for the current user
-        $totalBalance = $this->calculateTotalBalance($records);
+    //     $categories = Category::all(); // Retrieve all categories
+    //     $accounts = Account::where('user_id', Auth::user()->id)->get(); // Retrieve all accounts for the current user
+    //     $totalBalance = $this->calculateTotalBalance($records);
 
-        return view('record.record_list', compact('records', 'categories', 'accounts', 'totalBalance'))->render();
-    }
+    //     return view('record.record_list', compact('records', 'categories', 'accounts', 'totalBalance'))->render();
+    // }
 
     /**
      *  fetch the date from datepicker and show the ranged record
      */
-    public function fetchByDate(Request $request)
-    {
-        $startDate = $request->input('startDate');
-        $endDate = Carbon::parse($request->input('endDate'))->endOfDay();
-        $sort = $request->input('sort');
-        $user = Auth::user();
-        $currentSession = session('app.user_session_type', 'personal');
+    // public function fetchByDate(Request $request)
+    // {
+    //     $startDate = $request->input('startDate');
+    //     $endDate = Carbon::parse($request->input('endDate'))->endOfDay();
+    //     $sort = $request->input('sort');
+    //     $user = Auth::user();
+    //     $currentSession = session('app.user_session_type', 'personal');
 
-        $records = Record::with('category', 'account', 'user')
-            ->userScope($user->id, $currentSession)
-            ->dateRange($startDate, $endDate)
-            ->sortedBy($sort)
-            ->get();
+    //     $records = Record::with('category', 'account', 'user')
+    //         ->userScope($user->id, $currentSession)
+    //         ->dateRange($startDate, $endDate)
+    //         ->sortedBy($sort)
+    //         ->get();
 
-        $categories = Category::all(); // Retrieve all categories
-        $accounts = Account::where('user_id', Auth::user()->id)->get(); // Retrieve all accounts for the current user
-        $totalBalance = $this->calculateTotalBalance($records);
+    //     $categories = Category::all(); // Retrieve all categories
+    //     $accounts = Account::where('user_id', Auth::user()->id)->get(); // Retrieve all accounts for the current user
+    //     $totalBalance = $this->calculateTotalBalance($records);
 
-        return view('record.record_list', compact('records', 'categories', 'accounts', 'totalBalance'))->render();
-    }
+    //     return view('record.record_list', compact('records', 'categories', 'accounts', 'totalBalance'))->render();
+    // }
 
     /**
      *  calculate total balance function
@@ -108,38 +108,38 @@ class RecordController extends Controller
         return $totalIncome - $totalExpense;
     }
 
-    public function filter(Request $request)
-    {
-        $user = Auth::user();
-        $currentSession = session('app.user_session_type', 'personal');
+    // public function filter(Request $request)
+    // {
+    //     $user = Auth::user();
+    //     $currentSession = session('app.user_session_type', 'personal');
 
-        $records = Record::with('category', 'account', 'user');
+    //     $records = Record::with('category', 'account', 'user');
 
-        if ($currentSession === 'personal') {
-            $records->where('user_id', $user->id);
-        } else {
-            $activeGroupId = session('active_group_id');
-            $records->where('expense_sharing_group_id', $activeGroupId);
-        }
+    //     if ($currentSession === 'personal') {
+    //         $records->where('user_id', $user->id);
+    //     } else {
+    //         $activeGroupId = session('active_group_id');
+    //         $records->where('expense_sharing_group_id', $activeGroupId);
+    //     }
 
-        if ($request->has('categories')) {
-            $records->whereIn('category_id', $request->categories);
-        }
+    //     if ($request->has('categories')) {
+    //         $records->whereIn('category_id', $request->categories);
+    //     }
 
-        if ($request->has('types')) {
-            $records->whereIn('type', $request->types);
-        }
+    //     if ($request->has('types')) {
+    //         $records->whereIn('type', $request->types);
+    //     }
 
-        $sort = $request->input('sort', 'latest');
-        $records->orderBy('datetime', $sort == 'oldest' ? 'asc' : 'desc');
-        $records = $records->get();
+    //     $sort = $request->input('sort', 'latest');
+    //     $records->orderBy('datetime', $sort == 'oldest' ? 'asc' : 'desc');
+    //     $records = $records->get();
 
-        $categories = Category::all();
-        $accounts = Account::where('user_id', Auth::user()->id)->get();
-        $totalBalance = $this->calculateTotalBalance($records);
+    //     $categories = Category::all();
+    //     $accounts = Account::where('user_id', Auth::user()->id)->get();
+    //     $totalBalance = $this->calculateTotalBalance($records);
 
-        return view('record.record_list', compact('records', 'categories', 'accounts', 'totalBalance'));
-    }
+    //     return view('record.record_list', compact('records', 'categories', 'accounts', 'totalBalance'));
+    // }
 
     /**
      *  Create record
@@ -161,13 +161,13 @@ class RecordController extends Controller
         $validator = Validator::make(
             $request->all(),
             [
-                'account_id' => 'nullable',
-                'category_id' => 'required',
+                'account' => 'numeric|exists:accounts,id|nullable',
+                'category' => 'required|exists:categories,id',
                 'type' => 'required|string',
-                'amount' => 'required|numeric',
-                'datetime' => 'required',
-                'description' => 'nullable|string',
-                'expense_sharing_group_id' => 'nullable',
+                'amount' => 'required|numeric|min:0.01|max:9999999.99',
+                'datetime' => 'required|date_format:Y-m-d\TH:i',
+                'description' => 'string|max:255|nullable',
+                'expense_sharing_group_id' => 'numeric|exists:expense_sharing_groups,id|nullable',
             ]
         );
 
@@ -190,19 +190,18 @@ class RecordController extends Controller
             }
         }
 
-        $record = new Record;
-        $record->account_id = $request->input('account_id');
-        $record->category_id = $request->input('category_id');
-        $record->user_id = auth()->id();
-        $record->type = $request->input('type');
-        $record->amount = $request->input('amount');
-        $record->datetime = $request->input('datetime');
-        $record->description = $request->input('description');
-        $record->expense_sharing_group_id = $request->input('group_id');
-        $record->save();
+        Record::create([
+            'user_id' => $userId,
+            'account_id' => $request->input('account'),
+            'category_id' => $request->input('category'),
+            'expense_sharing_group_id' => $groupId,
+            'type' => $request->input('type'),
+            'amount' => $request->input('amount'),
+            'datetime' => $request->input('datetime'),
+            'description' => $request->input('description'),
+        ]);
 
-
-        return redirect()->route('record.index')->with('success', 'Record added successfully');
+        return redirect()->route('record.index')->with('success', 'Financial record added successfully');
     }
 
     /**

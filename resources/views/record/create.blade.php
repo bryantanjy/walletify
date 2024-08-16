@@ -1,91 +1,128 @@
-<div id="createRecordModal" class="modal fade" tabindex="-1" role="dialog" aria-labelledby="createRecordModalLabel"
-    aria-hidden="true">
-    <div class="modal-dialog modal-lg relative p-4">
-
+<div id="create-record-modal" tabindex="-1" aria-hidden="true" data-modal-backdrop="static"
+    class="hidden overflow-y-auto overflow-x-hidden fixed top-0 right-0 left-0 z-50 justify-center items-center w-full md:inset-0 h-[calc(100%-1rem)] max-h-full">
+    <div class="relative p-4 w-full max-w-lg max-h-full">
         <!--Modal Content-->
-        <div class="modal-content relative p-4 rounded-lg" style="background-color: #E1F1FA">
-            <div class="modal-header flex justify-between items-center pb-3">
-                <h2 class="font-semibold" style="font-size:20px">Add Record</h2>
-                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close">
-                    <i class="fa-solid fa-xmark"></i>
+        <div class="relative bg-white rounded-lg shadow dark:bg-gray-700">
+            <!-- Modal Header-->
+            <div class="flex items-center justify-between p-4 md:p-5 border-b rounded-t dark:border-gray-600">
+                <h3 class="text-lg font-semibold text-gray-900 dark:text-white">
+                    Create Financial Record
+                </h3>
+                <button type="button"
+                    class="text-gray-400 bg-transparent hover:bg-gray-200 hover:text-gray-900 rounded-lg text-sm w-8 h-8 ms-auto inline-flex justify-center items-center dark:hover:bg-gray-600 dark:hover:text-white"
+                    data-modal-hide="create-record-modal">
+                    <svg class="w-3 h-3" aria-hidden="true" xmlns="http://www.w3.org/2000/svg" fill="none"
+                        viewBox="0 0 14 14">
+                        <path stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                            d="m1 1 6 6m0 0 6 6M7 7l6-6M7 7l-6 6" />
+                    </svg>
+                    <span class="sr-only">Close modal</span>
                 </button>
             </div>
-            <div class="modal-body">
-                <form id="createForm" action="{{ route('record.store') }}" method="POST">
-                    @csrf
-                    <div>
-                        @if ($errors->any())
-                            <div class="text-red-500">
-                                <ul>
-                                    @foreach ($errors->all() as $error)
-                                        <li>{{ $error }}</li>
-                                    @endforeach
-                                </ul>
-                            </div>
-                        @endif
 
-                        @php
-                            $userSessionType = session('user_session_type', 'personal');
-                        @endphp
-                        <input type="hidden" name="group_id" value="{{ session('active_group_id') }}">
-                        {{-- hide this item if the session is group --}}
-                        @if ($userSessionType == 'personal')
-                            <div class="flex items-center form-group">
-                                <label for="account_id" class="w-32 pr-2 mt-4">Account Type</label>
-                                <select name="account_id" class="rounded-md border-0"
-                                    style="height: 30px; width:225px; padding:0px 10px; margin:15px 0px 0px 20px;"
-                                    required>
-                                    <option value="" selected disabled>Select an account</option>
-                                    @foreach ($accounts as $account)
-                                        <option value="{{ $account->id }}">{{ $account->name }}</option>
-                                    @endforeach
-                                </select>
-                            </div>
-                        @endif
+            <!-- Modal body -->
+            <form action="{{ route('record.store') }}" method="POST" class="p-4 md:p-5">
+                @csrf
+                {{-- error return --}}
+                @if ($errors->any())
+                <div class="border-red-500 rounded-md alert alert-danger bg-red-100 p-4 md:p-5 mb-3">
+                    <ul>
+                        @foreach ($errors->all() as $error)
+                        <li>{{ $error }}</li>
+                        @endforeach
+                    </ul>
+                </div>
+                @endif
 
-                        <div class="flex items-center form-group">
-                            <label for="type" class="w-32 pr-2 mt-4">Type of record</label>
-                            <select name="type" class="rounded-md border-0" id="type" onchange="updateCategories()"
-                                style="height: 30px; width:225px; padding:0px 10px; margin:15px 0px 0px 20px;" required>
-                                <option value="Expense">Expense</option>
-                                <option value="Income">Income</option>
-                            </select>
-                        </div>
-                        <div class="flex items-center form-group">
-                            <label for="category_id" class="w-32 pr-2 mt-4">Category</label>
-                            <select name="category_id" id="category_id" class="rounded-md border-0"
-                                style="height: 30px; width:225px; padding:0px 10px; margin:15px 0px 0px 20px;" required>
-                                <option value="" selected disabled>Select a category</option>
-                                @foreach ($categories as $category)
-                                    <option value="{{ $category->id }}">{{ $category->name }}</option>
-                                @endforeach
-                            </select>
-                        </div>
-                        <div class="flex items-center form-group">
-                            <label for="amount" class="w-32 pr-2 mt-4">Amount</label>
-                            <input type="number" step="0.01" class="rounded-md border-0" name="amount"
-                                placeholder="0.00"
-                                style="height: 30px; width:225px; padding:0px 10px; margin:15px 0px 0px 20px; text-align:right;"
-                                required>
-                        </div>
-                        <div class="flex items-center form-group">
-                            <label for="datetime" class="w-32 pr-2 mt-4">Date</label>
-                            <input type="datetime-local" class="rounded-md border-0" name="datetime"
-                                style="height: 30px; width:225px; margin:15px 0px 0px 20px;" required>
-                        </div>
-                        <div class="flex items-center form-group">
-                            <label for="description" class="w-32 pr-2 mt-4">Description</label>
-                            <textarea type="text" name="description" class="rounded-md flex-grow border-0"
-                                placeholder="Remarks" maxlength="255" style="height: 60px; padding:0px 10px; margin:15px 0px 0px 20px;"></textarea>
-                        </div>
-                        <div class="flex mt-6 justify-center">
-                            <button type="submit"
-                                class="py-1 px-3 bg-blue-500 text-white rounded-md hover:bg-blue-400">Add
-                                Record</button>
+                @php
+                    $userSessionType = session('user_session_type', 'personal');
+                @endphp
+                <div class="grid gap-4 mb-4 grid-cols-2">
+                    <input type="hidden" name="group_id" value="{{ session('active_group_id') }}">
+                    <!-- Hide account selection for group session -->
+                    @if ($userSessionType == 'personal')
+                    <div class="col-span-2">
+                        <label for="account_type" class="block mb-2 text-sm font-medium text-gray-900 dark:text-white"> Virtual Account</label>
+                        <select name="account" 
+                            class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-primary-500 focus:border-primary-500 block w-full p-2.5 dark:bg-gray-600 dark:border-gray-500 dark:placeholder-gray-400 dark:text-white dark:focus:ring-primary-500 dark:focus:border-primary-500"
+                            required>
+                            <option value="" selected disabled>Select an account</option>
+                            @forelse ($accounts as $account)
+                                <option value="{{ $account->id }}">{{ $account->name }}</option>
+                            @empty
+                                <option value="">No virtual account found. Proceed to <b>Virtual Account</b></option>
+                            @endforelse
+                        </select>
+                    </div>
+                    @endif
+                    
+                    <div class="col-span-2">
+                        <label for="type"
+                            class="block mb-2 text-sm font-medium text-gray-900 dark:text-white">Record
+                            Type</label>
+                        <select name="type" id="type"
+                            class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-primary-500 focus:border-primary-500 block w-full p-2.5 dark:bg-gray-600 dark:border-gray-500 dark:placeholder-gray-400 dark:text-white dark:focus:ring-primary-500 dark:focus:border-primary-500"
+                            required>
+                            <option value="" selected disabled>Select record type</option>
+                            <option value="Expense">Expense</option>
+                            <option value="Income">Income</option>
+                        </select>
+                    </div>
+
+                    <div class="col-span-2">
+                        <label for="category"
+                            class="block mb-2 text-sm font-medium text-gray-900 dark:text-white">Category</label>
+                        <select name="category" id="category"
+                            class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-primary-500 focus:border-primary-500 block w-full p-2.5 dark:bg-gray-600 dark:border-gray-500 dark:placeholder-gray-400 dark:text-white dark:focus:ring-primary-500 dark:focus:border-primary-500"
+                            required>
+                            <option value="" selected disabled>Select one category</option>
+                            @forelse ($categories as $category)
+                                <option value="{{ $category->id }}">{{ $category->name }}</option>
+                            @empty
+                                <option value="">No category found. Please contact Admin.</option>
+                            @endforelse
+                        </select>
+                    </div>
+
+                    <div class="col-span-2">
+                        <label for="amount"
+                            class="block mb-2 text-sm font-medium text-gray-900 dark:text-white">Amount</label>
+                        <div class="flex">
+                            <span class="inline-flex items-center px-3 text-sm text-gray-900 bg-gray-200 border rounded-e-0 border-gray-300 border-e-0 rounded-s-md dark:bg-gray-600 dark:text-gray-400 dark:border-gray-600">
+                                <img src="{{ asset('images/ringgit.png') }}" alt="RM">
+                            </span>
+                            <input type="number" name="amount" id="amount" 
+                            class="rounded-none rounded-e-lg bg-gray-50 border text-gray-900 focus:ring-blue-500 focus:border-blue-500 block flex-1 min-w-0 w-full text-sm border-gray-300 p-2.5  dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500" 
+                            min="0.01" step="0.01" required>
                         </div>
                     </div>
-                </form>
-            </div>
+
+                    <div class="col-span-2">
+                        <label for="datetime"
+                            class="block mb-2 text-sm font-medium text-gray-900 dark:text-white">Date</label>
+                        <input type="datetime-local" name="datetime" id="datetime"
+                            class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-primary-600 focus:border-primary-600 block w-full p-2.5 dark:bg-gray-600 dark:border-gray-500 dark:placeholder-gray-400 dark:text-white dark:focus:ring-primary-500 dark:focus:border-primary-500"
+                            required>
+                    </div>
+
+                    <div class="col-span-2">
+                        <label for="description" class="block mb-2 text-sm font-medium text-gray-900 dark:text-white">Description</label>
+                        <textarea name="description" id="description" rows="4" class="block p-2.5 w-full text-sm text-gray-900 bg-gray-50 rounded-lg border border-gray-300 focus:ring-blue-500 focus:border-blue-500 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500" 
+                        placeholder="Write your details here..."></textarea>                        
+                    </div>
+
+                    <button type="submit"
+                        class="text-white inline-flex items-center max-w-fit bg-blue-600 hover:bg-blue-800 focus:ring-4 focus:outline-none focus:ring-blue-300 font-medium rounded-lg text-sm px-5 py-2.5 text-center dark:bg-blue-600 dark:hover:bg-blue-700 dark:focus:ring-blue-800">
+                        <svg class="me-1 -ms-1 mr-2 w-5 h-5" fill="currentColor" viewBox="0 0 20 20"
+                            xmlns="http://www.w3.org/2000/svg">
+                            <path fill-rule="evenodd"
+                                d="M10 5a1 1 0 011 1v3h3a1 1 0 110 2h-3v3a1 1 0 11-2 0v-3H6a1 1 0 110-2h3V6a1 1 0 011-1z"
+                                clip-rule="evenodd"></path>
+                        </svg>
+                        Create
+                    </button>
+                </div>
+            </form>
         </div>
     </div>
 </div>
