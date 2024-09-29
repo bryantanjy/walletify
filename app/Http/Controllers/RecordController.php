@@ -20,34 +20,32 @@ class RecordController extends Controller
      */
     public function index(Request $request)
     {
-        $userId = Auth::user()->id;
-        $startDate = $request->input('startDate') ? Carbon::parse($request->input('startDate'))->startOfDay() : now()->startOfMonth();
-        $endDate = $request->input('endDate') ? Carbon::parse($request->input('endDate'))->endOfDay() + 1 : now()->endOfMonth();
-        $currentSession = session('app.user_session_type', 'personal');
+        // $userId = Auth::user()->id;
+        // $currentSession = session('app.user_session_type', 'personal');
 
-        $records = Record::with('category', 'user')
-            ->userScope($userId, $currentSession)
-            ->dateRange($startDate, $endDate)
-            ->orderByDesc('datetime')
-            ->get();
+        // $records = Record::with('category', 'user')
+        //     ->userScope($userId, $currentSession)
+        //     ->orderByDesc('datetime')
+        //     ->paginate(10);
 
-        $categories = Category::all();
-        $accounts = ($currentSession === 'personal') ? Account::where('user_id', $userId)->get() : collect();
-        $totalBalance = $this->calculateTotalBalance($records);
+        // $categories = Category::all();
+        // $accounts = ($currentSession === 'personal') ? Account::where('user_id', $userId)->get() : collect();
+        // $totalBalance = $this->calculateTotalBalance($records);
 
-        if ($request->ajax()) {
-            return response()->json([
-                'records' => $records,
-                'categories' => $categories,
-                'accounts' => $accounts,
-                'startDate' => $startDate,
-                'endDate' => $endDate,
-                'totalBalance' => $totalBalance
-            ]);
-        }
+        // if ($request->ajax()) {
+        //     return response()->json([
+        //         'records' => $records,
+        //         'categories' => $categories,
+        //         'accounts' => $accounts,
+        //         // 'startDate' => $startDate,
+        //         // 'endDate' => $endDate,
+        //         'totalBalance' => $totalBalance
+        //     ]);
+        // }
 
         // If it's a regular request, return the full view
-        return view('record.index', compact('records', 'categories', 'accounts', 'totalBalance', 'startDate', 'endDate'));
+        // return view('record.index', compact('records', 'categories', 'accounts', 'totalBalance'));
+        return view('record.index');
     }
 
     /**
@@ -232,18 +230,18 @@ class RecordController extends Controller
         $validator = Validator::make(
             $request->all(),
             [
-                'account_id' => 'nullable',
-                'category_id' => 'required',
+                'account' => 'numeric|exists:accounts,id|nullable',
+                'category' => 'required|exists:categories,id',
                 'type' => 'required|string',
-                'amount' => 'required|numeric',
-                'datetime' => 'required',
-                'description' => 'nullable|string',
-                'expense_sharing_group_id' => 'nullable',
+                'amount' => 'required|numeric|min:0.01|max:9999999.99',
+                'datetime' => 'required|date_format:Y-m-d\TH:i',
+                'description' => 'string|max:255|nullable',
+                'group_id' => 'numeric|exists:expense_sharing_groups,id|nullable',
             ]
         );
 
         if ($validator->fails()) {
-            return redirect()->route('record.edit')->withErrors($validator);
+            return back()->withErrors($validator)->withInput();;
         }
 
         $userId = auth()->user()->id;
@@ -262,8 +260,8 @@ class RecordController extends Controller
         }
 
         $record->update([
-            'account_id' => $request->input('account_id'),
-            'category_id' => $request->input('category_id'),
+            'account_id' => $request->input('account'),
+            'category_id' => $request->input('category'),
             'type' => $request->input('type'),
             'amount' => $request->input('amount'),
             'datetime' => $request->input('datetime'),

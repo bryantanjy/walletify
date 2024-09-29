@@ -1,15 +1,15 @@
 <div id="create-record-modal" tabindex="-1" aria-hidden="true" data-modal-backdrop="static"
     class="hidden overflow-y-auto overflow-x-hidden fixed top-0 right-0 left-0 z-50 justify-center items-center w-full md:inset-0 h-[calc(100%-1rem)] max-h-full">
-    <div class="relative p-4 w-full max-w-lg max-h-full">
+    <div class="relative w-full max-w-lg max-h-full p-4">
         <!--Modal Content-->
         <div class="relative bg-white rounded-lg shadow dark:bg-gray-700">
             <!-- Modal Header-->
-            <div class="flex items-center justify-between p-4 md:p-5 border-b rounded-t dark:border-gray-600">
+            <div class="flex items-center justify-between p-4 border-b rounded-t md:p-5 dark:border-gray-600">
                 <h3 class="text-lg font-semibold text-gray-900 dark:text-white">
                     Create Financial Record
                 </h3>
                 <button type="button"
-                    class="text-gray-400 bg-transparent hover:bg-gray-200 hover:text-gray-900 rounded-lg text-sm w-8 h-8 ms-auto inline-flex justify-center items-center dark:hover:bg-gray-600 dark:hover:text-white"
+                    class="inline-flex items-center justify-center w-8 h-8 text-sm text-gray-400 bg-transparent rounded-lg hover:bg-gray-200 hover:text-gray-900 ms-auto dark:hover:bg-gray-600 dark:hover:text-white"
                     data-modal-hide="create-record-modal">
                     <svg class="w-3 h-3" aria-hidden="true" xmlns="http://www.w3.org/2000/svg" fill="none"
                         viewBox="0 0 14 14">
@@ -25,7 +25,7 @@
                 @csrf
                 {{-- error return --}}
                 @if ($errors->any())
-                <div class="border-red-500 rounded-md alert alert-danger bg-red-100 p-4 md:p-5 mb-3">
+                <div class="p-4 mb-3 bg-red-100 border-red-500 rounded-md alert alert-danger md:p-5">
                     <ul>
                         @foreach ($errors->all() as $error)
                         <li>{{ $error }}</li>
@@ -37,7 +37,7 @@
                 @php
                     $userSessionType = session('user_session_type', 'personal');
                 @endphp
-                <div class="grid gap-4 mb-4 grid-cols-2">
+                <div class="grid grid-cols-2 gap-4 mb-4">
                     <input type="hidden" name="group_id" value="{{ session('active_group_id') }}">
                     <!-- Hide account selection for group session -->
                     @if ($userSessionType == 'personal')
@@ -88,7 +88,7 @@
                         <label for="amount"
                             class="block mb-2 text-sm font-medium text-gray-900 dark:text-white">Amount</label>
                         <div class="flex">
-                            <span class="inline-flex items-center px-3 text-sm text-gray-900 bg-gray-200 border rounded-e-0 border-gray-300 border-e-0 rounded-s-md dark:bg-gray-600 dark:text-gray-400 dark:border-gray-600">
+                            <span class="inline-flex items-center px-3 text-sm text-gray-900 bg-gray-200 border border-gray-300 rounded-e-0 border-e-0 rounded-s-md dark:bg-gray-600 dark:text-gray-400 dark:border-gray-600">
                                 <img src="{{ asset('images/ringgit.png') }}" alt="RM">
                             </span>
                             <input type="number" name="amount" id="amount" 
@@ -113,7 +113,7 @@
 
                     <button type="submit"
                         class="text-white inline-flex items-center max-w-fit bg-blue-600 hover:bg-blue-800 focus:ring-4 focus:outline-none focus:ring-blue-300 font-medium rounded-lg text-sm px-5 py-2.5 text-center dark:bg-blue-600 dark:hover:bg-blue-700 dark:focus:ring-blue-800">
-                        <svg class="me-1 -ms-1 mr-2 w-5 h-5" fill="currentColor" viewBox="0 0 20 20"
+                        <svg class="w-5 h-5 mr-2 me-1 -ms-1" fill="currentColor" viewBox="0 0 20 20"
                             xmlns="http://www.w3.org/2000/svg">
                             <path fill-rule="evenodd"
                                 d="M10 5a1 1 0 011 1v3h3a1 1 0 110 2h-3v3a1 1 0 11-2 0v-3H6a1 1 0 110-2h3V6a1 1 0 011-1z"
