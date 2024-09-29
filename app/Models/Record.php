@@ -45,24 +45,17 @@ class Record extends Model
         return $this->belongsTo(Category::class, 'category_id', 'id');
     }
 
-    public function scopeSearch($query, $searchTerm)
+    public function scopeSearch($query, $value)
     {
-        if ($searchTerm) {
-            $query->where(function ($q) use ($searchTerm) {
-                $q->where('description', 'like', '%' . $searchTerm . '%')
-                    ->orWhereHas('user', function ($subQuery) use ($searchTerm) {
-                        $subQuery->where('name', 'like', '%' . $searchTerm . '%');
-                    })
-                    ->orWhereHas('account', function ($subQuery) use ($searchTerm) {
-                        $subQuery->where('name', 'like', '%' . $searchTerm . '%');
-                    })
-                    ->orWhereHas('category', function ($subQuery) use ($searchTerm) {
-                        $subQuery->where('name', 'like', '%' . $searchTerm . '%');
-                    });
-            });
+        if ($value) {
+            $query->where('description','like',"%{$value}%")
+                ->orWhereHas('user', function ($subQuery) use ($value) {
+                    $subQuery->where('name', 'like', "%{$value}%");
+                })
+                ->orWhereHas('account', function ($subQuery) use ($value) {
+                    $subQuery->where('name', 'like', "%{$value}%");
+                });
         }
-
-        return $query;
     }
 
     public function scopeUserScope(Builder $query, $userId, $sessionType = 'personal')
